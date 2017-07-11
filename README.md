@@ -15,7 +15,8 @@ Subregular toolkit for language processing. Run _main.py_ to gain access to the 
 #### Extraction of Tier-based Strictly k-Local (k-TSL) grammar from the input data
 
     --- find_tsl(data, n, text) ---
-    Extracts tier-based strictly local grammar from the given data set. Follows the algorithm provided in (Jardine and McMullin in prep.)
+    Extracts tier-based strictly local grammar from the given data set.
+    Follows the algorithm provided in (Jardine and McMullin in prep.)
     Arguments:
     * data (any iterable) -- data to be analyzed
     * n (integer) -- length of ngrams to be constructed
