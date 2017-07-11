@@ -4,7 +4,7 @@ Subregular toolkit for language processing.
 
 Run _main.py_ to gain access to the functions.
 
-### Extraction of Strictly k-Local (k-SL) grammar from the input data
+##### Extraction of Strictly k-Local (k-SL) grammar from the input data
 
     --- find_sl(data, n, text) ---
     Collects _n_-grams that the input data consists of.
