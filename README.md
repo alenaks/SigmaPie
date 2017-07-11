@@ -1,10 +1,8 @@
 # slp
 
-Subregular toolkit for language processing.
+Subregular toolkit for language processing. Run _main.py_ to gain access to the functions.
 
-Run _main.py_ to gain access to the functions.
-
-##### Extraction of Strictly k-Local (k-SL) grammar from the input data
+#### Extraction of Strictly k-Local (k-SL) grammar from the input data
 
     --- find_sl(data, n, text) ---
     Collects _n_-grams that the input data consists of.
@@ -14,10 +12,16 @@ Run _main.py_ to gain access to the functions.
     * text (boolean) -- type of the data, symbols or text
 
 
-### Extraction of Tier-based Strictly k-Local (k-TSL) grammar from the input data
-**find_tsl** extracts tier-based strictly local grammar from the given data set. Follows the algorithm provided in (Jardine and McMullin in prep.)
+#### Extraction of Tier-based Strictly k-Local (k-TSL) grammar from the input data
 
-Arguments: see _find_sl_ function.
+    --- find_tsl(data, n, text) ---
+    Extracts tier-based strictly local grammar from the given data set. Follows the algorithm provided in (Jardine and McMullin in prep.)
+    Arguments:
+    * data (any iterable) -- data to be analyzed
+    * n (integer) -- length of ngrams to be constructed
+    * text (boolean) -- type of the data, symbols or text
+
+#### Extraction of the alphabet from the input data
 
     --- alphabet(data, text) ---
     Collects alphabet based on the input data. If text=False,
