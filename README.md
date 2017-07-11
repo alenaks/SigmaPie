@@ -1,2 +1,5 @@
-# slp
-Subregular toolkip for language processing
+### slp
+
+Subregular toolkit for language processing.
+
+# Available functions:
