@@ -4,11 +4,16 @@
 # Author: Alena Aksenova
 
 """
-Module with general helper functions:
- -- tokenize(obj)
- -- alphabetize(obj, text)
- -- annotate(obj, n, text)
- -- check_type(n, text)
+Module with general helper functions.
+
+*** tokenize ***    nltk word_tokenize function
+*** alphabetize *** collects alphabet from the input data
+*** annotate ***    annotates each item from the input object with
+                    start and end symbols
+*** preprocess ***  parses the input file(s)
+*** check_type ***  checks that the types of the input data is
+                    of the appropriate type
+*** report ***      reports on the extracted grammar
 """
 
 from nltk import word_tokenize
@@ -21,47 +26,89 @@ def tokenize(obj):
 
 
 
-def alphabetize(obj, text=False):
+def alphabetize(obj, param):
     """ Finds smallest units to work with.
         By-default (if text=False), breakes sequences in symbols.
         If text=True, tokenizes the string, and collects list of words.
     """
+    
+    try: obj.seek(0)
+    except: pass
 
-    # if text==False, collect the list of symbols used
-    # in the input data
-    if text == False:
-        alphabet = []
-        for item in obj:
-            for i in item:
-                if i not in alphabet:
-                    alphabet += [i]
-        return alphabet
-
-    # if the object is words, tokenize the object, and apply
-    # the same function having words as smallest units
-    else:
-        obj = [tokenize(i) for i in obj]
-        return alphabetize(obj, text=False)
+    alphabet = set()
+    for line in obj:
+        alphabet.update(preprocess(line, param))
+    return alphabet
 
 
 
-def annotate(obj, n, text):
+def annotate(obj, n, param):
     """ Annotates the sequences with n-1 start/end markers.
         Is needed for successful generation of (im)possible ngrams
         and further data generation.
     """
     
-    if text == False:
-        return ">"*(n-1) + obj + "<"*(n-1)
+    if param == "s":
+        return ">"*(n-1) + obj.strip() + "<"*(n-1)
+    elif param == "w":
+        return "> "*(n-1) + obj.strip() + " <"*(n-1)
+    elif param == "m":
+        return ">-"*(n-1) + obj.strip() + "-<"*(n-1)
     else:
-        return "> "*(n-1) + obj + " <"*(n-1)
+        raise ValueError()
 
 
 
-def check_type(n, text):
-    """ Checks types of 'n' and 'text' arguments. """
+def preprocess(obj, param):
+    """ Preprocessing function: depending on the type of an object,
+        parses it.
+    """
+
+    # if the object is not text, make a list of symbols
+    if param == "s":
+        obj = list(obj.strip())
         
+    elif param == "w":
+            
+        # if the object is text, tokenize it first
+        obj = tokenize(obj.strip())
+
+    elif param == "m":
+
+        # if the object is a list of morphemes, split it by a dash
+        obj = obj.replace("-", " ")
+        obj = tokenize(obj.strip())
+        
+    else:
+        raise RuntimeError("Unexpected behavior: please, report.")
+
+    return obj
+
+
+
+def check_type(obj, n, polar, param):
+    """ Checks types of 'obj', 'n' and 'text' arguments. """
+
+    if type(obj) not in [str, list, tuple]:
+        raise TypeError("The type of 'obj' must be either 'str' for a filename, or 'list'/'tuple' for a dataset.")
     if type(n) != int:
-        raise ValueError("The value of 'n' must be of the type 'int'.")
-    if type(text) != bool:
-        raise ValueError("The value of 'text' must be of the type 'bool'.")
+        raise TypeError("The type of 'n' must be 'int'.")
+    if type(polar) != bool:
+        raise TypeError("The type of 'polar' must be 'bool'.")
+    if param not in ["w", "m", "s"]:
+        raise ValueError("The value of 'param' must be 'w' for words, 'm' for morphemes, or 's' for symbols.")
+
+
+
+def report(info, alphabet, grammar, param):
+    """ Prints the info about the generated grammar """
+    
+    if param == "s":
+        t = "symbols"
+    elif param == "m":
+        t = "morphemes"
+    elif param == "w":
+        t = "words"
+    print("{} grammar constructed.".format(info))
+    print("Alphabet ({}): {}".format(t, alphabet))
+    print("Grammar: {}".format(grammar))
