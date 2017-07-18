@@ -4,29 +4,28 @@ Subregular toolkit for language processing. Run _main.py_ to gain access to the 
 
 #### Extraction of Strictly k-Local (k-SL) grammar from the input data
 
-    --- find_sl(data, n, text) ---
-    Collects _n_-grams that the input data consists of.
+    --- find_sl(data, n, polar, param) ---
+    Extracts strictly local grammar from the given data set.
     Arguments:
-    * data (any iterable) -- data to be analyzed
+    * data (any iterable or a filename) -- data to be analyzed
+    * polar (True or False) -- positive/negative grammar to be extracted
     * n (integer) -- length of ngrams to be constructed
-    * text (boolean) -- type of the data, symbols or text
+    * param ("s", "m", "w") -- type of the data: symbols, morphemes, or words
+
 
 
 #### Extraction of Tier-based Strictly k-Local (k-TSL) grammar from the input data
 
-    --- find_tsl(data, n, text) ---
-    Extracts tier-based strictly local grammar from the given data set.
-    Follows the algorithm provided in (Jardine and McMullin in prep.)
-    Arguments:
-    * data (any iterable) -- data to be analyzed
-    * n (integer) -- length of ngrams to be constructed
-    * text (boolean) -- type of the data, symbols or text
+    --- find_tsl(data, n, polar, param) ---
+    Extracts tier-based strictly local grammar from the given
+    data set. Follows the algorithm provided in (Jardine and
+    McMullin in prep.) with small modifications.
+    Arguments: see find_sl function.
 
 #### Extraction of the alphabet from the input data
 
-    --- alphabet(data, text) ---
-    Collects alphabet based on the input data. If text=False,
-    considers words to be alphabet units.
+    --- alphabet(data, param) ---
+    Collects alphabet based on the input data type ("s", "m", "w")
     Arguments:
     * data (any iterable) -- data to be analyzed
-    * text (boolean) -- type of the data, symbols or text
+    * param ("s", "m", "w") -- type of the data, symbols, morphemes, or words
