@@ -17,10 +17,10 @@ from helper import *
 from local_helper import *
 
 
-def find_sl(obj, n=2, polar=False, param="s"):
+def find_sl(obj, n=2, positive=False, param="s"):
     """ Extracts SL grammar based on the input data. """
 
-    check_type(obj, n, polar, param)
+    check_type(obj, n, positive, param)
     
     # if a string was given as 'obj', assume that it's a filename
     if type(obj) == str:
@@ -33,7 +33,7 @@ def find_sl(obj, n=2, polar=False, param="s"):
     pos_grammar = ngramize_all(obj, n, param)
 
     # if positive grammar is requested, return as it is
-    if polar==True:
+    if positive==True:
         report("Positive strictly {}-local".format(n), alphabet, pos_grammar, param)
         return pos_grammar
 

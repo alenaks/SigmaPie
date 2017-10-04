@@ -86,15 +86,15 @@ def preprocess(obj, param):
 
 
 
-def check_type(obj, n, polar, param):
+def check_type(obj, n, positive, param):
     """ Checks types of 'obj', 'n' and 'text' arguments. """
 
     if type(obj) not in [str, list, tuple]:
         raise TypeError("The type of 'obj' must be either 'str' for a filename, or 'list'/'tuple' for a dataset.")
     if type(n) != int:
         raise TypeError("The type of 'n' must be 'int'.")
-    if type(polar) != bool:
-        raise TypeError("The type of 'polar' must be 'bool'.")
+    if type(positive) != bool:
+        raise TypeError("The type of 'positive' must be 'bool'.")
     if param not in ["w", "m", "s"]:
         raise ValueError("The value of 'param' must be 'w' for words, 'm' for morphemes, or 's' for symbols.")
 

@@ -26,11 +26,11 @@ from local_helper import *
 from sl_learn import *
 
 
-def find_tsl(obj, n=2, polar=False, param="s"):
+def find_tsl(obj, n=2, positive=False, param="s"):
     """ Extracts TSL grammar from the input data """
 
     # preprocessing
-    check_type(obj, n, polar, param)
+    check_type(obj, n, positive, param)
     
     # if a string was given as 'obj', assume that it's a filename
     if type(obj) == str:
@@ -64,7 +64,7 @@ def find_tsl(obj, n=2, polar=False, param="s"):
     neg_gram = possib.difference(ngrams)
 
     # if the requested grammar is positive, change its polarity
-    if polar == True:
+    if positive == True:
         pos_gram = change_polarity(neg_gram, tier, n)
         report("Positive tier-based strictly {}-local".format(n), tier, pos_gram, param)
         return pos_gram
