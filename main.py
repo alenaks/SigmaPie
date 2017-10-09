@@ -53,8 +53,8 @@ def find_tsl(data, n=2, positive=False, param="s"):
 def alphabet(data, param="s"):
     return helper.alphabetize(data, param)
 
-def trim_sl(ngrams):
-    return sl_clean.trim_sl(ngrams)
+def trim_sl(ngrams, positive=True):
+    return sl_clean.trim_sl(ngrams, positive)
 
 def sl_to_fsm(ngrams):
     return sl_fsm.sl_to_fsm(ngrams)

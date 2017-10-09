@@ -28,7 +28,7 @@ def tokenize(obj):
 
 def alphabetize(obj, param):
     """ Finds smallest units to work with.
-        By-default (if text=False), breakes sequences in symbols.
+        By-default (if param="s"), breakes sequences in symbols.
         If text=True, tokenizes the string, and collects list of words.
     """
     
@@ -112,3 +112,18 @@ def report(info, alphabet, grammar, param):
     print("{} grammar constructed.".format(info))
     print("Alphabet ({}): {}".format(t, alphabet))
     print("Grammar: {}".format(grammar))
+
+
+
+def get_info(ngrams, param="s"):
+    """ Detects the alphabet and window size of the grammar """
+
+    if param != "s":
+        print("Not yet implemented.")
+        return False
+    else:
+        alphabet = set([i for i in "".join(ngrams) if i not in [">", "<"]])
+        
+    k = max(len(i) for i in ngrams)
+
+    return alphabet, k
