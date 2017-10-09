@@ -5,7 +5,7 @@
 
 import sl_learn, tsl_learn, helper, sl_clean, sl_fsm
 
-""" List of funstions:
+""" List of functions:
 
     --- find_sl(data, n, positive, param) ---
     Extracts strictly local grammar from the given data set.

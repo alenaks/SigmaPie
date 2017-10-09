@@ -20,7 +20,7 @@ from nltk import word_tokenize
 
 
 def tokenize(obj):
-    """ Tokenizes a sting """
+    """ Tokenizes a string """
     
     return word_tokenize(obj.strip())
 

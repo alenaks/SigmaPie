@@ -21,21 +21,13 @@ def sl_to_fsm(ngrams):
         For example, bigram "abc" becomes transition ("ab", "c", "bc"):
             after the sequence "ab" reading "c" brings you to the state "bc".
     """
-    
     safety_check(ngrams)
-
-    if ngrams == []:
-        return ngrams
-
-    transitions = []
-    for ngram in ngrams:
-        transitions.append((ngram[:-1], ngram[-1], ngram[1:]))
-
-    return transitions
+    return [(ngram[:-1], ngram[-1], ngram[1:]) for ngram in grams]
+           if ngrams !=[] else ngram
 
 
 def trim_fsm(transitions, markers=[">", "<"]):
-    """ This function trimms useless states out of the FSA.
+    """ This function trims useless states out of the FSA.
         The algorithm is made by Gordon Pace (University of Malta).
         Idea: find the initial state and collect the set of states to which
             one can come from that node and the nodes connected to it
@@ -54,9 +46,7 @@ def trim_fsm(transitions, markers=[">", "<"]):
     # here we get rid of states that don't have access to the final state(s)
     mirrored_list = [(i[2], i[1], i[0]) for i in transitions]
     mirrored_list = accessible_states(mirrored_list, markers[1])
-    useful_transitions = [(i[2], i[1], i[0]) for i in mirrored_list]
-    
-    return useful_transitions
+    return [(i[2], i[1], i[0]) for i in mirrored_list]
 
 
 def accessible_states(transitions, marker):
