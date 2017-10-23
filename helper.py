@@ -1,129 +1,32 @@
 #!/bin/python3
-# -*- coding: utf-8 -*-
-# Subregular Toolkit: python helper.py module
-# Author: Alena Aksenova
 
 """
-Module with general helper functions.
+   Module with general helper functions for the subregular package.
+   Copyright (C) 2017  Alena Aksenova
+   
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 3 of the License, or
+   (at your option) any later version.
 
-*** tokenize ***    nltk word_tokenize function
-*** alphabetize *** collects alphabet from the input data
-*** annotate ***    annotates each item from the input object with
-                    start and end symbols
-*** preprocess ***  parses the input file(s)
-*** check_type ***  checks that the types of the input data is
-                    of the appropriate type
-*** report ***      reports on the extracted grammar
 """
 
-from nltk import word_tokenize
+from typing import Tuple
 
 
-def tokenize(obj):
-    """ Tokenizes a string """
-    
-    return word_tokenize(obj.strip())
-
-
-
-def alphabetize(obj, param):
-    """ Finds smallest units to work with.
-        By-default (if param="s"), breakes sequences in symbols.
-        If text=True, tokenizes the string, and collects list of words.
-    """
-    
-    try: obj.seek(0)
-    except: pass
+def alphabetize(data:list) -> list:
+    """ Collects alphabets from the list of data. """
 
     alphabet = set()
-    for line in obj:
-        alphabet.update(preprocess(line, param))
-    return alphabet
+    for item in data:
+        alphabet.update({i for i in item})
+    return sorted(list(alphabet))
 
 
-
-def annotate(obj, n, param):
-    """ Annotates the sequences with n-1 start/end markers.
-        Is needed for successful generation of (im)possible ngrams
-        and further data generation.
-    """
-    
-    if param == "s":
-        return ">"*(n-1) + obj.strip() + "<"*(n-1)
-    elif param == "w":
-        return "> "*(n-1) + obj.strip() + " <"*(n-1)
-    elif param == "m":
-        return ">-"*(n-1) + obj.strip() + "-<"*(n-1)
-    else:
-        raise ValueError()
-
-
-
-def preprocess(obj, param):
-    """ Preprocessing function: depending on the type of an object,
-        parses it.
-    """
-
-    # if the object is not text, make a list of symbols
-    if param == "s":
-        obj = list(obj.strip())
-        
-    elif param == "w":
-            
-        # if the object is text, tokenize it first
-        obj = tokenize(obj.strip())
-
-    elif param == "m":
-
-        # if the object is a list of morphemes, split it by a dash
-        obj = obj.replace("-", " ")
-        obj = tokenize(obj.strip())
-        
-    else:
-        raise RuntimeError("Unexpected behavior: please, report.")
-
-    return obj
-
-
-
-def check_type(obj, n, positive, param):
-    """ Checks types of 'obj', 'n' and 'text' arguments. """
-
-    if type(obj) not in [str, list, tuple]:
-        raise TypeError("The type of 'obj' must be either 'str' for a filename, or 'list'/'tuple' for a dataset.")
-    if type(n) != int:
-        raise TypeError("The type of 'n' must be 'int'.")
-    if type(positive) != bool:
-        raise TypeError("The type of 'positive' must be 'bool'.")
-    if param not in ["w", "m", "s"]:
-        raise ValueError("The value of 'param' must be 'w' for words, 'm' for morphemes, or 's' for symbols.")
-
-
-
-def report(info, alphabet, grammar, param):
-    """ Prints the info about the generated grammar """
-    
-    if param == "s":
-        t = "symbols"
-    elif param == "m":
-        t = "morphemes"
-    elif param == "w":
-        t = "words"
-    print("{} grammar constructed.".format(info))
-    print("Alphabet ({}): {}".format(t, alphabet))
-    print("Grammar: {}".format(grammar))
-
-
-
-def get_info(ngrams, param="s"):
+def get_gram_info(ngrams:list) -> Tuple[list, int]:
     """ Detects the alphabet and window size of the grammar """
 
-    if param != "s":
-        print("Not yet implemented.")
-        return False
-    else:
-        alphabet = set([i for i in "".join(ngrams) if i not in [">", "<"]])
-        
+    alphabet = list(set([i for i in "".join(ngrams) if i not in [">", "<"]]))       
     k = max(len(i) for i in ngrams)
-
     return alphabet, k
+

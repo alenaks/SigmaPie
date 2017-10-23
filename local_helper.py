@@ -1,74 +1,63 @@
 #!/bin/python3
-# -*- coding: utf-8 -*-
-# Subregular Toolkit: python local_helper.py module
-# Author: Alena Aksenova
 
 """
-Module with auxiliary functions for sl_learn and tsl_learn
+   Module with the helper functions for local modules of the package.
+   Copyright (C) 2017  Alena Aksenova
+   
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 3 of the License, or
+   (at your option) any later version.
 
-*** change_polarity ***  changes polarity of a SL/TSL grammar
-                         negative <-> positive
-*** generate_ngrams ***  generates possible ngrams based on the
-                         given alphabet
-*** start_end_clean ***  gets rid of the ill-formed ngrams (like
-                         "a>a" or "<<<")
 """
 
+import typing
 from itertools import product
 
 
-def change_polarity(grammar, alphabet, n):
-    """ For a given pos/neg local grammar,
-        returns its neg/pos version
+def change_polarity(ngrams:list, alphabet:list, k:int) -> list:
+    """ For a grammar with given polarity, returns set of ngrams
+        of the opposite polarity.
     """
 
-    poss_seq = generate_ngrams(alphabet, n)
-    return poss_seq.difference(grammar)
+    combinations = set(generate_ngrams(alphabet, k))
+    return list(combinations.difference(set(ngrams)))
 
 
+def generate_ngrams(alphabet:list, k:int) -> list:
+    """ Generate possible ngrams of a given length based on
+        the given alphabet.
+    """
 
-def generate_ngrams(init_alphabet, n):
-    """ Generate possible sequences of the length n"""
-
-    alphabet = init_alphabet[:]
-    alphabet += [">", "<"]
-    full_combinations = product(alphabet, repeat=n)
-
-    # get rid of ill-formed tier sequences
-    combinations = set([i for i in full_combinations if start_end_clean(i)])
-        
-    return combinations
+    local_alphabet = alphabet[:]
+    local_alphabet += [">", "<"]
+    combinations = product(local_alphabet, repeat=k)
+    ngrams = set([i for i in combinations if good_ngram(i)])
+    return list(ngrams)
 
 
-def start_end_clean(seq):
-    """ Auxiliary function for the tier sequence generator """
+def good_ngram(ngram:tuple) -> bool:
+    """ Auxiliary function for the tier sequence generator. Returns True
+        iff the ngram is ill-formed, and False otherwise: if there is
+        somthing in-between two start- or two end-symbols ('>a>'),
+        something is before start symbol or after end symbol ('a>'), or
+        if the ngram consists only of start- or only of end-symbols.
+    """
 
-    # Start symbols exceptions:
-    # -- nothing in-between two start symbols (i.e., '>a>')
-    # -- nothing before a start symbol (i.e., 'a>')
-    # -- amount of start symbols is less than n (i.e., '>>>')
-    start = [i for i in range(len(seq)) if seq[i] == ">"]
+    start = [i for i in range(len(ngram)) if ngram[i] == ">"]
     if len(start) > 0:
         s_inter = [i for i in range(start[0], start[-1]) if i not in start]
-        if len(s_inter) > 0:
-            return False
-        elif start[0] != 0:
-            return False
-        elif len(start) == len(seq):
+        if len(s_inter) > 0 or start[0] != 0 or len(start) == len(ngram):
             return False
 
-    # End symbols exceptions:
-    # -- nothing in-between two end symbols (i.e., '<a<')
-    # -- nothing after an end symbol (i.e., '<a')
-    # -- amount of end symbols is less than n (i.e., '<<<')
-    end = [i for i in range(len(seq)) if seq[i] == "<"]
+    end = [i for i in range(len(ngram)) if ngram[i] == "<"]
     if len(end) > 0:
         e_inter = [i for i in range(end[0], end[-1]) if i not in end]
-        if len(e_inter) > 0:
-            return False
-        elif end[-1] != (len(seq)-1):
-            return False
-        elif len(end) == len(seq):
+        if len(e_inter) > 0 or end[-1] != (len(ngram)-1) or len(end) == len(ngram):
             return False
 
     return True
+
+
+def annotate_data(data:str, k:int) -> str:
+    return ">"*(k-1) + data.strip() + "<"*(k-1)
