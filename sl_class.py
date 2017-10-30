@@ -15,9 +15,9 @@ from helper import *
 from local_helper import *
 from fsm import *
 
-SL = TypeVar('SL', bound='PosStrictlyLocal')
+SL = TypeVar('SL', bound='PosSL')
 
-class PosStrictlyLocal(object):
+class PosSL(object):
     """ A class for Positive Strictly Local grammars. """
 
     def __init__(self:SL, grammar:list=[], k:int=2, data:list=[]) -> None:
@@ -40,7 +40,7 @@ class PosStrictlyLocal(object):
             raise IndexError("Language is not provided or empty -- "
                              "no grammar can be generated.")
         
-        self.grammar = self.__ngramize_data(self.k, self.data)
+        self.grammar = self._ngramize_data(self.k, self.data)
 
 
     def clean(self:SL) -> None:
@@ -52,13 +52,13 @@ class PosStrictlyLocal(object):
         self.grammar = self.__build_ngrams(fin_state.transitions)
         
 
-    def __ngramize_data(self:SL, k:int, data:list) -> list:
+    def _ngramize_data(self:SL, k:int, data:list) -> list:
         """ Creates set of k-grams based on the given data. """
         
         grammar:list = []
-        for s in self.data:
-            item = annotate_data(s, self.k)
-            grammar += self.__ngramize_item(item, self.k)
+        for s in data:
+            item = annotate_data(s, k)
+            grammar += self.__ngramize_item(item, k)
 
         return list(set(grammar))
 
@@ -67,8 +67,8 @@ class PosStrictlyLocal(object):
         """ N-gramizes a given string """
 
         ngrams:list = []
-        for i in range(len(item)-(self.k-1)):
-            ngrams += [tuple(item[i:i+self.k])]
+        for i in range(len(item)-(k-1)):
+            ngrams += [tuple(item[i:i+k])]
                 
         return list(set(ngrams))
 
@@ -88,11 +88,12 @@ class PosStrictlyLocal(object):
         return ngrams
 
 
-class NegStrictlyLocal(PosStrictlyLocal):
+class NegSL(PosSL):
     """ A class for Negative Strictly Local grammars. """
 
     def __init__(self:SL, grammar:list=[], k:int=2, data:list=[]) -> None:
         super().__init__(grammar, k, data)
+        self.alphabet:list = []
 
     def learn(self:SL) -> None:
         """ Function for extracting negative SL grammar and alphabet
