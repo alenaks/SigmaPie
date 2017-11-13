@@ -12,24 +12,21 @@
 
 from typing import TypeVar, Union, Tuple
 from helper import *
-from local_helper import *
 from fsm import *
+from grammar import *
 
-SL = TypeVar('SL', bound='PosSL')
+PosStL = TypeVar('PosStL', bound='PosSL')
+NegStL = TypeVar('NegStL', bound='NegSL')
 
-class PosSL(object):
+class PosSL(PosGram):
     """ A class for Positive Strictly Local grammars. """
 
-    def __init__(self:SL, grammar:list=[], k:int=2, data:list=[]) -> None:
+    def __init__(self:PosStL, grammar:list=[], k:int=2, data:list=[], alphabet:list=[]) -> None:
         """ Initialize basic attributes """
-        
-        self.grammar = grammar
-        self.k = k
-        self.data = data
-        self.alphabet:list = []
+        super().__init__(grammar, k, data, alphabet)
 
 
-    def learn(self:SL) -> None:
+    def learn(self:PosStL) -> None:
         """ Function for extracting positive SL grammar and alphabet
             from the given data.
         """
@@ -43,27 +40,31 @@ class PosSL(object):
         self.grammar = self._ngramize_data(self.k, self.data)
 
 
-    def clean(self:SL) -> None:
+    def clean(self:PosStL) -> None:
         """ Function for removing useless n-grams from the grammar """
 
         fin_state = FiniteStateMachine()
         fin_state.sl_states(self.grammar)
         fin_state.trim_fsm()
         self.grammar = self.__build_ngrams(fin_state.transitions)
+
+
+    def annotate_data(self:PosStL, data:str, k:int) -> str:
+        return ">"*(k-1) + data.strip() + "<"*(k-1)
         
 
-    def _ngramize_data(self:SL, k:int, data:list) -> list:
+    def _ngramize_data(self:PosStL, k:int, data:list) -> list:
         """ Creates set of k-grams based on the given data. """
         
         grammar:list = []
         for s in data:
-            item = annotate_data(s, k)
+            item = self.annotate_data(s, k)
             grammar += self.__ngramize_item(item, k)
 
         return list(set(grammar))
 
 
-    def __ngramize_item(self:SL, item:str, k:int) -> list:
+    def __ngramize_item(self:PosStL, item:str, k:int) -> list:
         """ N-gramizes a given string """
 
         ngrams:list = []
@@ -73,7 +74,7 @@ class PosSL(object):
         return list(set(ngrams))
 
 
-    def __build_ngrams(self:SL, transitions:list) -> list:
+    def __build_ngrams(self:PosStL, transitions:list) -> list:
         """ Generates SL grammar based on the given transitions.
             For the transition ("ab", "c", "bc") gives ngram "abc".
         """
@@ -91,22 +92,22 @@ class PosSL(object):
 class NegSL(PosSL):
     """ A class for Negative Strictly Local grammars. """
 
-    def __init__(self:SL, grammar:list=[], k:int=2, data:list=[]) -> None:
-        super().__init__(grammar, k, data)
-        self.alphabet:list = []
+    def __init__(self:NegStL, grammar:list=[], k:int=2, data:list=[], alphabet:list=[]) -> None:
+        super().__init__(grammar, k, data, alphabet)
 
-    def learn(self:SL) -> None:
+
+    def learn(self:NegStL) -> None:
         """ Function for extracting negative SL grammar and alphabet
             from the given data.
         """
         super().learn()
-        self.grammar = change_polarity(self.grammar, self.alphabet, self.k)
+        self.grammar = self.change_polarity(self.grammar, self.alphabet, self.k)
 
 
-    def clean(self:SL) -> None:
+    def clean(self:NegStL) -> None:
         """ Function for removing useless n-grams from the grammar """
 
-        self.grammar = change_polarity(self.grammar, self.alphabet, self.k)
+        self.grammar = self.change_polarity(self.grammar, self.alphabet, self.k)
         super().clean()
-        self.grammar = change_polarity(self.grammar, self.alphabet, self.k)
+        self.grammar = self.change_polarity(self.grammar, self.alphabet, self.k)
         
