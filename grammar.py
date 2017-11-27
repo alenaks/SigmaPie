@@ -10,12 +10,13 @@
    (at your option) any later version.
 """
 
-from helper import *
 from typing import TypeVar
 from itertools import product
+from helper import *
 
 PosG = TypeVar('PosG', bound='PosGram')
 NegG = TypeVar('NegG', bound='NegGram')
+
 
 class PosGram(object):
     """ A general class for positive grammars. """
@@ -25,6 +26,7 @@ class PosGram(object):
         self.k = k
         self.data = data
         self.alphabet = alphabet
+        self.sample:list = []
         
     
     def switch_polarity(self:PosG) -> None:
@@ -81,3 +83,9 @@ class NegGram(PosGram):
 
     def __init__(self:NegG, grammar:list=[], k:int=2, data:list=[], alphabet:list=[]) -> None:
         super().__init__(grammar, k, data, alphabet)
+
+    def switch_polarity(self:PosG) -> None:
+        super().switch_polarity()
+
+    def generate_ngrams(self:PosG, alphabet:list, k:int) -> list:
+        super().generate_ngrams(alphabet, k)
