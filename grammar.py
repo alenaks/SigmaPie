@@ -10,7 +10,7 @@
    (at your option) any later version.
 """
 
-from typing import TypeVar
+from typing import TypeVar, List
 from itertools import product
 from helper import *
 
@@ -19,44 +19,48 @@ NegG = TypeVar('NegG', bound='NegGram')
 
 
 class PosGram(object):
-    """ A general class for positive grammars. """
+    """ A general class for positive grammars. Contains methods that are applicable
+        to (positive) grammars in general.
+    """
 
-    def __init__(self:PosG, grammar:list=[], k:int=2, data:list=[], alphabet:list=[]) -> None:
+    def __init__(self:PosG, alphabet:list=[], grammar:List[tuple]=[], k:int=2, data:list=[]) -> None:
+        self.alphabet = alphabet
         self.grammar = grammar
         self.k = k
         self.data = data
-        self.alphabet = alphabet
-        self.sample:list = []
+        self.data_sample:list = []
         
     
-    def switch_polarity(self:PosG) -> None:
-        """ Changes polarity of the current grammar. """
-        self.grammar = self.change_polarity(self.grammar, self.alphabet, self.k)
-        
-    
-    def change_polarity(self:PosG, ngrams:list, alphabet:list, k:int) -> list:
+    def change_polarity(self:PosG) -> None:
         """ For a grammar with given polarity, returns set of ngrams
             of the opposite polarity.
         """
+        self.grammar = self.opposite_polarity(self.grammar, self.alphabet, self.k)
+        self.__class__ = NegGram
 
-        combinations = set(self.generate_ngrams(alphabet, k))
+
+    def opposite_polarity(self:PosG, ngrams:list, alphabet:list, k:int) -> list:
+        """ Returns set of ngrams of the opposite polarity. """
+
+        combinations = set(self.generate_all_ngrams(alphabet, k))
         return list(combinations.difference(set(ngrams)))
 
 
-    def generate_ngrams(self:PosG, alphabet:list, k:int) -> list:
+    def generate_all_ngrams(self:PosG, alphabet:list, k:int) -> list:
         """ Generate possible ngrams of a given length based on
             the given alphabet.
         """
 
         local_alphabet = alphabet[:]
-        local_alphabet += [">", "<"]
+        if (">" not in local_alphabet) and ("<" not in local_alphabet):
+            local_alphabet += [">", "<"]
         combinations = product(local_alphabet, repeat=k)
         ngrams = set([i for i in combinations if self.good_ngram(i)])
         return list(ngrams)
 
 
     def good_ngram(self:PosG, ngram:tuple) -> bool:
-        """ Auxiliary function for the tier sequence generator. Returns True
+        """ Auxiliary function for the ngram generator. Returns True
             iff the ngram is ill-formed, and False otherwise: if there is
             somthing in-between two start- or two end-symbols ('>a>'),
             something is before start symbol or after end symbol ('a>'), or
@@ -77,15 +81,20 @@ class PosGram(object):
 
         return True
 
+
         
 class NegGram(PosGram):
-    """ A general class for negative grammars. """
+    """ A general class for negative grammars. Contains methods that are applicable
+        to negative grammars in general.
+    """
 
-    def __init__(self:NegG, grammar:list=[], k:int=2, data:list=[], alphabet:list=[]) -> None:
-        super().__init__(grammar, k, data, alphabet)
+    def __init__(self:NegG, alphabet:list=[], grammar:List[tuple]=[], k:int=2, data:list=[]) -> None:
+        super().__init__(alphabet, grammar, k, data)
 
-    def switch_polarity(self:PosG) -> None:
-        super().switch_polarity()
 
-    def generate_ngrams(self:PosG, alphabet:list, k:int) -> list:
-        super().generate_ngrams(alphabet, k)
+    def change_polarity(self:NegG) -> None:
+        """ For a grammar with given polarity, returns set of ngrams
+            of the opposite polarity, and changes the class of the grammar.
+        """
+        self.grammar = self.opposite_polarity(self.grammar, self.alphabet, self.k)
+        self.__class__ = PosGram
