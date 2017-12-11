@@ -10,7 +10,7 @@
    (at your option) any later version.
 """
 
-from typing import TypeVar, List
+from typing import TypeVar, List, Union
 from itertools import product
 from helper import *
 
@@ -23,14 +23,22 @@ class PosGram(object):
         to (positive) grammars in general.
     """
 
-    def __init__(self:PosG, alphabet:list=[], grammar:List[tuple]=[], k:int=2, data:list=[]) -> None:
-        self.alphabet = alphabet
-        self.grammar = grammar
+    def __init__(self:PosG, grammar:Union[None,List[tuple]]=None, k:int=2,
+                 data:Union[list,None]=None, edges=[">", "<"]) -> None:
+        self.grammar = [] if grammar == None else grammar
         self.k = k
-        self.data = data
+        self.data = [] if data == None else data
+        self.edges = edges
         self.data_sample:list = []
-        
-    
+
+    @property
+    def alphabet(self):
+        return alphabetize(self.data)
+
+    @alphabet.setter
+    def alphabet(self, value):
+        self.alphabet = value
+
     def change_polarity(self:PosG) -> None:
         """ For a grammar with given polarity, returns set of ngrams
             of the opposite polarity.
