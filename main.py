@@ -10,7 +10,6 @@
    (at your option) any later version.
 """
 
-import fsm
-import sl_class
-
-# TODO: access to functions
+from fsm import *
+from sl_class import *
+from tsl_class import *

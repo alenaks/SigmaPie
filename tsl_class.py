@@ -12,7 +12,6 @@
 
 from typing import TypeVar, Generator
 from sl_class import *
-from local_helper import *
 
 TSL = TypeVar('TSL', bound='PosTSL')
 

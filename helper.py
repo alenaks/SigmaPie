@@ -18,6 +18,7 @@ def alphabetize(data:list) -> list:
     """ Collects alphabets from the list of data. """
 
     alphabet = set()
+    
     for item in data:
         alphabet.update({i for i in item})
     return sorted(list(alphabet))
@@ -30,3 +31,6 @@ def get_gram_info(ngrams:list) -> Tuple[list, int]:
     k = max(len(i) for i in ngrams)
     return alphabet, k
 
+
+def edge_decorator(f):
+    pass

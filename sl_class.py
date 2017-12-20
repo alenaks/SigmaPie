@@ -11,7 +11,7 @@
 """
 
 from typing import TypeVar, Union, Tuple, List
-from random import shuffle
+from random import choice
 from helper import *
 from fsm import *
 from grammar import *
@@ -22,9 +22,10 @@ NegStL = TypeVar('NegStL', bound='NegSL')
 class PosSL(PosGram):
     """ A class for Positive Strictly Local grammars. """
 
-    def __init__(self:PosStL,alphabet:list=[], grammar:List[tuple]=[], k:int=2, data:list=[]) -> None:
+    def __init__(self:PosG, alphabet:Union[None,list]=None, grammar:Union[None,List[tuple]]=None, k:int=2,
+                 data:Union[list,None]=None, edges=[">", "<"]) -> None:
         """ Initialize basic attributes """
-        super().__init__(alphabet, grammar, k, data)
+        super().__init__(alphabet, grammar, k, data, edges)
         self.fsm = None
 
 
@@ -46,41 +47,25 @@ class PosSL(PosGram):
         data = [self.generate_item() for i in range(n)]
         self.data_sample = data
 
-        # fixme: without repetitions, this f is super slow!
         if rep == False:
             self.data_sample = list(set(self.data_sample))
             while len(self.data_sample) < n:
                 self.data_sample += [self.generate_item()]
                 self.data_sample = list(set(self.data_sample))
 
-
-    def generate_item(self:PosStL) -> str:
-        """ Generates a sample item """
-
-        more = True
-        word = ">"
-        while more == True:
-            shuffle(self.fsm.transitions)
-            for i in self.fsm.transitions:
-                # find first appropriate move
-                if i[0] == (word[-1],):
-                    word += i[1]
-                break
-            if word[-1] == "<":
-                more = False
-                
-        return word
-
+    def scan(self:PosStL, string:str) -> bool:
+        """ Scans a string and tells whether it can be generated
+            by the grammar.
+        """
         
-    def fsmize(self:PosStL) -> None:
-        """ Function that builds FSM corresponding to the grammar """
-        
-        if self.grammar:
-            fin_state = FiniteStateMachine()
-            fin_state.sl_states(self.grammar)
-            self.fsm = fin_state
+        if not self.grammar:
+            self.learn()
+
+        string = self.annotate_data(string, self.k)
+        if set(self.ngramize_item(string, self.k)).issubset(set(self.grammar)):
+            return True
         else:
-            raise(IndexError("The grammar is not provided."))
+            return False
 
 
     def clean(self:PosStL) -> None:
@@ -96,8 +81,51 @@ class PosSL(PosGram):
         """ For a grammar with given polarity, returns set of ngrams
             of the opposite polarity.
         """
+
+        if not self.alphabet:
+            self.extract_alphabet()
         self.grammar = self.opposite_polarity(self.grammar, self.alphabet, self.k)
         self.__class__ = NegSL
+
+
+    def state_map(self:PosStL) -> dict:
+        """ Generates a map of possible transitions in the
+            given FSM.
+        """
+        
+        smap:dict = {}
+        
+        if not self.alphabet:
+            self.extract_alphabet()
+            
+        smap[self.edges[0]] = [i[1] for i in self.fsm.transitions if i[0] == (self.edges[0],)]
+        for symb in self.alphabet:
+            smap[symb] = [i[1] for i in self.fsm.transitions if i[0] == (symb,)]
+            
+        return smap
+
+
+    def generate_item(self:PosStL) -> str:
+        """ Randomly generates a well-formed word """
+        
+        smap = self.state_map()
+
+        word = self.edges[0]
+        while word[-1] != self.edges[1]:
+            word += choice(smap[word[-1]])
+
+        return word
+
+        
+    def fsmize(self:PosStL) -> None:
+        """ Function that builds FSM corresponding to the grammar """
+        
+        if self.grammar:
+            fin_state = FiniteStateMachine()
+            fin_state.sl_states(self.grammar)
+            self.fsm = fin_state
+        else:
+            raise(IndexError("The grammar is not provided."))
 
 
     def annotate_data(self:PosStL, data:str, k:int) -> str:
@@ -143,27 +171,15 @@ class PosSL(PosGram):
 class NegSL(PosSL):
     """ A class for Negative Strictly Local grammars. """
 
-    def __init__(self:NegStL, alphabet:list=[], grammar:List[tuple]=[], k:int=2, data:list=[]) -> None:
-        super().__init__(alphabet, grammar, k, data)
-
-
     def learn(self:NegStL) -> None:
         """ Function for extracting negative SL grammar and alphabet
             from the given data.
         """
         super().learn()
         if not self.alphabet:
-            raise(IndexError("The alphabet is not provided."))
+            self.extract_alphabet()
         self.grammar = self.opposite_polarity(self.grammar, self.alphabet, self.k)
-
-
-    def generate_sample(self:NegStL, n:int=10, rep:bool=True) -> None:
-        """ Generates a sample of the data of a given size. """
-
-        self.grammar = self.opposite_polarity(self.grammar, self.alphabet, self.k)
-        super().generate_sample(n, rep)
-        self.grammar = self.opposite_polarity(self.grammar, self.alphabet, self.k)
-        
+       
 
     def clean(self:NegStL) -> None:
         """ Function for removing useless n-grams from the grammar """
@@ -185,5 +201,8 @@ class NegSL(PosSL):
         """ For a grammar with given polarity, returns set of ngrams
             of the opposite polarity.
         """
+
+        if not self.alphabet:
+            self.extract_alphabet()
         self.grammar = self.opposite_polarity(self.grammar, self.alphabet, self.k)
         self.__class__ = PosSL

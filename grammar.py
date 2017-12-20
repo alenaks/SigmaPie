@@ -23,28 +23,36 @@ class PosGram(object):
         to (positive) grammars in general.
     """
 
-    def __init__(self:PosG, grammar:Union[None,List[tuple]]=None, k:int=2,
+    def __init__(self:PosG, alphabet:Union[None,list]=None, grammar:Union[None,List[tuple]]=None, k:int=2,
                  data:Union[list,None]=None, edges=[">", "<"]) -> None:
+        self.alphabet = [] if alphabet == None else alphabet
         self.grammar = [] if grammar == None else grammar
         self.k = k
         self.data = [] if data == None else data
         self.edges = edges
         self.data_sample:list = []
 
-    @property
-    def alphabet(self):
-        return alphabetize(self.data)
-
-    @alphabet.setter
-    def alphabet(self, value):
-        self.alphabet = value
-
+    
     def change_polarity(self:PosG) -> None:
         """ For a grammar with given polarity, returns set of ngrams
             of the opposite polarity.
         """
         self.grammar = self.opposite_polarity(self.grammar, self.alphabet, self.k)
         self.__class__ = NegGram
+
+
+    def extract_alphabet(self:PosG) -> None:
+        """ Based on the data or the grammar, extracts alphabet. """
+        symbols = set(self.alphabet)
+        if self.data:
+            for item in self.data:
+                symbols.update({j for j in item})
+        if self.grammar:
+            for item in self.grammar:
+                symbols.update({j for j in item})
+        symbols = symbols - set(self.edges)
+        self.alphabet = sorted(list(symbols))
+            
 
 
     def opposite_polarity(self:PosG, ngrams:list, alphabet:list, k:int) -> list:
@@ -95,10 +103,6 @@ class NegGram(PosGram):
     """ A general class for negative grammars. Contains methods that are applicable
         to negative grammars in general.
     """
-
-    def __init__(self:NegG, alphabet:list=[], grammar:List[tuple]=[], k:int=2, data:list=[]) -> None:
-        super().__init__(alphabet, grammar, k, data)
-
 
     def change_polarity(self:NegG) -> None:
         """ For a grammar with given polarity, returns set of ngrams
