@@ -20,6 +20,7 @@ class FiniteStateMachine(object):
     def __init__(self:FSM, transitions:list=[]) -> None:
         """ Initialize the list of transitions"""
         self.transitions = transitions
+        self.states = None # to be implemented
 
 
     def sl_states(self:FSM, grammar:list) -> None:
