@@ -41,8 +41,8 @@ class PosSL(PosGram):
     def generate_sample(self:PosStL, n:int=10, rep:bool=True) -> None:
         """ Generates a sample of the data of a given size. """
         
-        if self.fsm == None:
-            self.fsmize()
+        self.fsmize()
+        self.extract_alphabet()
 
         data = [self.generate_item() for i in range(n)]
         self.data_sample = data
@@ -52,6 +52,7 @@ class PosSL(PosGram):
             while len(self.data_sample) < n:
                 self.data_sample += [self.generate_item()]
                 self.data_sample = list(set(self.data_sample))
+
 
     def scan(self:PosStL, string:str) -> bool:
         """ Scans a string and tells whether it can be generated
@@ -71,8 +72,7 @@ class PosSL(PosGram):
     def clean(self:PosStL) -> None:
         """ Function for removing useless n-grams from the grammar """
 
-        if self.fsm == None:
-            self.fsmize()
+        self.fsmize()
         self.fsm.trim_fsm()
         self.grammar = self.build_ngrams(self.fsm.transitions)
 
@@ -88,33 +88,31 @@ class PosSL(PosGram):
         self.__class__ = NegSL
 
 
-    def state_map(self:PosStL) -> dict:
-        """ Generates a map of possible transitions in the
-            given FSM.
-        """
-        
-        smap:dict = {}
-        
-        if not self.alphabet:
-            self.extract_alphabet()
-            
-        smap[self.edges[0]] = [i[1] for i in self.fsm.transitions if i[0] == (self.edges[0],)]
-        for symb in self.alphabet:
-            smap[symb] = [i[1] for i in self.fsm.transitions if i[0] == (symb,)]
-            
-        return smap
-
-
     def generate_item(self:PosStL) -> str:
         """ Randomly generates a well-formed word """
         
         smap = self.state_map()
+        if any([len(smap[x]) for x in smap]) == 0:
+            raise(ValueError("The grammar is not provided properly."))
 
         word = self.edges[0]
         while word[-1] != self.edges[1]:
             word += choice(smap[word[-1]])
 
         return word
+
+
+    def state_map(self:PosStL) -> dict:
+        """ Generates a map of possible transitions in the
+            given FSM.
+        """
+            
+        smap:dict = {}
+        smap[self.edges[0]] = [i[1] for i in self.fsm.transitions if i[0] == (self.edges[0],)]
+        for symb in self.alphabet:
+            smap[symb] = [i[1] for i in self.fsm.transitions if i[0] == (symb,)]
+
+        return smap
 
         
     def fsmize(self:PosStL) -> None:
@@ -175,16 +173,15 @@ class NegSL(PosSL):
         """ Function for extracting negative SL grammar and alphabet
             from the given data.
         """
+
+        self.extract_alphabet()
         super().learn()
-        if not self.alphabet:
-            self.extract_alphabet()
         self.grammar = self.opposite_polarity(self.grammar, self.alphabet, self.k)
        
 
     def clean(self:NegStL) -> None:
         """ Function for removing useless n-grams from the grammar """
 
-        self.grammar = self.opposite_polarity(self.grammar, self.alphabet, self.k)
         super().clean()
         self.grammar = self.opposite_polarity(self.grammar, self.alphabet, self.k)
 
@@ -192,6 +189,7 @@ class NegSL(PosSL):
     def fsmize(self:NegStL) -> None:
         """ Function that builds FSM corresponding to the grammar """
 
+        self.extract_alphabet()
         self.grammar = self.opposite_polarity(self.grammar, self.alphabet, self.k)
         super().fsmize()
         self.grammar = self.opposite_polarity(self.grammar, self.alphabet, self.k)
@@ -202,7 +200,6 @@ class NegSL(PosSL):
             of the opposite polarity.
         """
 
-        if not self.alphabet:
-            self.extract_alphabet()
+        self.extract_alphabet()
         self.grammar = self.opposite_polarity(self.grammar, self.alphabet, self.k)
         self.__class__ = PosSL

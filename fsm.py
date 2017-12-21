@@ -43,11 +43,9 @@ class FiniteStateMachine(object):
 
         if self.transitions:
             can_start = self.__accessible_states(self.transitions, markers[0])
-
             self.transitions = [(i[2], i[1], i[0]) for i in can_start]
             mirrored = self.__accessible_states(self.transitions, markers[1])
             useful_transitions = [(i[2], i[1], i[0]) for i in mirrored]
-            
             self.transitions = useful_transitions
 
 
