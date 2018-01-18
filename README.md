@@ -26,7 +26,7 @@ Initialize positive or negative SL grammar:
 Initialize the grammar, data, edge symbols in use, or k-gram length:
 
 ```python3
-    >>> posSL.grammar = [">a", "ab", "ba", "b<"]
+    >>> posSL.grammar = ('>', 'a'), ('a', 'b'), ('b', '<'), ('b', 'a')]
     >>> posSL.data = ["ab", "ababab"]
     >>> posSL.edges = [">", "<"]
     >>> posSL.k = 2
