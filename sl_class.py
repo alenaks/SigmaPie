@@ -36,7 +36,7 @@ class PosSL(PosGram):
         """ Initializes the PosSL object. """
         
         super().__init__(alphabet, grammar, k, data, edges)
-        self.fsm = None
+        self.fsm = FiniteStateMachine()
 
 
     def learn(self:PosStL) -> None:
@@ -194,9 +194,7 @@ class PosSL(PosGram):
         """
         
         if self.grammar:
-            fin_state = FiniteStateMachine()
-            fin_state.sl_states(self.grammar)
-            self.fsm = fin_state
+            self.fsm.sl_states(self.grammar)
         else:
             raise(IndexError("The grammar is not provided."))
 

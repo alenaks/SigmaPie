@@ -10,23 +10,45 @@
    (at your option) any later version.
 """
 
-from typing import TypeVar, Generator
+from typing import TypeVar, Generator, Union
 from sl_class import *
 
-TSL = TypeVar('TSL', bound='PosTSL')
+PTSL = TypeVar('PTSL', bound='PosTSL')
 
 class PosTSL(PosSL):
-    """ A class for Positive Tier-based Strictly Local grammars. """
+    """ A class for positive strictly local grammars.
+
+    Attributes:
+    -- alphabet: the list of symbols used in the given language;
+    -- grammar: the list of grammatical rules;
+    -- k: the locality measure;
+    -- data: the language data given as input;
+    -- data_sample: the generated data sample;
+    -- fsm: the finite state machine that corresponds to the given grammar;
+    -- tier: the list of tier symbols.
     
-    def __init__(self:TSL, tier:list=[], grammar:list=[], k:int=2, data:list=[]) -> None:
-        super().__init__(grammar, k, data)
+    """
+    
+    def __init__(self:PTSL, alphabet:Union[None,list]=None, grammar:Union[None,List[tuple]]=None, k:int=2,
+                 data:Union[list,None]=None, edges=[">", "<"], tier:Union[None,list]=None) -> None:
+        """ Initializes the PosTSL object. """
+        
+        super().__init__(alphabet, grammar, k, data, edges)
         self.tier = tier
-        self.alphabet:list = []
+
 
     def learn(self:TSL) -> None:
-        """ Function for extracting negative SL grammar and alphabet
+        pass
+
+
+
+
+"""
+
+    def learn(self:TSL) -> None:
+    Function for extracting negative SL grammar and alphabet
             from the given data.
-        """
+ 
         if self.data:
             self.alphabet = alphabetize(self.data)
         else:
@@ -43,7 +65,7 @@ class PosTSL(PosSL):
                 print(symb, "must be deleted")
 
     def __run_tests(self:TSL, symb:str, ngrams:list, ngrams_less:list) -> bool:
-        """ Runs tests to determine whether a symbol is a tier symbol """
+     Runs tests to determine whether a symbol is a tier symbol 
 
         test_ins = list(self.__test_insert(symb, ngrams, ngrams_less))
         if all(test_ins) == True:
@@ -52,7 +74,7 @@ class PosTSL(PosSL):
             return False
         
     def __test_insert(self:TSL, symb:str, ngrams:list, ngrams_less:list) -> Generator[bool, None, None]:
-        """ Tier test: insertion """
+  
         
         for ngram in ngrams_less:
             new:list = []
@@ -67,14 +89,14 @@ class PosTSL(PosSL):
                 yield False
 
     def __test_remove(self:TSL, symb:str, ngrams:list, ngrams_less:list) -> Generator[bool, None, None]:
-        """ Tier test: deletion """
+        
         
         pass
         
 
 
 
-"""
+
         ngrams = ngramize_all(obj, n, param)
 
         # for every symbol in tier, check whether the two tests hold
