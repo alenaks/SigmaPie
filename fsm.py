@@ -15,16 +15,33 @@ from typing import TypeVar
 FSM = TypeVar('FSM', bound='FiniteStateMachine')
 
 class FiniteStateMachine(object):
-    """ Class of Finite State Machines """
+    """
+    This class encodes Finite State Machines.
+    Used for scanning and/or generating data.
+
+    Attributes:
+    -- transitions: triples of the worm [prev_state, transition, next_state].
+    """
 
     def __init__(self:FSM, transitions:list=[]) -> None:
-        """ Initialize the list of transitions"""
+        """ Initializes the FiniteStateMachine object. """
+        
         self.transitions = transitions
         self.states = None # to be implemented
 
 
     def sl_states(self:FSM, grammar:list) -> None:
-        """ Translate SL grammar in FSM transitions """
+        """
+        Translates SL grammar in FSM transitions.
+
+        Arguments:
+        -- self;
+        -- grammar: the list of ngrams.
+
+        Results:
+        -- self.transitions is rewritten as transitions that correspond
+                            to the given grammar.
+        """
 
         if not grammar:
             raise IndexError("The grammar is empty -- "
@@ -34,11 +51,19 @@ class FiniteStateMachine(object):
 
 
     def trim_fsm(self:FSM, markers:list=[">", "<"]) -> None:
-        """ FSA's useless states trimmer. Algorithm (C) Gordon Pace (U of Malta).
-            Finds the initial state and collect the set of states to which one can
-            come from that node and the nodes connected to it.
-            My modification: change direction of the transitions and run this
-            algorithm to detect states drom which one cannot get to the final state.
+        """
+        This function trims useless states.
+        1. Finds the initial state and collects the set of states to which one
+           can come from that node and the nodes connected to it.
+        2. Changes direction of the transitions and runs algorithm again to
+           detect states drom which one cannot get to the final state.
+
+        Arguments:
+        -- self;
+        -- markers (optional): list of markers used in the grammar.
+
+        Results:
+        -- self.transitions only contains useful transitions.
         """
 
         if self.transitions:
@@ -50,7 +75,18 @@ class FiniteStateMachine(object):
 
 
     def __accessible_states(self:FSM, transitions:list, marker:str) -> list:
-        """ Auxiliary function that finds accessible states """
+        """
+        Auxiliary function that finds accessible states.
+
+        Arguments:
+        -- self;
+        -- transitions: list of transitions;
+        -- markers: list of markers used in the grammar.
+
+        Returns:
+        -- reachable: list of states that are reachable from
+                      the initial state(s).
+        """
 
         loop_trans, updated = self.transitions[:], self.transitions[:]
 

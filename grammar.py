@@ -19,12 +19,22 @@ NegG = TypeVar('NegG', bound='NegGram')
 
 
 class PosGram(object):
-    """ A general class for positive grammars. Contains methods that are applicable
-        to (positive) grammars in general.
+    """
+    A general class for positive grammars. Contains methods that are applicable
+    to all grammars in this package.
+
+    Attributes:
+    -- alphabet: the list of symbols used in the given language;
+    -- grammar: the list of grammatical rules;
+    -- k: the locality measure;
+    -- data: the language data given as input;
+    -- data_sample: the generated data sample.
     """
 
     def __init__(self:PosG, alphabet:Union[None,list]=None, grammar:Union[None,List[tuple]]=None, k:int=2,
                  data:Union[list,None]=None, edges=[">", "<"]) -> None:
+        """ Initializes the PosGram object. """
+        
         self.alphabet = [] if alphabet == None else alphabet
         self.grammar = [] if grammar == None else grammar
         self.k = k
@@ -34,15 +44,32 @@ class PosGram(object):
 
     
     def change_polarity(self:PosG) -> None:
-        """ For a grammar with given polarity, returns set of ngrams
-            of the opposite polarity.
         """
+        Changes polarity of the grammar.
+
+        Arguments:
+        -- self.
+
+        Results:
+        -- self.grammar is being switched to the opposite;
+        -- self.__class__ is changed to 'NegGram'.
+        """
+        
         self.grammar = self.opposite_polarity(self.grammar, self.alphabet, self.k)
         self.__class__ = NegGram
 
 
     def extract_alphabet(self:PosG) -> None:
-        """ Based on the data or the grammar, extracts alphabet. """
+        """
+        Extracts alphabet from the given data/grammar.
+
+        Arguments:
+        -- self.
+
+        Results:
+        -- self.alphabet contains symbols that are used in the data.
+        """
+        
         symbols = set(self.alphabet)
         if self.data:
             for item in self.data:
@@ -52,19 +79,40 @@ class PosGram(object):
                 symbols.update({j for j in item})
         symbols = symbols - set(self.edges)
         self.alphabet = sorted(list(symbols))
-            
-
+        
 
     def opposite_polarity(self:PosG, ngrams:list, alphabet:list, k:int) -> list:
-        """ Returns set of ngrams of the opposite polarity. """
+        """
+        For a grammar with given polarity, returns set of ngrams
+        of the opposite polarity.
+
+        Arguments:
+        -- self;
+        -- ngrams: list of ngrams;
+        -- alphabet: list of symbold used in the given grammar;
+        -- k: the locality window.
+
+        Returns:
+        -- a list of ngrams opposite to the ones given as input.
+        """
 
         combinations = set(self.generate_all_ngrams(alphabet, k))
         return list(combinations.difference(set(ngrams)))
 
 
     def generate_all_ngrams(self:PosG, alphabet:list, k:int) -> list:
-        """ Generate possible ngrams of a given length based on
-            the given alphabet.
+        """
+        Generate possible ngrams of a given length based on
+        the given alphabet.
+
+        Arguments:
+        -- self;
+        -- alphabet: list of symbols used in the given grammar;
+        -- k: the locality window.
+
+        Returns:
+        -- list of all possible ngrams of the length k that can
+           be generated basen of the given alphabet.
         """
 
         local_alphabet = alphabet[:]
@@ -76,11 +124,21 @@ class PosGram(object):
 
 
     def good_ngram(self:PosG, ngram:tuple) -> bool:
-        """ Auxiliary function for the ngram generator. Returns True
-            iff the ngram is ill-formed, and False otherwise: if there is
-            somthing in-between two start- or two end-symbols ('>a>'),
-            something is before start symbol or after end symbol ('a>'), or
-            if the ngram consists only of start- or only of end-symbols.
+        """
+        Auxiliary function for the ngram generator. Returns True
+        iff the ngram is ill-formed, and False otherwise.
+
+        An ngram is ill-formed if:
+        * there is somthing in-between two start- or end-symbols ('>a>'), or
+        * something is before start symbol or after end symbol ('a>'), or
+        * the ngram consists only of start- or only of end-symbols.
+
+        Arguments:
+        -- self;
+        -- ngram: an ngram that needs to be evaluated.
+
+        Returns:
+        -- a boolean value depending on the well-formedness of the ngram.
         """
 
         start = [i for i in range(len(ngram)) if ngram[i] == ">"]
@@ -100,13 +158,29 @@ class PosGram(object):
 
         
 class NegGram(PosGram):
-    """ A general class for negative grammars. Contains methods that are applicable
-        to negative grammars in general.
+    """
+    A general class for positive grammars. Contains methods that are applicable
+    to all grammars in this package.
+
+    Attributes:
+    -- alphabet: the list of symbols used in the given language;
+    -- grammar: the list of grammatical rules;
+    -- k: the locality measure;
+    -- data: the language data given as input;
+    -- data_sample: the generated data sample.
     """
 
     def change_polarity(self:NegG) -> None:
-        """ For a grammar with given polarity, returns set of ngrams
-            of the opposite polarity, and changes the class of the grammar.
         """
+        Version of the function for negative grammar.
+
+        Arguments:
+        -- self.
+
+        Results:
+        -- self.grammar is being switched to the opposite;
+        -- self.__class__ is changed to 'PosGram'.
+        """
+        
         self.grammar = self.opposite_polarity(self.grammar, self.alphabet, self.k)
         self.__class__ = PosGram

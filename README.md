@@ -3,7 +3,7 @@
 In this repository, you can find a package for subregular language processing.
 Please find below brief instruction on what is consists of (for now), and how to use it.
 In order to get access to the language classes and methods defined for them, please run the following commands in the terminal after downloading the folder `slp`.
-Please ensure that you are running `Python3`, no earlier than the version 3.6.
+Please ensure that you are running `Python3` no older than the version 3.6.
 
 ```python3
 $ cd ~/slp
@@ -26,7 +26,7 @@ Initialize positive or negative SL grammar:
 Initialize the grammar, data, edge symbols in use, or k-gram length:
 
 ```python3
-    >>> posSL.grammar = ('>', 'a'), ('a', 'b'), ('b', '<'), ('b', 'a')]
+    >>> posSL.grammar = [('>', 'a'), ('a', 'b'), ('b', '<'), ('b', 'a')]
     >>> posSL.data = ["ab", "ababab"]
     >>> posSL.edges = [">", "<"]
     >>> posSL.k = 2

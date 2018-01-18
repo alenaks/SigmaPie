@@ -15,22 +15,34 @@ from typing import Tuple
 
 
 def alphabetize(data:list) -> list:
-    """ Collects alphabets from the list of data. """
+    """
+    Collects alphabets from the list of data.
+
+    Arguments:
+    -- data: list of examples given as input.
+
+    Returns:
+    -- the list of symbols used in these examples.
+    """
 
     alphabet = set()
-    
     for item in data:
         alphabet.update({i for i in item})
     return sorted(list(alphabet))
 
 
 def get_gram_info(ngrams:list) -> Tuple[list, int]:
-    """ Detects the alphabet and window size of the grammar """
+    """
+    Detects the alphabet and window size of the grammar.
+
+    Arguments:
+    -- ngrams: list of ngrams.
+
+    Returns: (alphabet, k) where:
+    -- alphabet: the list of symbols used in these examples;
+    -- k: the locality window.
+    """
 
     alphabet = list(set([i for i in "".join(ngrams) if i not in [">", "<"]]))       
     k = max(len(i) for i in ngrams)
     return alphabet, k
-
-
-def edge_decorator(f):
-    pass
