@@ -36,6 +36,24 @@ class PosTSL(PosSL):
         self.tier = tier
 
 
+    def learn(self:PTSL) -> None:
+        """
+        Extracts positive TSL grammar from the given data.
+
+        Arguments:
+        -- self.
+
+        Results:
+        -- self.grammar is being detected.
+        """
+
+        self.learn_tier()
+        tier_sequences = self.erasing_function()
+        
+        if tier_sequences:
+            self.grammar = self.ngramize_data(self.k, tier_sequences)
+
+
     def learn_tier(self:PTSL) -> None:
         """
         This function determines which of the symbols used in the language
@@ -122,3 +140,27 @@ class PosTSL(PosSL):
         else:
             return False
                 
+
+    def erasing_function(self:PTSL) -> list:
+        """
+        Function that erases non-tier symbols from the data therefore
+        leaving just tier sequences.
+
+        Arguments:
+        -- self.
+
+        Returns:
+        -- a list of data under the erasing image.
+        """
+        
+        erased = []
+        if self.data:
+            for item in self.data:
+                new = ""
+                for i in item:
+                    if i in self.tier:
+                        new += i
+                erased.append(new)
+            return list(set(erased))
+        else:
+            return []
