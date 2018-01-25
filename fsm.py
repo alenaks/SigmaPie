@@ -32,7 +32,7 @@ class FiniteStateMachine(object):
 
     def sl_states(self:FSM, grammar:list) -> None:
         """
-        Translates SL grammar in FSM transitions.
+        Translates (T)SL grammar in FSM transitions.
 
         Arguments:
         -- self;

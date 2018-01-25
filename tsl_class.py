@@ -14,6 +14,7 @@ from typing import TypeVar, Generator, Union
 from sl_class import *
 
 PTSL = TypeVar('PTSL', bound='PosTSL')
+NTSL = TypeVar('NTSL', bound='NegTSL')
 
 class PosTSL(PosSL):
     """ A class for positive strictly local grammars.
@@ -78,7 +79,6 @@ class PosTSL(PosSL):
                 if self.test_insert(symbol, ngrams, ngrams_less) and \
                    self.test_remove(symbol, ngrams, ngrams_more):
                     self.tier.remove(symbol)
-                   
 
 
     def test_insert(self:PTSL, symbol:str, ngrams:list, ngrams_less:list) -> bool:
@@ -164,3 +164,108 @@ class PosTSL(PosSL):
             return list(set(erased))
         else:
             return []
+
+
+    def change_polarity(self:PTSL) -> None:
+        """
+        Changes polarity of the grammar.
+
+        Arguments:
+        -- self.
+
+        Results:
+        -- self.grammar is being switched to the opposite;
+        -- self.__class__ is changed to 'NTSL'.
+        """
+
+        if not self.tier:
+            self.learn()
+        self.grammar = self.opposite_polarity(self.grammar, self.tier, self.k)
+        self.__class__ = NegTSL
+
+
+class NegTSL(PosTSL):
+    """ A class for negative strictly local grammars.
+
+    Attributes:
+    -- alphabet: the list of symbols used in the given language;
+    -- grammar: the list of grammatical rules;
+    -- k: the locality measure;
+    -- data: the language data given as input;
+    -- data_sample: the generated data sample;
+    -- fsm: the finite state machine that corresponds to the given grammar;
+    -- tier: the list of tier symbols.
+    """
+
+    def __init__(self:PTSL, alphabet:Union[None,list]=None, grammar:Union[None,List[tuple]]=None, k:int=2,
+                 data:Union[list,None]=None, edges=[">", "<"], tier:Union[None,list]=None) -> None:
+        """ Initializes the NegTSL object. """
+        
+        super().__init__(alphabet, grammar, k, data, edges, tier)
+
+
+    def learn(self:NTSL) -> None:
+        """
+        Extracts positive TSL grammar from the given data.
+
+        Arguments:
+        -- self.
+
+        Results:
+        -- self.grammar is being detected.
+        """
+        
+        super().learn()
+        self.grammar = self.opposite_polarity(self.grammar, self.tier, self.k)
+
+
+    def change_polarity(self:NTSL) -> None:
+        """
+        Changes polarity of the grammar.
+
+        Arguments:
+        -- self.
+
+        Results:
+        -- self.grammar is being switched to the opposite;
+        -- self.__class__ is changed to 'PTSL'.
+        """
+
+        if not self.tier:
+            self.learn()
+        self.grammar = self.opposite_polarity(self.grammar, self.tier, self.k)
+        self.__class__ = PosTSL
+
+
+    def fsmize(self:NTSL) -> None:
+        """
+        Function that builds FSM corresponding to the given grammar.
+
+        Arguments:
+        -- self.
+
+        Results:
+        -- self.fsm contains a finite states machine that corresponds to
+                    the given grammar.
+        """
+
+        self.grammar = self.opposite_polarity(self.grammar, self.tier, self.k)
+        super().fsmize()
+        self.grammar = self.opposite_polarity(self.grammar, self.tier, self.k)
+
+
+    def clean(self:NTSL) -> None:
+        """
+        Removes useless n-grams from the grammar. Useless ngrams are
+        that can never be used in the language.
+
+        Arguments:
+        -- self.
+
+        Results:
+        -- self.fsm contains the FSM of the current grammar;
+        -- self.grammar is being cleaned.
+        """
+
+        super().clean()
+        self.grammar = self.opposite_polarity(self.grammar, self.tier, self.k)
