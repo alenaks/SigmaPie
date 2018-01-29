@@ -304,7 +304,7 @@ class NegSL(PosSL):
         if not self.grammar:
             self.learn()
 
-        if not set(alphabetize(string)).issubset(set(self.alphabet)):
+        if not set(alphabetize([string])).issubset(set(self.alphabet)):
             return False
         string = self.annotate_data(string, self.k)
         ngramized_string = self.ngramize_item(string, self.k)

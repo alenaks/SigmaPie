@@ -94,7 +94,7 @@ class PosTSL(PosSL):
            with respect to the given grammar.
         """
 
-        if not set(alphabetize(string)).issubset(set(self.alphabet)):
+        if not set(alphabetize([string])).issubset(set(self.alphabet)):
             return False
         tier_img = self.annotate_data(self.tier_image(string, self.tier), self.k)
         if set(self.ngramize_item(tier_img, self.k)).issubset(set(self.grammar)):
@@ -271,7 +271,7 @@ class NegTSL(PosTSL):
            with respect to the given grammar.
         """
 
-        if not set(alphabetize(string)).issubset(set(self.alphabet)):
+        if not set(alphabetize([string])).issubset(set(self.alphabet)):
             return False
         tier_img = self.annotate_data(self.tier_image(string, self.tier), self.k)
         ngramized_string = self.ngramize_item(tier_img, self.k)
