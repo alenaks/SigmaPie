@@ -53,6 +53,7 @@ class PosSL(PosGram):
         if self.data:
             self.grammar = self.ngramize_data(self.k, self.data)
             self.extract_alphabet()
+        self.fsmize()
 
 
     def generate_sample(self:PosStL, n:int=10, rep:bool=True) -> None:

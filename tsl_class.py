@@ -11,6 +11,7 @@
 """
 
 from typing import TypeVar, Generator, Union
+from random import choice, randint
 from sl_class import *
 
 PTSL = TypeVar('PTSL', bound='PosTSL')
@@ -53,9 +54,10 @@ class PosTSL(PosSL):
         
         if tier_sequences:
             self.grammar = self.ngramize_data(self.k, tier_sequences)
+            self.fsmize()
 
 
-    def generate_sample(self:PosStL, n:int=10, rep:bool=True) -> None:
+    def generate_sample(self:PTSL, n:int=10, rep:bool=True) -> None:
         """
         Generates a sample of the data of a given size.
 
@@ -71,6 +73,64 @@ class PosTSL(PosSL):
         """
 
         super().generate_sample(n, rep)
+
+
+    def generate_item(self:PTSL) -> str:
+        """
+        Generates a well-formed sequence of symbols.
+
+        Arguments:
+        -- self.
+
+        Returns:
+        -- a well-formed sequence with respect to a given grammar.
+        """
+
+        tier_seq = super().generate_item()
+        ind = [x for x in range(len(tier_seq)) if tier_seq[x] not in self.edges]
+        tier_items = list(tier_seq[ind[0]:(ind[-1]+1)])
+        free_symb = list(set(self.alphabet).difference(set(self.tier)))
+        
+        new_string = self.edges[0]*(self.k-1)
+        for i in range(self.k+1):
+            if randint(0,1) == 1:
+                new_string += choice(free_symb)
+
+        if tier_items:
+            for item in tier_items:
+                new_string += item
+                for i in range(self.k+1):
+                    if randint(0,1) == 1:
+                        new_string += choice(free_symb)
+
+        new_string += self.edges[1]*(self.k-1)
+        
+        return new_string
+
+
+    def state_map(self:PTSL) -> dict:
+        """ Generates a dictionary of possible transitions in the given FSM.
+
+        Arguments:
+        -- self.
+
+        Returns:
+        -- the dictionary of the form
+            {"previous_symbols":[list of possible next symbols]}.
+        """
+            
+        smap:dict = {}
+        local_alphabet = self.tier[:] + self.edges[:]
+        poss = product(local_alphabet, repeat=self.k-1)
+        for i in poss:
+            for j in self.fsm.transitions:
+                if j[0] == i:
+                    before = "".join(i)
+                    if before in smap:
+                        smap[before] += j[1]
+                    else:
+                        smap[before] = [j[1]]
+        return smap
 
 
     def learn_tier(self:PTSL) -> None:
