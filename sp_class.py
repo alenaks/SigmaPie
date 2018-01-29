@@ -31,7 +31,11 @@ class PosSP(PosGram):
     -- fsm: the finite state machine that corresponds to the given grammar.
     """
 
+<<<<<<< HEAD
     def __init__(self:PosStP, alphabet:Union[None,list]=None, grammar:Union[None,List[tuple]]=None, k:int=2,
+=======
+    def __init__(self:PosG, alphabet:Union[None,list]=None, grammar:Union[None,List[tuple]]=None, k:int=2,
+>>>>>>> 01c14fc758b9eb1ea95f92920c0f8411faf53f70
                  data:Union[list,None]=None, edges=[">", "<"]) -> None:
         """ Initializes the PosSL object. """
         
