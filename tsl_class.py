@@ -55,6 +55,24 @@ class PosTSL(PosSL):
             self.grammar = self.ngramize_data(self.k, tier_sequences)
 
 
+    def generate_sample(self:PosStL, n:int=10, rep:bool=True) -> None:
+        """
+        Generates a sample of the data of a given size.
+
+        Arguments:
+        -- self;
+        -- n (optional): the number of examples, the default value is 10;
+        -- rep (optional): allow (rep=True) or prohibit (rep=False)
+               repetitions, the default value is True.
+
+        Results:
+        -- self.data_sample is being generated.
+
+        """
+
+        super().generate_sample(n, rep)
+
+
     def learn_tier(self:PTSL) -> None:
         """
         This function determines which of the symbols used in the language

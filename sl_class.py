@@ -157,9 +157,10 @@ class PosSL(PosGram):
         if any([len(smap[x]) for x in smap]) == 0:
             raise(ValueError("The grammar is not provided properly."))
 
-        word = self.edges[0]
+        word = self.edges[0]*(self.k-1)
         while word[-1] != self.edges[1]:
-            word += choice(smap[word[-1]])
+            word += choice(smap[word[-(self.k-1):]])
+        word += self.edges[1]*(self.k-2)
 
         return word
 
@@ -171,14 +172,21 @@ class PosSL(PosGram):
         -- self.
 
         Returns:
-        -- the dictionary of the form {symbol:[list of possible transitions]}.
+        -- the dictionary of the form
+            {"previous_symbols":[list of possible next symbols]}.
         """
             
         smap:dict = {}
-        smap[self.edges[0]] = [i[1] for i in self.fsm.transitions if i[0] == (self.edges[0],)]
-        for symb in self.alphabet:
-            smap[symb] = [i[1] for i in self.fsm.transitions if i[0] == (symb,)]
-
+        local_alphabet = self.alphabet[:] + self.edges[:]
+        poss = product(local_alphabet, repeat=self.k-1)
+        for i in poss:
+            for j in self.fsm.transitions:
+                if j[0] == i:
+                    before = "".join(i)
+                    if before in smap:
+                        smap[before] += j[1]
+                    else:
+                        smap[before] = [j[1]]
         return smap
 
         
