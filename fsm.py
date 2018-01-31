@@ -1,7 +1,7 @@
 #!/bin/python3
 
 """
-   A class of Strictly Local Grammars.
+   A class of Finite State Machines.
    Copyright (C) 2017  Alena Aksenova
    
    This program is free software; you can redistribute it and/or modify
