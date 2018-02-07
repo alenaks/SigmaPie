@@ -23,7 +23,7 @@ class FSMFamily(object):
     -- transitions: triples of the worm [prev_state, transition, next_state].
     """
 
-    def __init__(self:FSM, transitions:list=[]) -> None:
+    def __init__(self:FSMFam, transitions:list=[]) -> None:
         """ Initializes the FiniteStateMachine object. """
         
         self.transitions = transitions

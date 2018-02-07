@@ -10,6 +10,10 @@
    (at your option) any later version.
 """
 
+from helper import *
 from fsm import *
+from fsm_family import *
+from grammar import *
 from sl_class import *
 from tsl_class import *
+from sp_class import *
