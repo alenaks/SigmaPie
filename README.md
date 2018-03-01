@@ -1,7 +1,7 @@
 # Python package for subregular language processing
 
 **Disclaimer:** the first version of the package is currently being developed.
-For comments, questions, or suggestions please email to `alena.aksenova@stonybrook.edu`.
+For comments, questions, or suggestions please email to <alena.aksenova@stonybrook.edu>.
 
 
 In this repository, you can find a package for subregular language processing.
