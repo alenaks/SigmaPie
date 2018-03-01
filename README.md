@@ -217,6 +217,15 @@ Initialize positive or negative SP grammar:
 
 
 ## To-do list
+Coming soon:
+
+- [ ] class of FSM family (needed for SP learning)
+- [ ] SP learner
+- [ ] SP fsmizer
+- [ ] SP scanner
+- [ ] SP sample generator
+- [ ] SP grammar cleaning
+- [ ] SP polarity swicher
 
 
 
