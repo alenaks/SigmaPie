@@ -243,5 +243,5 @@ Coming soon:
 [4]  Adam Jardine and Kevin McMullin. Efficient Learning of Tier-based Strictly k-Local Languages. (2017) In Frank Drewes, Carlos Martín-Vide, and Bianca Truthe (eds.), *Proceedings of Language and Automata Theory and Applications, 11th International Conference*, pp. 64-76. Lecture Notes in Computer Science series. Springer.
 
 
-### Author
-[Alëna Aksënova](https://www.aaksenova.com/)
+
+&copy; [Alëna Aksënova](https://www.aaksenova.com/)
