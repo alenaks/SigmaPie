@@ -11,6 +11,7 @@
 """
 
 from typing import TypeVar
+from fsm import *
 
 FSMFam = TypeVar('FSMFam', bound='FSMFamily')
 
