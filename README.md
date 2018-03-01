@@ -1,5 +1,9 @@
 # Python package for subregular language processing
 
+**Disclaimer:** the first version of the package is currently being developed.
+For comments, questions, or suggestions please email to `alena.aksenova@stonybrook.edu`.
+
+
 In this repository, you can find a package for subregular language processing.
 Please find below a brief overview of what it consists of (for now), and how to use it.
 In order to get access to the language classes and methods defined for them, please run the following commands in the terminal after downloading the folder `slp`.
