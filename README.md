@@ -225,7 +225,7 @@ Coming soon:
 
 - [ ] class of FSM family (needed for SP learning)
 - [ ] SP learner
-- [ ] SP fsmizer
+- [x] SP fsmizer
 - [ ] SP scanner
 - [ ] SP sample generator
 - [ ] SP grammar cleaning
