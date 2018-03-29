@@ -116,8 +116,8 @@ class PosGram(object):
         """
 
         local_alphabet = alphabet[:]
-        if (">" not in local_alphabet) and ("<" not in local_alphabet):
-            local_alphabet += [">", "<"]
+        if (self.edges[0] not in local_alphabet) and (self.edges[1] not in local_alphabet):
+            local_alphabet += self.edges
         combinations = product(local_alphabet, repeat=k)
         ngrams = set([i for i in combinations if self.good_ngram(i)])
         return list(ngrams)
@@ -141,13 +141,13 @@ class PosGram(object):
         -- a boolean value depending on the well-formedness of the ngram.
         """
 
-        start = [i for i in range(len(ngram)) if ngram[i] == ">"]
+        start = [i for i in range(len(ngram)) if ngram[i] == self.edges[0]]
         if len(start) > 0:
             s_inter = [i for i in range(start[0], start[-1]) if i not in start]
             if len(s_inter) > 0 or start[0] != 0 or len(start) == len(ngram):
                 return False
 
-        end = [i for i in range(len(ngram)) if ngram[i] == "<"]
+        end = [i for i in range(len(ngram)) if ngram[i] == self.edges[1]]
         if len(end) > 0:
             e_inter = [i for i in range(end[0], end[-1]) if i not in end]
             if len(e_inter) > 0 or end[-1] != (len(ngram)-1) or len(end) == len(ngram):

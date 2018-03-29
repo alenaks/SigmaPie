@@ -10,7 +10,7 @@
    (at your option) any later version.
 """
 
-from typing import TypeVar
+from typing import TypeVar, Union
 from fsm import *
 
 FSMFam = TypeVar('FSMFam', bound='FSMFamily')
@@ -24,8 +24,10 @@ class FSMFamily(object):
     -- transitions: triples of the worm [prev_state, transition, next_state].
     """
 
-    def __init__(self:FSMFam, transitions:list=[]) -> None:
+    def __init__(self:FSMFam, family:Union[None,list]=None) -> None:
         """ Initializes the FiniteStateMachine object. """
         
-        self.transitions = transitions
-        self.states = None # to be implemented
+        if family == None:
+            self.family = []
+        else:
+            self.family = family

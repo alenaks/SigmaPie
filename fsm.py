@@ -10,7 +10,7 @@
    (at your option) any later version.
 """
 
-from typing import TypeVar
+from typing import TypeVar, Union
 
 FSM = TypeVar('FSM', bound='FiniteStateMachine')
 
@@ -23,11 +23,12 @@ class FiniteStateMachine(object):
     -- transitions: triples of the worm [prev_state, transition, next_state].
     """
 
-    def __init__(self:FSM, transitions:list=[]) -> None:
+    def __init__(self:FSM, transitions:Union[None,list]=None) -> None:
         """ Initializes the FiniteStateMachine object. """
-        
-        self.transitions = transitions
-        self.states = None # to be implemented
+        if transitions == None:
+            self.transitions = []
+        else:
+            self.transitions = transitions
 
 
     def sl_states(self:FSM, grammar:list) -> None:
@@ -48,6 +49,106 @@ class FiniteStateMachine(object):
                              "FSM cannot be generated!")
         transitions = [(i[:-1], i[-1], i[1:]) for i in grammar]
         self.transitions = transitions
+
+
+
+    def sp_template(self:FSM, seq:tuple, alphabet:list, k:int) -> None:
+        """
+        Generates a template for a k-SP path.
+
+        Arguments:
+        -- self;
+        -- seq: path for which the template is being generated;
+        -- alphabet: list of all symbols of the grammar;
+        -- k: window of the grammar.
+        """
+
+        # creating the "sceleton" of the FSM
+        for i in range(k-1):
+            # boolean shows whether the transition was accessed
+            self.transitions.append([i, seq[i], i+1, False])
+
+        # adding non-final loops
+        newtrans = []
+        for t in self.transitions:
+            for s in alphabet:
+                if s != t[1]:
+                    newtrans.append([t[0], s, t[0], False])
+
+        # adding final loops
+        for s in alphabet:
+            newtrans.append([self.transitions[-1][2], s, self.transitions[-1][2], False])
+
+        self.transitions += newtrans
+
+
+    def run_sp(self:FSM, w:str) -> bool:
+        """
+        Runs a word through an SP sequence automaton.
+        WARNING: SP automata only!
+            -- deterministic;
+            -- state 0 is the only initial state;
+            -- every state is final.
+
+        Arguments:
+        -- self;
+        -- w: string to run through the automaton.
+
+        Returns:
+        -- True if w can be accepted by the automaton, otherwise False.
+        """
+
+        state = 0
+        for s in w:
+            change = False
+            for t in self.transitions:
+                if (t[0] == state) and (t[1] == s):
+                    state = t[2]
+                    change = True
+                    break
+                    
+            if change == False:
+                return False
+            
+        return True
+
+
+    def run_learn_sp(self:FSM, w:str) -> bool:
+        """
+        Runs a word through an SP sequence automaton, and marks transitions
+        if they were taken.
+        WARNING: SP automata only!
+            -- deterministic;
+            -- state 0 is the only initial state;
+            -- every state is final.
+
+        Arguments:
+        -- self;
+        -- w: string to run through the automaton.
+
+        Results:
+        -- Transitions that are taken are marked.
+        """
+
+        state = 0
+        
+        for s in w:
+            for t in self.transitions:
+                if (t[0] == state) and (t[1] == s):
+                    state = t[2]
+                    t[3] = True
+                    break
+
+
+    def sp_clean(self:FSM) -> None:
+        """ """
+
+        new = []
+        for i in self.transitions:
+            if i[3] == True:
+                new.append(i[0:3])
+        self.transitions = new
+                
 
 
     def trim_fsm(self:FSM, markers:list=[">", "<"]) -> None:
@@ -109,3 +210,4 @@ class FiniteStateMachine(object):
             loop_trans, loop_reach = updated[:], reachable[:]
 
         return reachable
+    
