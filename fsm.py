@@ -141,7 +141,15 @@ class FiniteStateMachine(object):
 
 
     def sp_clean(self:FSM) -> None:
-        """ """
+        """
+        Removes the "untouched" transitions from the automaton.
+
+        Attributes:
+        -- self.
+
+        Results:
+        -- "cleans" the list of the transitions.
+        """
 
         new = []
         for i in self.transitions:

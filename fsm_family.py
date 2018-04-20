@@ -31,3 +31,24 @@ class FSMFamily(object):
             self.family = []
         else:
             self.family = family
+
+
+
+    def run_all(self:FSMFam, w:str) -> None:
+        """
+        Runs ass the automata in the family and returns whether the
+        string can be accepted by all of them.
+
+        Arguments:
+        -- self;
+        -- w: a string to pass.
+
+        Returns:
+        -- True if w is accepted, otherwise False.
+        """
+
+        runs = []
+        for f in self.family:
+            runs.append(f.run_sp(w))
+            
+        return all(runs)

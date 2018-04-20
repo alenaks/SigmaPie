@@ -39,51 +39,224 @@ class PosSP(PosGram):
         
         super().__init__(alphabet, grammar, k, data)
         data_sample = None
-        self.fsm = FSMFamily()
+        self.fsm = None
 
 
-        
-    def learn_fsm(self:PosStP) -> None:
+    def learn(self:PosStP) -> None:
+        """
+        Learns possible subsequences of the given length.
+
+        Arguments:
+        -- self.
+
+        Results:
+        -- self.grammar is updated.
+        """
+
         if not self.data:
             raise ValueError("The data is not provided")
 
-        seq = self.generate_paths()
+        self.grammar = []
+        gr = []
+
+        for i in self.data:
+            ss = self.subsequences(i)
+            for j in ss:
+                if j not in gr:
+                    gr.append(j)
+        for i in gr:
+            self.grammar.append(tuple(i))
+
+
+    def fsmize(self:PosStP) -> None:
+        """
+        Creates FSM family for the given SP grammar.
+
+        Arguments:
+        -- self.
+
+        Results:
+        -- fills self.fsm with the corresponding FSMFamily object.
+        """
+
+        self.fsm = FSMFamily()
+
+        if not self.grammar:
+            self.learn()
+
+        seq = self.generate_paths(self.k-1)
         for i in seq:
             f = FiniteStateMachine()
             f.sp_template(i, self.alphabet, self.k)
             self.fsm.family.append(f)
 
         for f in self.fsm.family:
-            for d in self.data:
+            for d in self.grammar:
                 f.run_learn_sp(d)
 
         for f in self.fsm.family:
             f.sp_clean()
 
 
-
     def generate_sample(self:PosStP) -> None:
-        pass
+        raise NotImplemented("Coming soon!")
 
 
+    def scan(self:PosStP, w:str) -> None:
+        """
+        Accepts of rejects the given string.
 
-    def scan(self:PosStP) -> None:
-        pass
+        Arguments:
+        -- self;
+        -- w: string to be checked.
 
+        Returns:
+        -- boolean depending on well-formedness of the string.
+        """
+        
+        if self.fsm == None:
+            self.fsmize()
+
+        return self.fsm.run_all(w)
 
 
     def change_polarity(self:PosStP) -> None:
         pass
+    
+
+    def generate_paths(self:PosStP, rep:int) -> None:
+        """
+        Generates all possible permutations of the alphabet items
+        of the desired length.
+
+        Arguments:
+        -- self;
+        -- rep: length of the generated sequences.
+
+        Returns:
+        -- the list of generated sequences.
+        
+        """
+        
+        return product(self.alphabet, repeat=rep)
 
 
-    def generate_paths(self:PosStP) -> None:
-        return product(self.alphabet, repeat=self.k-1)
+    def subsequences(self:PosStP, string:str) -> list:
+        """
+        Extracts subsequences of the length self.k out of a
+        given word.
+
+        Arguments:
+        -- self;
+        -- string: string from which the substrings need to
+                   be extracted.
+
+        Returns:
+        -- list of subsequences of that string.
+        """
+
+        choices = []
+        s = 0
+        e = len(string) - self.k
+        for i in range(self.k):
+            choices.append(range(s, e + 1))
+            s += 1
+            e += 1
+
+        general = []
+        local = []
+        
+        for i in choices[0]:
+            for j in choices[1]:
+                if i < j:
+                    local.append([i,j])
+        general = local[:]
+        local = []
+        
+        choices = choices[2:]
+
+
+        for layer in choices:
+            for item in layer:
+                for prefix in general:
+                    if prefix[-1] < item:
+                        local.append(prefix + [item])
+            general = local[:]
+            local = []
+
+        subseq = []
+        for i in general:
+            new = []
+            for j in i:
+                new.append(string[j])
+            subseq.append(new)
+
+        return subseq
+
+
+    def opposite_polarity(self:PosStP) -> list:
+        """
+        For a grammar with given polarity, returns set of ngrams
+        of the opposite polarity.
+
+        Arguments:
+        -- self.
+
+        Returns:
+        -- a list of ngrams opposite to the ones given as input.
+        """
+
+        opposite = []
+        possib = self.generate_paths(self.k)
+        for i in possib:
+            if i not in self.grammar:
+                opposite.append(i)
+                
+        return opposite
 
 
 
-# TESTING AREA
-a = PosSP()
-a.alphabet = ["a", "b"]
-a.data = ["ab", "aaaaabaaa", "aaaa", "b"]
-a.k = 3
-a.learn_fsm()
+class NegSP(PosSP):
+    """ A class for negative strictly piecewise grammars.
+
+    Attributes:
+    -- alphabet: the list of symbols used in the given language;
+    -- grammar: the list of grammatical rules;
+    -- k: the locality measure;
+    -- data: the language data given as input;
+    -- data_sample: the generated data sample;
+    -- fsm: the finite state machine that corresponds to the given grammar.
+    """
+
+    def learn(self:NegStP) -> None:
+        """
+        Learns possible subsequences of the given length.
+
+        Arguments:
+        -- self.
+
+        Results:
+        -- self.grammar is updated.
+        """
+
+        if self.data:
+            self.extract_alphabet()
+            
+        super().learn()
+        self.grammar = self.opposite_polarity()
+
+
+    def fsmize(self:PosStP) -> None:
+        """
+        Creates FSM family for the given SP grammar.
+
+        Arguments:
+        -- self.
+
+        Results:
+        -- fills self.fsm with the corresponding FSMFamily object.
+        """
+
+        self.grammar = self.opposite_polarity()
+        super().fsmize()
+        self.grammar = self.opposite_polarity()
