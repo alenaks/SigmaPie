@@ -121,7 +121,21 @@ class PosSP(PosGram):
 
 
     def change_polarity(self:PosStP) -> None:
-        pass
+        """
+        Changes polarity of the grammar.
+
+        Arguments:
+        -- self.
+
+        Results:
+        -- self.grammar is being switched to the opposite;
+        -- self.__class__ is changed to 'NegSP'.
+        """
+
+        if not self.alphabet:
+            self.extract_alphabet()
+        self.grammar = self.opposite_polarity()
+        self.__class__ = NegSP
     
 
     def generate_paths(self:PosStP, rep:int) -> None:
@@ -260,3 +274,21 @@ class NegSP(PosSP):
         self.grammar = self.opposite_polarity()
         super().fsmize()
         self.grammar = self.opposite_polarity()
+
+
+    def change_polarity(self:NegStP) -> None:
+        """
+        Changes polarity of the grammar.
+
+        Arguments:
+        -- self.
+
+        Results:
+        -- self.grammar is being switched to the opposite;
+        -- self.__class__ is changed to 'PosSP'.
+        """
+
+        if not self.alphabet:
+            self.extract_alphabet()
+        self.grammar = self.opposite_polarity()
+        self.__class__ = NegSP
