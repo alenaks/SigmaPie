@@ -38,7 +38,7 @@ class PosSP(PosGram):
         """ Initializes the PosSL object. """
         
         super().__init__(alphabet, grammar, k, data)
-        data_sample = None
+        self.data_sample:list = []
         self.fsm = None
 
 
@@ -98,8 +98,29 @@ class PosSP(PosGram):
             f.sp_clean()
 
 
-    def generate_sample(self:PosStP) -> None:
-        raise NotImplemented("Coming soon!")
+    def generate_sample(self:PosStP, n:int=10, rep:bool=False) -> None:
+        """
+        Generates a sample of the data of a given size.
+
+        Arguments:
+        -- self;
+        -- n (optional): the number of examples, the default value is 10;
+        -- rep (optional): allow (rep=True) or prohibit (rep=False)
+               repetitions, the default value is False.
+
+        Results:
+        -- self.data_sample is being generated.
+        """
+        
+        sample = []
+        for i in range(n):
+            sample.append(self.generate_item())
+
+        if rep == False:
+            while len(list(set(sample))) < n:
+                sample.append(self.generate_item())
+
+        self.data_sample = list(set(sample))
 
 
     def scan(self:PosStP, w:str) -> None:
@@ -136,8 +157,37 @@ class PosSP(PosGram):
             self.extract_alphabet()
         self.grammar = self.opposite_polarity()
         self.__class__ = NegSP
-    
 
+
+    def generate_item(self:PosStP) -> None:
+        """
+        Generates an item well-formed with respect to
+        a given grammar.
+
+        Arguments:
+        -- self.
+
+        Returns:
+        -- a well-formed string of a language.
+        """
+
+        if not self.alphabet:
+            self.extract_alphabet()
+
+        string = ""
+        cont = True
+        while cont:
+            options = []
+            for i in self.alphabet:
+                if self.scan(string+i):
+                    options.append(i)
+            add = choice(options + ["EOS"])
+            if add == "EOS":
+                return string
+            else:
+                string += add
+            
+    
     def generate_paths(self:PosStP, rep:int) -> None:
         """
         Generates all possible permutations of the alphabet items
