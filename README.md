@@ -3,7 +3,7 @@
 **Disclaimer:** the first version of the package is currently being developed.
 For comments, questions, or suggestions please email to <alena.aksenova@stonybrook.edu>.
 
-**Last updated:** March 29, 2018.
+**Readme updated:** March 29, 2018.
 
 
 In this repository, you can find a package for subregular language processing.
