@@ -2,7 +2,6 @@
 
 **Disclaimer:** the first version of the package is currently being developed.
 For comments, questions, or suggestions please email to <alena.aksenova@stonybrook.edu>.
-
 **Readme updated:** March 29, 2018.
 
 
