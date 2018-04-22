@@ -175,8 +175,7 @@ class PosSP(PosGram):
             self.extract_alphabet()
 
         string = ""
-        cont = True
-        while cont:
+        while True:
             options = []
             for i in self.alphabet:
                 if self.scan(string+i):
