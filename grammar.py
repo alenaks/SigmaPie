@@ -71,7 +71,7 @@ class L(object):
         Otherwise it is well-formed.
 
         Arguments:
-            ngram (str): THe ngram that needs to be evaluated.
+            ngram (str): The ngram that needs to be evaluated.
 
         Returns:
             bool: Tells whether the ngram is well-formed.
