@@ -10,37 +10,30 @@
    (at your option) any later version.
 """
 
-from typing import TypeVar, List, Union
 from itertools import product
 from helper import *
 
-PosG = TypeVar('PosG', bound='PosGram')
-NegG = TypeVar('NegG', bound='NegGram')
-
-
-class PosGram(object):
+class LanguageClass(object):
     """
-    A general class for positive grammars. Contains methods that are applicable
+    A general class for grammars. Contains methods that are applicable
     to all grammars in this package.
 
     Attributes:
-    -- alphabet: the list of symbols used in the given language;
-    -- grammar: the list of grammatical rules;
-    -- k: the locality measure;
+        alphabet (list): alphabet used in the language;
+        grammar (list): the list of substructures;
+        k (int): the locality measure;
     -- data: the language data given as input;
     -- data_sample: the generated data sample.
     """
 
-    def __init__(self:PosG, alphabet:Union[None,list]=None, grammar:Union[None,List[tuple]]=None, k:int=2,
-                 data:Union[list,None]=None, edges=[">", "<"]) -> None:
-        """ Initializes the PosGram object. """
-        
+    def __init__(self, alphabet=None, grammar=None, k=2, data=None,
+                 edges=[">", "<"]):
         self.alphabet = [] if alphabet == None else alphabet
         self.grammar = [] if grammar == None else grammar
         self.k = k
         self.data = [] if data == None else data
         self.edges = edges
-        self.data_sample:list = []
+        self.data_sample = []
 
     
     def change_polarity(self:PosG) -> None:
@@ -154,33 +147,3 @@ class PosGram(object):
                 return False
 
         return True
-
-
-        
-class NegGram(PosGram):
-    """
-    A general class for positive grammars. Contains methods that are applicable
-    to all grammars in this package.
-
-    Attributes:
-    -- alphabet: the list of symbols used in the given language;
-    -- grammar: the list of grammatical rules;
-    -- k: the locality measure;
-    -- data: the language data given as input;
-    -- data_sample: the generated data sample.
-    """
-
-    def change_polarity(self:NegG) -> None:
-        """
-        Version of the function for negative grammar.
-
-        Arguments:
-        -- self.
-
-        Results:
-        -- self.grammar is being switched to the opposite;
-        -- self.__class__ is changed to 'PosGram'.
-        """
-        
-        self.grammar = self.opposite_polarity(self.grammar, self.alphabet, self.k)
-        self.__class__ = PosGram

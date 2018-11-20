@@ -11,18 +11,15 @@
 
 """
 
-from typing import Tuple
-
-
-def alphabetize(data:list) -> list:
+def alphabetize(data):
     """
-    Collects alphabets from the list of data.
+    Detects symbols used in the input data.
 
     Arguments:
-    -- data: list of examples given as input.
+        data (list): Input data.
 
     Returns:
-    -- the list of symbols used in these examples.
+        list:  Symbols used in these examples.
     """
 
     alphabet = set()
@@ -31,16 +28,17 @@ def alphabetize(data:list) -> list:
     return sorted(list(alphabet))
 
 
-def get_gram_info(ngrams:list) -> Tuple[list, int]:
+def get_gram_info(ngrams):
     """
-    Detects the alphabet and window size of the grammar.
+    Returns the alphabet and window size of the grammar.
 
     Arguments:
-    -- ngrams: list of ngrams.
+        ngrams (list): list of ngrams.
 
-    Returns: (alphabet, k) where:
-    -- alphabet: the list of symbols used in these examples;
-    -- k: the locality window.
+    Returns:
+        (list, int)
+            list: alphabet;
+            int: locality window.
     """
 
     alphabet = list(set([i for i in "".join(ngrams) if i not in [">", "<"]]))       
