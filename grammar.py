@@ -13,56 +13,43 @@
 from itertools import product
 from helper import *
 
-class LanguageClass(object):
+class L(object):
     """
-    A general class for grammars. Contains methods that are applicable
+    A general class for grammars and languages. Contains methods that are applicable
     to all grammars in this package.
 
     Attributes:
+        polar ("p" or "n"): polarity of the grammar;
         alphabet (list): alphabet used in the language;
         grammar (list): the list of substructures;
-        k (int): the locality measure;
-    -- data: the language data given as input;
-    -- data_sample: the generated data sample.
+        k (int): locality window;
+        data (list): input data.
     """
 
     def __init__(self, alphabet=None, grammar=None, k=2, data=None,
-                 edges=[">", "<"]):
-        self.alphabet = [] if alphabet == None else alphabet
+                 edges=[">", "<"], polar="p"):
+        if polar not in ["p", "n"]:
+            raise ValueError("The value of polarity should be either "
+                            "positive ('p') or negative ('n').")
+        self.__polarity = polar
+        self.alphabet = alphabet
         self.grammar = [] if grammar == None else grammar
         self.k = k
         self.data = [] if data == None else data
         self.edges = edges
-        self.data_sample = []
 
-    
-    def change_polarity(self:PosG) -> None:
+
+    def extract_alphabet(self):
         """
-        Changes polarity of the grammar.
-
-        Arguments:
-        -- self.
-
-        Results:
-        -- self.grammar is being switched to the opposite;
-        -- self.__class__ is changed to 'NegGram'.
-        """
+        Extracts alphabet from the given data or grammar and saves it
+        into the 'alphabet' attribute.
         
-        self.grammar = self.opposite_polarity(self.grammar, self.alphabet, self.k)
-        self.__class__ = NegGram
-
-
-    def extract_alphabet(self:PosG) -> None:
+        CAUTION: if not all symbols were used in the data or grammar,
+                the result is not correct: update manually.
         """
-        Extracts alphabet from the given data/grammar.
 
-        Arguments:
-        -- self.
-
-        Results:
-        -- self.alphabet contains symbols that are used in the data.
-        """
-        
+        if self.alphabet == None:
+            self.alphabet = []
         symbols = set(self.alphabet)
         if self.data:
             for item in self.data:
@@ -72,78 +59,109 @@ class LanguageClass(object):
                 symbols.update({j for j in item})
         symbols = symbols - set(self.edges)
         self.alphabet = sorted(list(symbols))
-        
 
-    def opposite_polarity(self:PosG, ngrams:list, alphabet:list, k:int) -> list:
+
+    def well_formed_ngram(self, ngram):
         """
-        For a grammar with given polarity, returns set of ngrams
-        of the opposite polarity.
-
-        Arguments:
-        -- self;
-        -- ngrams: list of ngrams;
-        -- alphabet: list of symbold used in the given grammar;
-        -- k: the locality window.
-
-        Returns:
-        -- a list of ngrams opposite to the ones given as input.
-        """
-
-        combinations = set(self.generate_all_ngrams(alphabet, k))
-        return list(combinations.difference(set(ngrams)))
-
-
-    def generate_all_ngrams(self:PosG, alphabet:list, k:int) -> list:
-        """
-        Generate possible ngrams of a given length based on
-        the given alphabet.
-
-        Arguments:
-        -- self;
-        -- alphabet: list of symbols used in the given grammar;
-        -- k: the locality window.
-
-        Returns:
-        -- list of all possible ngrams of the length k that can
-           be generated basen of the given alphabet.
-        """
-
-        local_alphabet = alphabet[:]
-        if (self.edges[0] not in local_alphabet) and (self.edges[1] not in local_alphabet):
-            local_alphabet += self.edges
-        combinations = product(local_alphabet, repeat=k)
-        ngrams = set([i for i in combinations if self.good_ngram(i)])
-        return list(ngrams)
-
-
-    def good_ngram(self:PosG, ngram:tuple) -> bool:
-        """
-        Auxiliary function for the ngram generator. Returns True
-        iff the ngram is ill-formed, and False otherwise.
-
+        Tells whether the given ngram is well-formed.
         An ngram is ill-formed if:
-        * there is somthing in-between two start- or end-symbols ('>a>'), or
-        * something is before start symbol or after end symbol ('a>'), or
-        * the ngram consists only of start- or only of end-symbols.
+        * there is something in-between two start- or end-symbols ('>a>'), or
+        * something is before start symbol or after the end symbol ('a>'), or
+        * the ngram consists only of start- or end-symbols.
+        Otherwise it is well-formed.
 
         Arguments:
-        -- self;
-        -- ngram: an ngram that needs to be evaluated.
+            ngram (str): THe ngram that needs to be evaluated.
 
         Returns:
-        -- a boolean value depending on the well-formedness of the ngram.
+            bool: Tells whether the ngram is well-formed.
         """
+        
+        start, end = [], []
+        for i in range(len(ngram)):
+            if ngram[i] == self.edges[0]: start.append(i)
+            elif ngram[i] == self.edges[1]: end.append(i)
 
-        start = [i for i in range(len(ngram)) if ngram[i] == self.edges[0]]
-        if len(start) > 0:
-            s_inter = [i for i in range(start[0], start[-1]) if i not in start]
-            if len(s_inter) > 0 or start[0] != 0 or len(start) == len(ngram):
-                return False
+        start_len, end_len = len(start), len(end)
+        if any([start_len == len(ngram), end_len == len(ngram)]):
+            return False
+        
+        if start_len > 0:
+            if ngram[0] != self.edges[0]: return False
+            if start_len > 1:
+                for i in range(1,start_len):
+                    if start[i] - start[i-1] != 1: return False
 
-        end = [i for i in range(len(ngram)) if ngram[i] == self.edges[1]]
-        if len(end) > 0:
-            e_inter = [i for i in range(end[0], end[-1]) if i not in end]
-            if len(e_inter) > 0 or end[-1] != (len(ngram)-1) or len(end) == len(ngram):
-                return False
+        if end_len > 0:
+            if ngram[-1] != self.edges[1]: return False
+            if end_len > 1:
+                for i in range(1,end_len):
+                    if end[i] - end[i-1] != 1: return False
 
         return True
+
+
+    def generate_all_ngrams(self, symbols, k):
+        """
+        Generates all possible ngrams of the length k out of the given alphabet.
+
+        Arguments:
+            alphabet (list): alphabet, regular or tier;
+            k (int): ngram's length.
+
+        Returns:
+            list: generated ngrams
+        """
+
+        symb = symbols[:]
+        if (self.edges[0] not in symb) and (self.edges[1] not in symb):
+            symb += self.edges
+            
+        combinations = product(symb, repeat=k)
+        ngrams = []
+        for ngram in combinations:
+            if self.well_formed_ngram(ngram) and (ngram not in ngrams):
+                ngrams.append(ngram)
+
+        return ngrams
+
+
+    def switched_grammar(self, symbols):
+        """
+        Returns the list of ngrams that is opposite to the grammar, and switches
+        the polarity of the grammar.
+
+        Arguments:
+            symbols (list): alphabet, regular or tier.
+
+        Returns:
+            list: ngrams of the opposite polarity.
+        """
+
+        if self.__polarity == "p": self.__polarity = "n"
+        elif self.__polarity == "n": self.__polarity = "p"
+
+        all_ngrams = self.generate_all_ngrams(symbols, self.k)
+        opposite = [i for i in all_ngrams if i not in self.grammar]
+        
+        return opposite
+
+
+    def check_polarity(self):
+        """ Returns "p" or "n" showing the polarity of the grammar. """
+        if self.__polarity == "p": return "p"
+        else: return "n"
+
+
+    def change_polarity(self, new_polarity):
+        """
+        Changes the polarity of the grammar.
+
+        Arguments:
+            new_polarity ("p" or "n"): the new value of the polarity.
+        """
+        
+        if new_polarity not in ["p", "n"]:
+            raise ValueError("The value of polarity should be either "
+                            "positive ('p') or negative ('n').")
+        self.__polarity = new_polarity
