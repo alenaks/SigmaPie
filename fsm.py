@@ -37,8 +37,20 @@ class FSM(object):
         self.transitions = [(i[:-1], i[-1], i[1:]) for i in grammar]
 
 
-    def scan_sl(self, string):
-        current_state = string[0]
+    def scan_sl(self, string, position=0):
+        current_state = string[position]
+        for i in range(len(string)):
+            passed = False
+            for j in range(len(self.transitions))
+            if j[0] == i:
+                passed = True
+
+            if passed == True:
+                self.scan_sl(string, position+1)
+            else:
+                return False
+
+        return True
 
 
 
