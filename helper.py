@@ -2,8 +2,8 @@
 
 """
    Module with general helper functions for the subregular package.
-   Copyright (C) 2017  Alena Aksenova
-   
+   Copyright (C) 2018  Alena Aksenova
+
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 3 of the License, or
@@ -41,6 +41,6 @@ def get_gram_info(ngrams):
             int: locality window.
     """
 
-    alphabet = list(set([i for i in "".join(ngrams) if i not in [">", "<"]]))       
+    alphabet = list(set([i for i in "".join(ngrams) if i not in [">", "<"]]))
     k = max(len(i) for i in ngrams)
     return alphabet, k

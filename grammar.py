@@ -2,8 +2,8 @@
 
 """
    A module with the definition of the grammar class.
-   Copyright (C) 2017  Alena Aksenova
-   
+   Copyright (C) 2018  Alena Aksenova
+
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 3 of the License, or
@@ -43,7 +43,7 @@ class L(object):
         """
         Extracts alphabet from the given data or grammar and saves it
         into the 'alphabet' attribute.
-        
+
         CAUTION: if not all symbols were used in the data or grammar,
                 the result is not correct: update manually.
         """
@@ -76,7 +76,7 @@ class L(object):
         Returns:
             bool: Tells whether the ngram is well-formed.
         """
-        
+
         start, end = [], []
         for i in range(len(ngram)):
             if ngram[i] == self.edges[0]: start.append(i)
@@ -85,7 +85,7 @@ class L(object):
         start_len, end_len = len(start), len(end)
         if any([start_len == len(ngram), end_len == len(ngram)]):
             return False
-        
+
         if start_len > 0:
             if ngram[0] != self.edges[0]: return False
             if start_len > 1:
@@ -116,7 +116,7 @@ class L(object):
         symb = symbols[:]
         if (self.edges[0] not in symb) and (self.edges[1] not in symb):
             symb += self.edges
-            
+
         combinations = product(symb, repeat=k)
         ngrams = []
         for ngram in combinations:
@@ -143,7 +143,7 @@ class L(object):
 
         all_ngrams = self.generate_all_ngrams(symbols, self.k)
         opposite = [i for i in all_ngrams if i not in self.grammar]
-        
+
         return opposite
 
 
@@ -160,7 +160,7 @@ class L(object):
         Arguments:
             new_polarity ("p" or "n"): the new value of the polarity.
         """
-        
+
         if new_polarity not in ["p", "n"]:
             raise ValueError("The value of polarity should be either "
                             "positive ('p') or negative ('n').")

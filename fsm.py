@@ -2,57 +2,51 @@
 
 """
    A class of Finite State Machines.
-   Copyright (C) 2017  Alena Aksenova
-   
+   Copyright (C) 2018  Alena Aksenova
+
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 3 of the License, or
    (at your option) any later version.
 """
 
-from typing import TypeVar, Union
-
-FSM = TypeVar('FSM', bound='FiniteStateMachine')
-
-class FiniteStateMachine(object):
+class FSM(object):
     """
-    This class encodes Finite State Machines.
-    Used for scanning and/or generating data.
+    This class implements Finite State Machine.
 
     Attributes:
-    -- transitions: triples of the worm [prev_state, transition, next_state].
+        transitions (list): triples of the form [prev_state,
+            transition, next_state].
     """
 
-    def __init__(self:FSM, transitions:Union[None,list]=None) -> None:
-        """ Initializes the FiniteStateMachine object. """
-        if transitions == None:
-            self.transitions = []
-        else:
-            self.transitions = transitions
+    def __init__(self, transitions=None):
+        if transitions == None: self.transitions = []
+        else: self.transitions = transitions
 
 
-    def sl_states(self:FSM, grammar:list) -> None:
+    def sl_to_fsm(self, grammar):
         """
-        Translates (T)SL grammar in FSM transitions.
+        Creates FSM transitions based on the SL grammar.
 
         Arguments:
-        -- self;
-        -- grammar: the list of ngrams.
-
-        Results:
-        -- self.transitions is rewritten as transitions that correspond
-                            to the given grammar.
+            grammar (list): SL ngrams.
         """
 
         if not grammar:
-            raise IndexError("The grammar is empty -- "
-                             "FSM cannot be generated!")
-        transitions = [(i[:-1], i[-1], i[1:]) for i in grammar]
-        self.transitions = transitions
+            raise ValueError("The grammar must not be empty.")
+        self.transitions = [(i[:-1], i[-1], i[1:]) for i in grammar]
+
+
+    def scan_sl(self, string):
+        current_state = string[0]
 
 
 
-    def sp_template(self:FSM, seq:tuple, alphabet:list, k:int) -> None:
+
+
+########################################################################
+
+    def sp_template(self, seq, alphabet, k):
         """
         Generates a template for a k-SP path.
 
@@ -82,7 +76,7 @@ class FiniteStateMachine(object):
         self.transitions += newtrans
 
 
-    def run_sp(self:FSM, w:str) -> bool:
+    def run_sp(self, w):
         """
         Runs a word through an SP sequence automaton.
         WARNING: SP automata only!
@@ -106,14 +100,14 @@ class FiniteStateMachine(object):
                     state = t[2]
                     change = True
                     break
-                    
+
             if change == False:
                 return False
-            
+
         return True
 
 
-    def run_learn_sp(self:FSM, w:str) -> bool:
+    def run_learn_sp(self, w):
         """
         Runs a word through an SP sequence automaton, and marks transitions
         if they were taken.
@@ -131,7 +125,7 @@ class FiniteStateMachine(object):
         """
 
         state = 0
-        
+
         for s in w:
             for t in self.transitions:
                 if (t[0] == state) and (t[1] == s):
@@ -140,7 +134,7 @@ class FiniteStateMachine(object):
                     break
 
 
-    def sp_clean(self:FSM) -> None:
+    def sp_clean(self):
         """
         Removes the "untouched" transitions from the automaton.
 
@@ -156,10 +150,10 @@ class FiniteStateMachine(object):
             if i[3] == True:
                 new.append(i[0:3])
         self.transitions = new
-                
 
 
-    def trim_fsm(self:FSM, markers:list=[">", "<"]) -> None:
+
+    def trim_fsm(self, markers=[">", "<"]):
         """
         This function trims useless states.
         1. Finds the initial state and collects the set of states to which one
@@ -183,7 +177,7 @@ class FiniteStateMachine(object):
             self.transitions = useful_transitions
 
 
-    def __accessible_states(self:FSM, transitions:list, marker:str) -> list:
+    def __accessible_states(self, transitions, marker):
         """
         Auxiliary function that finds accessible states.
 
@@ -218,4 +212,3 @@ class FiniteStateMachine(object):
             loop_trans, loop_reach = updated[:], reachable[:]
 
         return reachable
-    
