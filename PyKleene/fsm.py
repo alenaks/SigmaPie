@@ -10,6 +10,8 @@
    (at your option) any later version.
 """
 
+from .helper import *
+
 class FSM(object):
     """
     This class implements Finite State Machine.
@@ -53,21 +55,24 @@ class FSM(object):
         Returns:
             bool: tells whether the string is well-formed.
         """
-        
         if len(string) < 2:
             raise ValueError("The string is too short.")
         if string[0] != self.initial or string[-1] != self.final:
             raise ValueError("The string is not annotated with the delimeters.")
-        
-        matches = []
-        for i in range(len(string)-1):
-            passes = []
-            for j in range(len(self.transitions)):
-                if self.transitions[j][0] == string[i] and \
-                   self.transitions[j][1] == string[i+1]:
-                    passes.append(True)
-            matches.append(any(passes))
-        return all(matches)
+        if not self.transitions:
+            raise ValueError("The transitions are empty.")
+
+        k = len(self.transitions[0][0])+1
+        for i in range(k-1, len(string)):
+            move_to_next = []
+            for j in self.transitions:
+                if string[i-k+1:i+1] == "".join(j[0])+j[1]:
+                    move_to_next.append(True)
+                else:
+                    move_to_next.append(False)
+            if not any(move_to_next):
+                return False
+        return True
 
 
 
