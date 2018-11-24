@@ -126,10 +126,10 @@ class L(object):
         return ngrams
 
 
-    def switched_grammar(self, symbols):
+    def change_polarity(self):
         """
-        Returns the list of ngrams that is opposite to the grammar, and switches
-        the polarity of the grammar.
+        Rewrites grammar to the opposite and changes polarity
+        of the grammar.
 
         Arguments:
             symbols (list): alphabet, regular or tier.
@@ -141,7 +141,7 @@ class L(object):
         if self.__polarity == "p": self.__polarity = "n"
         elif self.__polarity == "n": self.__polarity = "p"
 
-        all_ngrams = self.generate_all_ngrams(symbols, self.k)
+        all_ngrams = self.generate_all_ngrams(self.alphabet, self.k)
         opposite = [i for i in all_ngrams if i not in self.grammar]
 
         return opposite

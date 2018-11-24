@@ -2,7 +2,7 @@
 
 """
    A class of Strictly Local Grammars.
-   Copyright (C) 2017  Alena Aksenova
+   Copyright (C) 2018  Alena Aksenova
    
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -10,16 +10,12 @@
    (at your option) any later version.
 """
 
-from typing import TypeVar, Union, Tuple, List
 from random import choice
 from helper import *
 from fsm import *
 from grammar import *
 
-PosStL = TypeVar('PosStL', bound='PosSL')
-NegStL = TypeVar('NegStL', bound='NegSL')
-
-class PosSL(PosGram):
+class SL(L):
     """ A class for positive strictly local grammars.
 
     Attributes:

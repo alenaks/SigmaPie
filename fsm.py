@@ -15,13 +15,19 @@ class FSM(object):
     This class implements Finite State Machine.
 
     Attributes:
+        initial (str): initial symbol;
+        final (str): final symbol;
         transitions (list): triples of the form [prev_state,
             transition, next_state].
     """
 
-    def __init__(self, transitions=None):
+    def __init__(self, initial, final, transitions=None):
+        
         if transitions == None: self.transitions = []
         else: self.transitions = transitions
+
+        self.initial = initial
+        self.final = final
 
 
     def sl_to_fsm(self, grammar):
@@ -37,20 +43,31 @@ class FSM(object):
         self.transitions = [(i[:-1], i[-1], i[1:]) for i in grammar]
 
 
-    def scan_sl(self, string, position=0):
-        current_state = string[position]
-        for i in range(len(string)):
-            passed = False
-            for j in range(len(self.transitions))
-            if j[0] == i:
-                passed = True
+    def scan_sl(self, string):
+        """
+        Scans the given string with SL dependencies.
 
-            if passed == True:
-                self.scan_sl(string, position+1)
-            else:
-                return False
+        Arguments:
+            string (str): a string that needs to be scanned.
 
-        return True
+        Returns:
+            bool: tells whether the string is well-formed.
+        """
+        
+        if len(string) < 2:
+            raise ValueError("The string is too short.")
+        if string[0] != self.initial or string[-1] != self.final:
+            raise ValueError("The string is not annotated with the delimeters.")
+        
+        matches = []
+        for i in range(len(string)-1):
+            passes = []
+            for j in range(len(self.transitions)):
+                if self.transitions[j][0] == string[i] and \
+                   self.transitions[j][1] == string[i+1]:
+                    passes.append(True)
+            matches.append(any(passes))
+        return all(matches)
 
 
 
@@ -224,3 +241,4 @@ class FSM(object):
             loop_trans, loop_reach = updated[:], reachable[:]
 
         return reachable
+
