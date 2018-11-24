@@ -11,7 +11,7 @@
 """
 
 from itertools import product
-from helper import *
+from .helper import *
 
 class L(object):
     """
@@ -126,7 +126,7 @@ class L(object):
         return ngrams
 
 
-    def change_polarity(self):
+    def opposite_polarity(self, symbols):
         """
         Rewrites grammar to the opposite and changes polarity
         of the grammar.
@@ -141,7 +141,7 @@ class L(object):
         if self.__polarity == "p": self.__polarity = "n"
         elif self.__polarity == "n": self.__polarity = "p"
 
-        all_ngrams = self.generate_all_ngrams(self.alphabet, self.k)
+        all_ngrams = self.generate_all_ngrams(symbols, self.k)
         opposite = [i for i in all_ngrams if i not in self.grammar]
 
         return opposite
@@ -165,3 +165,4 @@ class L(object):
             raise ValueError("The value of polarity should be either "
                             "positive ('p') or negative ('n').")
         self.__polarity = new_polarity
+    
