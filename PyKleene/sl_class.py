@@ -10,46 +10,53 @@
    (at your option) any later version.
 """
 
+import sys, os
+sys.path.insert(0, os.path.abspath('..'))
+
 from random import choice
-from helper import *
-from fsm import *
-from grammar import *
+from PyKleene.helper import *
+from PyKleene.fsm import *
+from PyKleene.grammar import *
 
 class SL(L):
-    """ A class for positive strictly local grammars.
+    """
+    A class for strictly local grammars and languages.
 
     Attributes:
-    -- alphabet: the list of symbols used in the given language;
-    -- grammar: the list of grammatical rules;
-    -- k: the locality measure;
-    -- data: the language data given as input;
-    -- data_sample: the generated data sample;
-    -- fsm: the finite state machine that corresponds to the given grammar.
+        alphabet (list): alphabet used in the language;
+        grammar (list): the list of substructures;
+        k (int): locality window;
+        data (list): input data;
+        edges (list): start- and end-symbols for the grammar;
+        polar ("p" or "n"): polarity of the grammar.
+        fsm (FSM): finite state machine that corresponds to the grammar.
+
+    Methods:
+        extract_alphabet: extracts alphabet from data/grammar;
+        well_formed_ngram: checks if ngram is well-formed;
+        generate_all_ngrams: generates all possible well-formed ngrams
+            based on the given alphabet;
+        opposite_polarity: changes the polarity of the grammar to the opposite,
+            and returns the opposite grammar;
+        check_polarity: returns the polarity of the grammar;
+        change_polarity: changes the polarity of the grammar to the one
+            that is provided by the user.
     """
 
-    def __init__(self:PosG, alphabet:Union[None,list]=None, grammar:Union[None,List[tuple]]=None, k:int=2,
-                 data:Union[list,None]=None, edges=[">", "<"]) -> None:
+    def __init__(self, alphabet=None, grammar=None, k=2, data=None,
+                 edges=[">", "<"], polar="p"):
         """ Initializes the PosSL object. """
-        
-        super().__init__(alphabet, grammar, k, data, edges)
+        super().__init__(alphabet, grammar, k, data, edges, polar)
         self.fsm = FiniteStateMachine()
 
 
-    def learn(self:PosStL) -> None:
-        """
-        Extracts positive SL grammar from the given data.
-
-        Arguments:
-        -- self.
-
-        Results:
-        -- self.grammar is being detected.
-        """
+    def learn(self):
+        """ Extracts SL grammar from the given data. """
 
         if self.data:
-            self.grammar = self.ngramize_data(self.k, self.data)
-            self.extract_alphabet()
-        self.fsmize()
+            if polar == "p":
+                self.grammar = self.ngramize_data(self.k, self.data)
+            self.fsmize()
 
 
     def generate_sample(self:PosStL, n:int=10, rep:bool=True) -> None:

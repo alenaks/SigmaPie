@@ -104,6 +104,22 @@ class TestGeneralLanguages(unittest.TestCase):
         self.assertFalse(old_polarity == l.check_polarity)
 
 
+    def test_change_polarity(self):
+        """ Tests the correctness of change_polarity. """
+        a = L(polar="n")
+        a.change_polarity(new_polarity="n")
+        self.assertTrue(a.check_polarity() == "n")
+        a.change_polarity()
+        self.assertFalse(a.check_polarity() == "n")
+
+        b = L()
+        old_polarity = b.check_polarity()
+        b.change_polarity()
+        self.assertTrue(b.check_polarity() != old_polarity)
+        
+        
+
+
 if __name__ == '__main__':
     unittest.main()
     

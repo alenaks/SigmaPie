@@ -10,20 +10,35 @@
    (at your option) any later version.
 """
 
+import sys, os
+sys.path.insert(0, os.path.abspath('..'))
+
 from itertools import product
-from .helper import *
+from PyKleene.helper import *
 
 class L(object):
     """
-    A general class for grammars and languages. Contains methods that are applicable
-    to all grammars in this package.
+    A general class for grammars and languages. Contains methods that are
+    applicable to all grammars in this package.
 
     Attributes:
-        polar ("p" or "n"): polarity of the grammar;
         alphabet (list): alphabet used in the language;
         grammar (list): the list of substructures;
         k (int): locality window;
-        data (list): input data.
+        data (list): input data;
+        edges (list): start- and end-symbols for the grammar;
+        polar ("p" or "n"): polarity of the grammar.
+
+    Methods:
+        extract_alphabet: extracts alphabet from data/grammar;
+        well_formed_ngram: checks if ngram is well-formed;
+        generate_all_ngrams: generates all possible well-formed ngrams
+            based on the given alphabet;
+        opposite_polarity: changes the polarity of the grammar to the opposite,
+            and returns the opposite grammar;
+        check_polarity: returns the polarity of the grammar;
+        change_polarity: changes the polarity of the grammar to the one
+            that is provided by the user.
     """
 
     def __init__(self, alphabet=None, grammar=None, k=2, data=None,
@@ -128,8 +143,7 @@ class L(object):
 
     def opposite_polarity(self, symbols):
         """
-        Rewrites grammar to the opposite and changes polarity
-        of the grammar.
+        Returns the grammar opposite to the one given.
 
         Arguments:
             symbols (list): alphabet, regular or tier.
@@ -137,9 +151,6 @@ class L(object):
         Returns:
             list: ngrams of the opposite polarity.
         """
-
-        if self.__polarity == "p": self.__polarity = "n"
-        elif self.__polarity == "n": self.__polarity = "p"
 
         all_ngrams = self.generate_all_ngrams(symbols, self.k)
         opposite = [i for i in all_ngrams if i not in self.grammar]
@@ -153,7 +164,7 @@ class L(object):
         else: return "n"
 
 
-    def change_polarity(self, new_polarity):
+    def change_polarity(self, new_polarity=None):
         """
         Changes the polarity of the grammar.
 
@@ -161,8 +172,13 @@ class L(object):
             new_polarity ("p" or "n"): the new value of the polarity.
         """
 
-        if new_polarity not in ["p", "n"]:
-            raise ValueError("The value of polarity should be either "
-                            "positive ('p') or negative ('n').")
-        self.__polarity = new_polarity
+        if new_polarity != None:
+            if new_polarity not in ["p", "n"]:
+                raise ValueError("The value of polarity should be either "
+                                "positive ('p') or negative ('n').")
+            self.__polarity = new_polarity
+        else:
+            if self.__polarity == "p": self.__polarity = "n"
+            elif self.__polarity == "n": self.__polarity = "p"
+            
     
