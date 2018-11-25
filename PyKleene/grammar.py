@@ -62,7 +62,6 @@ class L(object):
         CAUTION: if not all symbols were used in the data or grammar,
                 the result is not correct: update manually.
         """
-
         if self.alphabet == None:
             self.alphabet = []
         symbols = set(self.alphabet)
@@ -91,7 +90,6 @@ class L(object):
         Returns:
             bool: Tells whether the ngram is well-formed.
         """
-
         start, end = [], []
         for i in range(len(ngram)):
             if ngram[i] == self.edges[0]: start.append(i)
@@ -127,7 +125,6 @@ class L(object):
         Returns:
             list: generated ngrams
         """
-
         symb = symbols[:]
         if (self.edges[0] not in symb) and (self.edges[1] not in symb):
             symb += self.edges
@@ -151,7 +148,6 @@ class L(object):
         Returns:
             list: ngrams of the opposite polarity.
         """
-
         all_ngrams = self.generate_all_ngrams(symbols, self.k)
         opposite = [i for i in all_ngrams if i not in self.grammar]
 
@@ -171,7 +167,6 @@ class L(object):
         Arguments:
             new_polarity ("p" or "n"): the new value of the polarity.
         """
-
         if new_polarity != None:
             if new_polarity not in ["p", "n"]:
                 raise ValueError("The value of polarity should be either "
@@ -180,5 +175,3 @@ class L(object):
         else:
             if self.__polarity == "p": self.__polarity = "n"
             elif self.__polarity == "n": self.__polarity = "p"
-            
-    

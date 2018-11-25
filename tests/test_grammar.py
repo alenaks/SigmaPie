@@ -26,18 +26,18 @@ class TestGeneralLanguages(unittest.TestCase):
             edge-markers.
         """
         l = L()
-        self.assertTrue(l.well_formed_ngram("aba"))
-        self.assertTrue(l.well_formed_ngram(">ab"))
-        self.assertTrue(l.well_formed_ngram(">a<"))
-        self.assertTrue(l.well_formed_ngram("><"))
-        self.assertTrue(l.well_formed_ngram("b<"))
-        self.assertTrue(l.well_formed_ngram("aaaaa"))
+        self.assertTrue(l.well_formed_ngram(("a", "b", "a")))
+        self.assertTrue(l.well_formed_ngram((">", "a", "b")))
+        self.assertTrue(l.well_formed_ngram((">", "a", "<")))
+        self.assertTrue(l.well_formed_ngram((">", "<")))
+        self.assertTrue(l.well_formed_ngram(("b", "<")))
+        self.assertTrue(l.well_formed_ngram(("a", "a", "a", "a", "a")))
         
-        self.assertFalse(l.well_formed_ngram("a>"))
-        self.assertFalse(l.well_formed_ngram(">d<>"))
-        self.assertFalse(l.well_formed_ngram("a>a"))
-        self.assertFalse(l.well_formed_ngram(">>"))
-        self.assertFalse(l.well_formed_ngram("<"))
+        self.assertFalse(l.well_formed_ngram(("a", ">")))
+        self.assertFalse(l.well_formed_ngram(("?", "d", "<", ">")))
+        self.assertFalse(l.well_formed_ngram(("a", ">", "a")))
+        self.assertFalse(l.well_formed_ngram((">", ">")))
+        self.assertFalse(l.well_formed_ngram(("<")))
 
 
     def test_good_ngram_non_standard_edges(self):
@@ -47,16 +47,16 @@ class TestGeneralLanguages(unittest.TestCase):
         """
         l = L()
         l.edges=["$", "#"]
-        self.assertTrue(l.well_formed_ngram("$ab"))
-        self.assertTrue(l.well_formed_ngram("$a#"))
-        self.assertTrue(l.well_formed_ngram("$#"))
-        self.assertTrue(l.well_formed_ngram("b#"))
+        self.assertTrue(l.well_formed_ngram(("$", "a", "b")))
+        self.assertTrue(l.well_formed_ngram(("$", "a", "#")))
+        self.assertTrue(l.well_formed_ngram(("$", "#")))
+        self.assertTrue(l.well_formed_ngram(("b", "#")))
         
-        self.assertFalse(l.well_formed_ngram("a$"))
-        self.assertFalse(l.well_formed_ngram("$d#$"))
-        self.assertFalse(l.well_formed_ngram("a$a"))
-        self.assertFalse(l.well_formed_ngram("$$"))
-        self.assertFalse(l.well_formed_ngram("#"))
+        self.assertFalse(l.well_formed_ngram(("a", "$")))
+        self.assertFalse(l.well_formed_ngram(("$", "d", "#", "$")))
+        self.assertFalse(l.well_formed_ngram(("a", "$", "a")))
+        self.assertFalse(l.well_formed_ngram(("$", "$")))
+        self.assertFalse(l.well_formed_ngram(("#")))
         
 
     def test_ngram_gen(self):
