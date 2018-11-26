@@ -1,7 +1,7 @@
 #!/bin/python3
 
 """
-   A module with the unittests for the grammar module.
+   A module with the unittests for the SL module.
    Copyright (C) 2018  Alena Aksenova
 
    This program is free software; you can redistribute it and/or modify
