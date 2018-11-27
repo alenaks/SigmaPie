@@ -83,6 +83,35 @@ class TestFSM(unittest.TestCase):
         self.assertFalse(f.scan_sl(">>ba<<"))
         self.assertFalse(f.scan_sl(">>ababbab<<"))
 
+
+    def test_trim_fsm_2(self):
+        f = FSM(initial=">", final="<")
+        f.transitions = [((">",), "a", ("a",)), (("b",), "a", ("a",)),
+                         (("a",), "b", ("b",)), (("b",), "<", ("<",)),
+                         ((">",), "c", ("c",)), (("d",), "<", ("<",))]
+        goal = {((">",), "a", ("a",)), (("b",), "a", ("a",)),
+                (("a",), "b", ("b",)), (("b",), "<", ("<",))}
+        f.trim_fsm()
+        self.assertTrue(set(f.transitions) == goal)
+
+
+    def test_trim_fsm_3(self):
+        f = FSM(initial=">", final="<")
+        f.transitions = [((">", "a"), "b", ("a", "b")),
+                         (("a", "b"), "a", ("b", "a")),
+                         (("b", "a"), "b", ("a", "b")),
+                         (("a", "b"), "<", ("b", "<")),
+                         ((">", ">"), "a", (">", "a")),
+                         (("b", "<"), "<", ("<", "<")),
+                         ((">", "b"), "j", ("b", "j")),
+                         ((">", ">"), "j", (">", "j")),
+                         (("j", "k"), "o", ("k", "o"))]
+        goal = {((">", "a"), "b", ("a", "b")), (("a", "b"), "a", ("b", "a")),
+                (("b", "a"), "b", ("a", "b")), (("a", "b"), "<", ("b", "<")),
+                ((">", ">"), "a", (">", "a")), (("b", "<"), "<", ("<", "<"))}
+        f.trim_fsm()
+        self.assertTrue(set(f.transitions) == goal)
+
 if __name__ == '__main__':
     unittest.main()
     

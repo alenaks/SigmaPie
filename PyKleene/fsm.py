@@ -74,7 +74,62 @@ class FSM(object):
         return True
 
 
+    def trim_fsm(self):
+        """
+        This function trims useless transitions.
+        1. Finds the initial state and collects the set of states to which one
+           can come from that node and the nodes connected to it.
+        2. Changes direction of the transitions and runs algorithm again to
+           detect states from which one cannot get to the final state.
+        As the result, self.transitions only contains useful transitions.
+        """
+        if not self.transitions:
+            raise ValueError("Transtitions of the automaton must"
+                             " not be emtpy.")
+        can_start = self.accessible_states(self.initial)
+        self.transitions = [(i[2], i[1], i[0]) for i in can_start]
+        mirrored = self.accessible_states(self.final)
+        self.transitions = [(i[2], i[1], i[0]) for i in mirrored]
+        
 
+    def accessible_states(self, marker):
+        """
+        Finds accessible states.
+
+        Arguments:
+            marker (str): initial or final state.
+
+        Returns:
+            list: list of transitions that can be made from
+                the given initial or final state.
+        """
+        updated = self.transitions[:]
+        
+        # find initial/final transitions
+        reachable = []
+        for i in self.transitions:
+            if i[0][0] == i[0][-1] == marker:
+                reachable.append(i)
+                updated.remove(i)
+
+        # to keep copies that can be modified while looping
+        mod_updated = updated[:]
+        mod_reachable = []
+        first_time = True
+
+        # find transitions that can be reached
+        while mod_reachable != [] or first_time == True:
+            mod_reachable = []
+            first_time = False
+            for p in updated:
+                for s in reachable:
+                    if p[0] == s[2]:
+                        mod_reachable.append(p)
+                        mod_updated.remove(p)
+            updated = mod_updated[:]
+            reachable.extend(mod_reachable)
+
+        return reachable
 
 
 ########################################################################
@@ -186,63 +241,4 @@ class FSM(object):
 
 
 
-    def trim_fsm(self, markers=[">", "<"]):
-        """
-        This function trims useless states.
-        1. Finds the initial state and collects the set of states to which one
-           can come from that node and the nodes connected to it.
-        2. Changes direction of the transitions and runs algorithm again to
-           detect states drom which one cannot get to the final state.
-
-        Arguments:
-        -- self;
-        -- markers (optional): list of markers used in the grammar.
-
-        Results:
-        -- self.transitions only contains useful transitions.
-        """
-
-        if self.transitions:
-            can_start = self.__accessible_states(self.transitions, markers[0])
-            self.transitions = [(i[2], i[1], i[0]) for i in can_start]
-            mirrored = self.__accessible_states(self.transitions, markers[1])
-            useful_transitions = [(i[2], i[1], i[0]) for i in mirrored]
-            self.transitions = useful_transitions
-
-
-    def __accessible_states(self, transitions, marker):
-        """
-        Auxiliary function that finds accessible states.
-
-        Arguments:
-        -- self;
-        -- transitions: list of transitions;
-        -- markers: list of markers used in the grammar.
-
-        Returns:
-        -- reachable: list of states that are reachable from
-                      the initial state(s).
-        """
-
-        loop_trans, updated = self.transitions[:], self.transitions[:]
-
-        reachable:list = []  # find initial/final transitions
-        for i in self.transitions:
-            if i[0][0] == i[0][-1] and i[0][-1] == marker:
-                reachable.append(i)
-                loop_trans.remove(i)
-                updated.remove(i)
-        loop_reach = reachable[:]
-
-        previous_step:list = []  # loop while something is being detected
-        while previous_step != updated:
-            previous_step = updated[:]
-            for i in loop_trans:
-                for j in loop_reach:
-                    if j[-1] == i[0]:
-                        reachable.append(i)
-                        updated.remove(i)
-            loop_trans, loop_reach = updated[:], reachable[:]
-
-        return reachable
 
