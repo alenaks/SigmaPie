@@ -34,8 +34,7 @@ class L(object):
         well_formed_ngram: checks if ngram is well-formed;
         generate_all_ngrams: generates all possible well-formed ngrams
             based on the given alphabet;
-        opposite_polarity: changes the polarity of the grammar to the opposite,
-            and returns the opposite grammar;
+        opposite_polarity: returns the opposite grammar;
         check_polarity: returns the polarity of the grammar;
         change_polarity: changes the polarity of the grammar to the one
             that is provided by the user.

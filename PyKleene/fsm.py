@@ -20,6 +20,14 @@ class FSM(object):
         final (str): final symbol;
         transitions (list): triples of the form [prev_state,
             transition, next_state].
+
+    Methods:
+        sl_to_fsm: converts given SL grammar to FSM transitions;
+        scan_sl: scans a string with SL dependencies and tells
+            whether it is well-formed in the current FSM;
+        trim_fsm: removes useless transitions, i.e. the ones that
+            cannot be accessed from the initial state, and the ones
+            that do not lead to the final state.
     """
 
     def __init__(self, initial, final, transitions=None):
