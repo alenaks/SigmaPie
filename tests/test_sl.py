@@ -156,7 +156,49 @@ class TestSLLanguages(unittest.TestCase):
         sl.switch_polarity()
         self.assertTrue(set(sl.grammar)==gneg)
         self.assertTrue(sl.check_polarity() == "n")
-        
+
+
+    def test_clean_grammar_2_pos(self):
+        """ Tests if clean_grammar correctly cleans 2-local positive
+            SL grammar.
+        """
+        goal = {(">", "a"), ("b", "a"), ("a", "b"), ("b", "<")}
+        s = SL()
+        s.grammar = [(">", "a"), ("b", "a"), ("a", "b"), ("b", "<"),
+                     (">", "g"), ("f", "<"), ("t", "t")]
+        s.clean_grammar()
+        self.assertTrue(set(s.grammar) == goal)
+
+
+    def test_clean_grammar_2_neg(self):
+        """ Tests if clean_grammar correctly cleans 2-local negative
+            SL grammar.
+        """
+        goal = {(">", "<"), ("a", "<"), (">", "b"), ("b", "b"), ("a", "a")}
+        a = SL(polar="n")
+        a.alphabet = ["a", "b"]
+        a.grammar = [(">", "<"), ("a", "<"), (">", "b"), ("b", "b"),
+                     ("a", "a"), (">", "<"), ("b", "b")]
+        a.clean_grammar()
+        self.assertTrue(set(a.grammar) == goal)
+
+
+    def test_clean_grammar_3_pos(self):
+        """ Tests if clean_grammar correctly cleans 2-local positive
+            SL grammar.
+        """
+        goal = {('>', 'a', 'a'), ('>', 'b', 'b'), ('b', 'b', '<'),
+                ('b', '<', '<'), ('a', '<', '<'), ('>', '>', 'a'),
+                ('a', 'a', 'a'), ('a', 'a', '<'), ('>', '>', 'b'),
+                ('b', 'b', 'b')}
+        s = SL()
+        s.grammar = [('>', 'a', 'a'), ('>', 'b', 'b'), ('b', 'b', '<'),
+                     ('b', '<', '<'), ('a', '<', '<'), ('>', '>', 'a'),
+                     ('a', 'a', 'a'), ('a', 'a', '<'), ('>', '>', 'b'),
+                     ('b', 'b', 'b'), ('>', '>', 'f'), ('b', 'd', 'c')]
+        s.clean_grammar()
+        self.assertTrue(set(s.grammar) == goal)
+
 
 if __name__ == '__main__':
     unittest.main()

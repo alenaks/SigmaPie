@@ -237,20 +237,19 @@ class SL(L):
         self.change_polarity()
 
 
-####################################################################
-##    def clean(self) -> None:
-##        """
-##        Removes useless n-grams from the grammar. Useless ngrams are
-##        that can never be used in the language.
-##
-##        Arguments:
-##        -- self.
-##
-##        Results:
-##        -- self.fsm contains the FSM of the current grammar;
-##        -- self.grammar is being cleaned.
-##        """
-##
-##        self.fsmize()
-##        self.fsm.trim_fsm()
-##        self.grammar = self.build_ngrams(self.fsm.transitions)
+    def clean_grammar(self):
+        """ Removes useless ngrams from the grammar.
+            If negative, it just removes duplicates.
+            If positive, it detects bigrams to which one cannot get
+                from the initial symbol and from which one cannot get
+                to the final symbol, and removes them.
+        """
+        if not self.fsm.transitions:
+            self.fsmize()
+            
+        if self.check_polarity() == "n":
+            self.grammar = list(set(self.grammar))
+        elif self.check_polarity() == "p":
+            self.fsm.trim_fsm()
+            self.grammar = [j[0]+(j[1],) for j in self.fsm.transitions]
+            
