@@ -29,7 +29,7 @@ class SL(L):
         k (int): locality window;
         data (list): input data;
         edges (list): start- and end-symbols for the grammar;
-        polar ("p" or "n"): polarity of the grammar.
+        polar ("p" or "n"): polarity of the grammar;
         fsm (FSM): finite state machine that corresponds to the grammar.
 
     Methods:
@@ -51,7 +51,7 @@ class SL(L):
         opposite_polarity: returns the opposite grammar;
         check_polarity: returns the polarity of the grammar;
         change_polarity: changes the polarity of the grammar to the one
-            that is provided by the user;
+            that is provided by the user.
     """
 
     def __init__(self, alphabet=None, grammar=None, k=2, data=None,
