@@ -17,7 +17,7 @@ from random import choice
 from itertools import product
 from PyKleene.grammar import *
 from PyKleene.fsm import *
-from PyKleene.fsm_family import *
+#from PyKleene.fsm_family import *
 from PyKleene.helper import *
 
 class SP(L):
@@ -34,7 +34,8 @@ class SP(L):
         fsm (FSM): finite state machine that corresponds to the grammar.
 
     Methods:
-        ADD SP METHODS!!!
+        subsequences: extracts subsequences of the length k from
+            the input string;
         extract_alphabet: extracts alphabet from data/grammar;
         well_formed_ngram: checks if ngram is well-formed;
         generate_all_ngrams: generates all possible well-formed ngrams
