@@ -34,6 +34,7 @@ class SP(L):
         fsm (FSM): finite state machine that corresponds to the grammar.
 
     Methods:
+        MORE METHODS
         subsequences: extracts subsequences of the length k from
             the input string;
         extract_alphabet: extracts alphabet from data/grammar;
@@ -46,10 +47,10 @@ class SP(L):
             that is provided by the user.
     """
 
-    def __init__(self, alphabet=None, grammar=None, k=2, data=None,
-                 polar="p"):
-        """ Initializes the PosSL object. """
-        super().__init__(alphabet, grammar, k, data, polar)
+    def __init__(self, alphabet=None, grammar=None, k=2, data=None, polar="p"):
+        """ Initializes the SP object. """
+        super().__init__(alphabet, grammar, k, data)
+        self.__polarity = polar
         self.fsm = FSM(initial=None, final=None)
 
 
@@ -81,35 +82,46 @@ class SP(L):
             current_state = []
             
         return list(set([tuple(i) for i in result]))
+
+
+    def learn(self):
+        """
+        Learns possible subsequences of the given length.
+
+        Arguments:
+        -- self.
+
+        Results:
+        -- self.grammar is updated.
+        """
+
+        if not self.data:
+            raise ValueError("The data must be provided.")
+        if not self.alphabet:
+            raise ValueError("The alphabet must be provided.")
+        
+        self.grammar = []
+
+        for i in self.data:
+            for j in self.subsequences(i):
+                if j not in self.grammar:
+                    self.grammar.append(j)
+
+        if self.check_polarity() == "n":
+            self.grammar = self.opposite_polarity()
+
+
+    def opposite_polarity(self):
+        """ Returns the grammar opposite to the current one. """
+        all_ngrams = product(self.alphabet, repeat = self.k)
+        return [i for i in all_ngrams if i not in self.grammar]
+
                     
 
     
 #####################################################################
 ##
-##    def learn(self:PosStP) -> None:
-##        """
-##        Learns possible subsequences of the given length.
-##
-##        Arguments:
-##        -- self.
-##
-##        Results:
-##        -- self.grammar is updated.
-##        """
-##
-##        if not self.data:
-##            raise ValueError("The data is not provided")
-##
-##        self.grammar = []
-##        gr = []
-##
-##        for i in self.data:
-##            ss = self.subsequences(i)
-##            for j in ss:
-##                if j not in gr:
-##                    gr.append(j)
-##        for i in gr:
-##            self.grammar.append(tuple(i))
+
 ##
 ##
 ##    def fsmize(self:PosStP) -> None:

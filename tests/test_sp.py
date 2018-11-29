@@ -47,6 +47,31 @@ class TestSPLanguages(unittest.TestCase):
         self.assertTrue(set(sp.subsequences(str2)) == ssq2)
 
 
+    def test_learn_pos(self):
+        """ Tests learning of the positive grammar. """
+        data = ["abab", "abcde"]
+        goal = {tuple(i) for i in ["aba", "abb", "bab", "aab", "abc", "abd",
+                                   "abe", "acd", "ace", "ade", "bcd", "bce",
+                                   "bde", "cde"]}
+        sp = SP(k=3)
+        sp.data = data
+        sp.alphabet = ["a", "b", "c", "d", "e"]
+        sp.learn()
+        self.assertTrue(set(sp.grammar) == goal)
+
+
+    def test_learn_neg(self):
+        """ Tests learning of the negative grammar. """
+        data = ["aaaaabbbb", "abbbb", "aaab"]
+        goal = {tuple("ba")}
+        sp = SP(polar="n")
+        print(sp.check_polarity())
+        sp.data = data
+        sp.alphabet = ["b", "a"]
+        sp.learn()
+        self.assertTrue(set(sp.grammar) == goal)
+
+
 if __name__ == '__main__':
     unittest.main()
     
