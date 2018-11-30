@@ -35,6 +35,8 @@ class SP(L):
 
     Methods:
         MORE METHODS
+        learn: extracts allowed or prohibited subsequences from
+            the input data;
         subsequences: extracts subsequences of the length k from
             the input string;
         extract_alphabet: extracts alphabet from data/grammar;
@@ -195,23 +197,6 @@ class SP(L):
 ##        return self.fsm.run_all(w)
 ##
 ##
-##    def change_polarity(self:PosStP) -> None:
-##        """
-##        Changes polarity of the grammar.
-##
-##        Arguments:
-##        -- self.
-##
-##        Results:
-##        -- self.grammar is being switched to the opposite;
-##        -- self.__class__ is changed to 'NegSP'.
-##        """
-##
-##        if not self.alphabet:
-##            self.extract_alphabet()
-##        self.grammar = self.opposite_polarity()
-##        self.__class__ = NegSP
-##
 ##
 ##    def generate_item(self:PosStP) -> None:
 ##        """
@@ -239,20 +224,3 @@ class SP(L):
 ##                return string
 ##            else:
 ##                string += add
-##            
-##    
-##    def generate_paths(self:PosStP, rep:int) -> None:
-##        """
-##        Generates all possible permutations of the alphabet items
-##        of the desired length.
-##
-##        Arguments:
-##        -- self;
-##        -- rep: length of the generated sequences.
-##
-##        Returns:
-##        -- the list of generated sequences.
-##        
-##        """
-##        
-##        return product(self.alphabet, repeat=rep)

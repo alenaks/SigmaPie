@@ -71,6 +71,31 @@ class TestSPLanguages(unittest.TestCase):
         self.assertTrue(set(sp.grammar) == goal)
 
 
+    def test_change_polarity(self):
+        """ Tests change_polarity function """
+        sp1 = SP(polar="p")
+        sp1.change_polarity()
+        self.assertTrue(sp1.check_polarity() == "n")
+
+        sp2 = SP()
+        sp2.change_polarity("p")
+        sp2.change_polarity()
+        self.assertTrue(sp2.check_polarity() == "n")
+
+        sp3 = SP(polar="n")
+        sp3.change_polarity()
+        self.assertTrue(sp3.check_polarity() == "p")
+
+        sp4 = SP()
+        sp4.change_polarity("n")
+        sp4.change_polarity()
+        self.assertTrue(sp4.check_polarity() == "p")
+
+        sp5 = SP()
+        sp5.change_polarity("p")
+        self.assertTrue(sp5.check_polarity() == "p")
+        
+
 if __name__ == '__main__':
     unittest.main()
     
