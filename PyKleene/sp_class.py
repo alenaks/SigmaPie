@@ -49,8 +49,7 @@ class SP(L):
 
     def __init__(self, alphabet=None, grammar=None, k=2, data=None, polar="p"):
         """ Initializes the SP object. """
-        super().__init__(alphabet, grammar, k, data)
-        self.__polarity = polar
+        super().__init__(alphabet, grammar, k, data, polar=polar)
         self.fsm = FSM(initial=None, final=None)
 
 
@@ -99,9 +98,8 @@ class SP(L):
             raise ValueError("The data must be provided.")
         if not self.alphabet:
             raise ValueError("The alphabet must be provided.")
-        
-        self.grammar = []
 
+        self.grammar = []
         for i in self.data:
             for j in self.subsequences(i):
                 if j not in self.grammar:
@@ -258,93 +256,3 @@ class SP(L):
 ##        """
 ##        
 ##        return product(self.alphabet, repeat=rep)
-##
-##
-##
-##
-##
-##    def opposite_polarity(self:PosStP) -> list:
-##        """
-##        For a grammar with given polarity, returns set of ngrams
-##        of the opposite polarity.
-##
-##        Arguments:
-##        -- self.
-##
-##        Returns:
-##        -- a list of ngrams opposite to the ones given as input.
-##        """
-##
-##        opposite = []
-##        possib = self.generate_paths(self.k)
-##        for i in possib:
-##            if i not in self.grammar:
-##                opposite.append(i)
-##                
-##        return opposite
-##
-##
-##
-##class NegSP(PosSP):
-##    """ A class for negative strictly piecewise grammars.
-##
-##    Attributes:
-##    -- alphabet: the list of symbols used in the given language;
-##    -- grammar: the list of grammatical rules;
-##    -- k: the locality measure;
-##    -- data: the language data given as input;
-##    -- data_sample: the generated data sample;
-##    -- fsm: the finite state machine that corresponds to the given grammar.
-##    """
-##
-##    def learn(self:NegStP) -> None:
-##        """
-##        Learns possible subsequences of the given length.
-##
-##        Arguments:
-##        -- self.
-##
-##        Results:
-##        -- self.grammar is updated.
-##        """
-##
-##        if self.data:
-##            self.extract_alphabet()
-##            
-##        super().learn()
-##        self.grammar = self.opposite_polarity()
-##
-##
-##    def fsmize(self:PosStP) -> None:
-##        """
-##        Creates FSM family for the given SP grammar.
-##
-##        Arguments:
-##        -- self.
-##
-##        Results:
-##        -- fills self.fsm with the corresponding FSMFamily object.
-##        """
-##
-##        self.grammar = self.opposite_polarity()
-##        super().fsmize()
-##        self.grammar = self.opposite_polarity()
-##
-##
-##    def change_polarity(self:NegStP) -> None:
-##        """
-##        Changes polarity of the grammar.
-##
-##        Arguments:
-##        -- self.
-##
-##        Results:
-##        -- self.grammar is being switched to the opposite;
-##        -- self.__class__ is changed to 'PosSP'.
-##        """
-##
-##        if not self.alphabet:
-##            self.extract_alphabet()
-##        self.grammar = self.opposite_polarity()
-##        self.__class__ = NegSP
-##

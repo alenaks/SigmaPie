@@ -65,7 +65,6 @@ class TestSPLanguages(unittest.TestCase):
         data = ["aaaaabbbb", "abbbb", "aaab"]
         goal = {tuple("ba")}
         sp = SP(polar="n")
-        print(sp.check_polarity())
         sp.data = data
         sp.alphabet = ["b", "a"]
         sp.learn()
