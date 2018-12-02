@@ -34,11 +34,15 @@ class SP(L):
         fsm (FSM): finite state machine that corresponds to the grammar.
 
     Methods:
-        MORE METHODS
+        scan: tells whether a given string is well-formed;
         learn: extracts allowed or prohibited subsequences from
             the input data;
         subsequences: extracts subsequences of the length k from
             the input string;
+        fsmize: creates a corresponding FSM based on the
+            training sample;
+        generate_item: generates a well-formed string;
+        generate_sample: generates a sample of a given size;
         extract_alphabet: extracts alphabet from data/grammar;
         well_formed_ngram: checks if ngram is well-formed;
         generate_all_ngrams: generates all possible well-formed ngrams
