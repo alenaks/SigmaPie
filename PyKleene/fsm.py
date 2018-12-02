@@ -98,6 +98,31 @@ class FSM(object):
         self.transitions = [(i[2], i[1], i[0]) for i in can_start]
         mirrored = self.accessible_states(self.final)
         self.transitions = [(i[2], i[1], i[0]) for i in mirrored]
+
+
+    def scan_sp(self, string):
+        """ Runs the given sequence through the automaton.
+
+        Arguments:
+            string (str): string to run through the automaton.
+
+        Returns:
+            bool: True if input can be accepted by the automaton,
+                otherwise False.
+        """
+        state = 0
+        for s in string:
+            change = False
+            for t in self.transitions:
+                if (t[0] == state) and (t[1] == s):
+                    state = t[2]
+                    change = True
+                    break
+
+            if change == False:
+                return False
+
+        return True
         
 
     def accessible_states(self, marker):
@@ -189,29 +214,6 @@ class FSM(object):
 
 
     def sp_clean_template(self):
+        """ Removes transitions that were not accessed. """
         self.transitions = [i[:3] for i in self.transitions if i[3] == True]
 
-
-    def sp_pass_string(self, string):
-        """ Runs the given sequence through the automaton.
-
-        Arguments:
-            string (str): string to run through the automaton.
-
-        Returns:
-            bool: True if input can be accepted by the automaton,
-                otherwise False.
-        """
-        state = 0
-        for s in string:
-            change = False
-            for t in self.transitions:
-                if (t[0] == state) and (t[1] == s):
-                    state = t[2]
-                    change = True
-                    break
-
-            if change == False:
-                return False
-
-        return True

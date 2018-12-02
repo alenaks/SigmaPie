@@ -162,7 +162,6 @@ class SP(L):
         return self.fsm.run_all_fsm(string)
 
 ##
-##
 ##    def generate_sample(self:PosStP, n:int=10, rep:bool=False) -> None:
 ##        """
 ##        Generates a sample of the data of a given size.
@@ -187,8 +186,6 @@ class SP(L):
 ##
 ##        self.data_sample = list(set(sample))
 ##
-##
-
 ##
 ##
 ##

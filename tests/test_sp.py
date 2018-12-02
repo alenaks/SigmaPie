@@ -107,8 +107,14 @@ class TestSPLanguages(unittest.TestCase):
         sp.fsmize()
 
         self.assertTrue(sp.scan("aaaa"))
+        self.assertTrue(sp.scan("aaabbbbbb"))
+        self.assertTrue(sp.scan("baaaaaaabbbbb"))
+        self.assertTrue(sp.scan("a"))
+        self.assertTrue(sp.scan("b"))
 
         self.assertFalse(sp.scan("aaaabaabbbba"))
+        self.assertFalse(sp.scan("abababba"))
+        self.assertFalse(sp.scan("abbbbabbaababab"))
         
 
         

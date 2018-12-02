@@ -41,4 +41,4 @@ class FSMFamily(object):
             bool: True if the string is accepted by all the
                 fsms, otherwise False.
         """
-        return all([f.sp_pass_string(string) for f in self.family])
+        return all([f.scan_sp(string) for f in self.family])
