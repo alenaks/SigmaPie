@@ -115,9 +115,48 @@ class TestSPLanguages(unittest.TestCase):
         self.assertFalse(sp.scan("aaaabaabbbba"))
         self.assertFalse(sp.scan("abababba"))
         self.assertFalse(sp.scan("abbbbabbaababab"))
+
+
+    def test_generate_item(self):
+        """ Tests string generation """
+        sp = SP(polar="n")
+        sp.grammar = [tuple("aba")]
+        sp.k = 3
+        sp.extract_alphabet()
+        sp.fsmize()
+        
+        for i in range(30):
+            self.assertTrue(sp.scan(sp.generate_item()))
+
+
+    def test_generate_sample_pos(self):
+        """
+        Tests sample generation when the grammar
+        is positive.
+        """
+        sp = SP()
+        sp.grammar = [tuple(i) for i in ["ab", "ba", "bb"]]
+        sp.extract_alphabet()
+        sp.fsmize()
+
+        a = sp.generate_sample(n=10)
+        self.assertTrue(len(a) == 10)
         
 
-        
+    def test_generate_sample_neg(self):
+        """
+        Tests sample generation when the grammar
+        is negative.
+        """
+        sp = SP(polar="n")
+        sp.grammar = [tuple("aba")]
+        sp.k = 3
+        sp.extract_alphabet()
+        sp.fsmize()
+
+        a = sp.generate_sample(n=15, rep=False)
+        self.assertTrue(len(set(a)) == 15)
+
 
 if __name__ == '__main__':
     unittest.main()

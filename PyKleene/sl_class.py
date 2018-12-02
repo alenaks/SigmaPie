@@ -13,7 +13,6 @@
 import sys, os
 sys.path.insert(0, os.path.abspath('..'))
 
-import warnings
 from random import choice
 from PyKleene.helper import *
 from PyKleene.fsm import *
@@ -177,9 +176,6 @@ class SL(L):
 
         if rep == False:
             data = set(data)
-            warnings.warn("The grammar needs to be able to produce "
-                          "the requested number of strings",
-                          UserWarning)
             useless_loops = 0
             prev_len = len(data)
             while len(data) < n:

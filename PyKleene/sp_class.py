@@ -161,57 +161,58 @@ class SP(L):
 
         return self.fsm.run_all_fsm(string)
 
-##
-##    def generate_sample(self:PosStP, n:int=10, rep:bool=False) -> None:
-##        """
-##        Generates a sample of the data of a given size.
-##
-##        Arguments:
-##        -- self;
-##        -- n (optional): the number of examples, the default value is 10;
-##        -- rep (optional): allow (rep=True) or prohibit (rep=False)
-##               repetitions, the default value is False.
-##
-##        Results:
-##        -- self.data_sample is being generated.
-##        """
-##        
-##        sample = []
-##        for i in range(n):
-##            sample.append(self.generate_item())
-##
-##        if rep == False:
-##            while len(list(set(sample))) < n:
-##                sample.append(self.generate_item())
-##
-##        self.data_sample = list(set(sample))
-##
-##
-##
-##
-##    def generate_item(self:PosStP) -> None:
-##        """
-##        Generates an item well-formed with respect to
-##        a given grammar.
-##
-##        Arguments:
-##        -- self.
-##
-##        Returns:
-##        -- a well-formed string of a language.
-##        """
-##
-##        if not self.alphabet:
-##            self.extract_alphabet()
-##
-##        string = ""
-##        while True:
-##            options = []
-##            for i in self.alphabet:
-##                if self.scan(string+i):
-##                    options.append(i)
-##            add = choice(options + ["EOS"])
-##            if add == "EOS":
-##                return string
-##            else:
-##                string += add
+
+    def generate_item(self):
+        """ Generates a well-formed string with respect
+            to a given grammar.
+
+        Returns:
+            str: the generated string.
+        """
+        if not self.alphabet:
+            raise ValueError("The alphabet must be provided.")
+
+        string = ""
+        while True:
+            options = []
+            for i in self.alphabet:
+                if self.scan(string+i):
+                    options.append(i)
+            add = choice(options + ["EOS"])
+            if add == "EOS": return string
+            else: string += add
+
+
+    def generate_sample(self, n=10, rep=False, safe=True):
+        """ Generates data sample of desired length.
+
+        Arguments:
+            n (int): the number of examples to be generated,
+                the default value is 10;
+            rep (bool): allow (rep=True) or prohibit (rep=False)
+               repetitions, the default value is False;
+            safe (bool): automatically break out of infinite looops,
+                for example, when the grammar cannot generate the
+                required number of data items, and the repetitions
+                are set to False.
+
+        Returns:
+            list: a list of generated examples.
+        """
+        
+        sample = [self.generate_item() for i in range(n)]
+        if rep == False:
+            useless_loops = 0
+            sample = set(sample)
+            prev_len = len(sample)
+            while len(list(set(sample))) < n:
+                sample.add(self.generate_item())
+                if prev_len == len(sample): useless_loops += 1
+                else: useless_loops = 0
+
+                if safe == True and useless_loops > 100:
+                    print("The grammar cannot produce the requested number"
+                          " of strings.")
+                    break
+
+        return list(sample)
