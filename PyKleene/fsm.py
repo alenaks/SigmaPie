@@ -140,23 +140,20 @@ class FSM(object):
         return reachable
 
 
-########################################################################
-
-    def sp_template(self, seq, alphabet, k):
+    def sp_build_template(self, path, alphabet, k):
         """
-        Generates a template for a k-SP path.
+        Generates a template for the given k-SP path.
 
         Arguments:
-        -- self;
-        -- seq: path for which the template is being generated;
-        -- alphabet: list of all symbols of the grammar;
-        -- k: window of the grammar.
+            path (str): the sequence for which the template is generated;
+            alphabet (list): list of all symbols of the grammar;
+            k (int): window size of the grammar.
         """
 
         # creating the "sceleton" of the FSM
         for i in range(k-1):
             # boolean shows whether the transition was accessed
-            self.transitions.append([i, seq[i], i+1, False])
+            self.transitions.append([i, path[i], i+1, False])
 
         # adding non-final loops
         newtrans = []
@@ -172,24 +169,41 @@ class FSM(object):
         self.transitions += newtrans
 
 
-    def run_sp(self, w):
+    def sp_fill_template(self, sequence):
         """
-        Runs a word through an SP sequence automaton.
-        WARNING: SP automata only!
-            -- deterministic;
-            -- state 0 is the only initial state;
-            -- every state is final.
+        Runs the imput sequence through the SP automaton
+        and marks transitions if they were taken. Cleans
+        transitions that were not taken afterwards.
 
         Arguments:
-        -- self;
-        -- w: string to run through the automaton.
+            sequence (str): sequence of symbols that needs to be
+                passed through the automaton.
+        """
+        state = 0
+        for s in sequence:
+            for t in self.transitions:
+                if (t[0] == state) and (t[1] == s):
+                    state = t[2]
+                    t[3] = True
+                    break
+
+
+    def sp_clean_template(self):
+        self.transitions = [i[:3] for i in self.transitions if i[3] == True]
+
+
+    def sp_pass_string(self, string):
+        """ Runs the given sequence through the automaton.
+
+        Arguments:
+            string (str): string to run through the automaton.
 
         Returns:
-        -- True if w can be accepted by the automaton, otherwise False.
+            bool: True if input can be accepted by the automaton,
+                otherwise False.
         """
-
         state = 0
-        for s in w:
+        for s in string:
             change = False
             for t in self.transitions:
                 if (t[0] == state) and (t[1] == s):
@@ -201,52 +215,3 @@ class FSM(object):
                 return False
 
         return True
-
-
-    def run_learn_sp(self, w):
-        """
-        Runs a word through an SP sequence automaton, and marks transitions
-        if they were taken.
-        WARNING: SP automata only!
-            -- deterministic;
-            -- state 0 is the only initial state;
-            -- every state is final.
-
-        Arguments:
-        -- self;
-        -- w: string to run through the automaton.
-
-        Results:
-        -- Transitions that are taken are marked.
-        """
-
-        state = 0
-
-        for s in w:
-            for t in self.transitions:
-                if (t[0] == state) and (t[1] == s):
-                    state = t[2]
-                    t[3] = True
-                    break
-
-
-    def sp_clean(self):
-        """
-        Removes the "untouched" transitions from the automaton.
-
-        Attributes:
-        -- self.
-
-        Results:
-        -- "cleans" the list of the transitions.
-        """
-
-        new = []
-        for i in self.transitions:
-            if i[3] == True:
-                new.append(i[0:3])
-        self.transitions = new
-
-
-
-

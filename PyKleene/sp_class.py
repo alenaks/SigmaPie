@@ -17,7 +17,7 @@ from random import choice
 from itertools import product
 from PyKleene.grammar import *
 from PyKleene.fsm import *
-#from PyKleene.fsm_family import *
+from PyKleene.fsm_family import *
 from PyKleene.helper import *
 
 class SP(L):
@@ -52,7 +52,7 @@ class SP(L):
     def __init__(self, alphabet=None, grammar=None, k=2, data=None, polar="p"):
         """ Initializes the SP object. """
         super().__init__(alphabet, grammar, k, data, polar=polar)
-        self.fsm = FSM(initial=None, final=None)
+        self.fsm = FSMFamily()
 
 
     def subsequences(self, string):
@@ -95,7 +95,6 @@ class SP(L):
         Results:
         -- self.grammar is updated.
         """
-
         if not self.data:
             raise ValueError("The data must be provided.")
         if not self.alphabet:
@@ -116,42 +115,52 @@ class SP(L):
         all_ngrams = product(self.alphabet, repeat = self.k)
         return [i for i in all_ngrams if i not in self.grammar]
 
-                    
 
-    
-#####################################################################
-##
+    def fsmize(self):
+        """
+        Creates FSM family for the given SP grammar by passing every
+        encountered subsequence through the corresponding automaton.
+        """
+        self.fsm = FSMFamily()
 
-##
-##
-##    def fsmize(self:PosStP) -> None:
-##        """
-##        Creates FSM family for the given SP grammar.
-##
-##        Arguments:
-##        -- self.
-##
-##        Results:
-##        -- fills self.fsm with the corresponding FSMFamily object.
-##        """
-##
-##        self.fsm = FSMFamily()
-##
-##        if not self.grammar:
-##            self.learn()
-##
-##        seq = self.generate_paths(self.k-1)
-##        for i in seq:
-##            f = FiniteStateMachine()
-##            f.sp_template(i, self.alphabet, self.k)
-##            self.fsm.family.append(f)
-##
-##        for f in self.fsm.family:
-##            for d in self.grammar:
-##                f.run_learn_sp(d)
-##
-##        for f in self.fsm.family:
-##            f.sp_clean()
+        if not self.grammar:
+            self.learn()
+
+        if self.check_polarity() == "p":
+            data_subseq = self.grammar[:]
+        else: data_subseq = self.opposite_polarity()
+
+        # create a family of templates in fsm attribute
+        seq = product(self.alphabet, repeat = self.k-1)
+        for path in seq:
+            f = FSM(initial=None, final=None)
+            f.sp_build_template(path, self.alphabet, self.k)
+            self.fsm.family.append(f)
+
+        # run the input/grammar through the fsm family
+        for f in self.fsm.family:
+            for r in data_subseq:
+                f.sp_fill_template(r)
+
+        # clean the untouched transitions
+        for f in self.fsm.family:
+            f.sp_clean_template()
+
+
+    def scan(self, string):
+        """ Tells if the input string is well-formed.
+
+        Arguments:
+            string (str): string to be scanned.
+
+        Returns:
+            bool: True is well-formed, otherwise False.
+        """
+        if self.fsm == None:
+            self.fsmize()
+
+        return self.fsm.run_all_fsm(string)
+
 ##
 ##
 ##    def generate_sample(self:PosStP, n:int=10, rep:bool=False) -> None:
@@ -179,22 +188,7 @@ class SP(L):
 ##        self.data_sample = list(set(sample))
 ##
 ##
-##    def scan(self:PosStP, w:str) -> None:
-##        """
-##        Accepts of rejects the given string.
-##
-##        Arguments:
-##        -- self;
-##        -- w: string to be checked.
-##
-##        Returns:
-##        -- boolean depending on well-formedness of the string.
-##        """
-##        
-##        if self.fsm == None:
-##            self.fsmize()
-##
-##        return self.fsm.run_all(w)
+
 ##
 ##
 ##

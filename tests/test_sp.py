@@ -94,6 +94,23 @@ class TestSPLanguages(unittest.TestCase):
         sp5 = SP()
         sp5.change_polarity("p")
         self.assertTrue(sp5.check_polarity() == "p")
+
+
+    def test_scan_neg(self):
+        """ Tests if automata correctly recognize illicit
+            substructures.
+        """
+        sp = SP(polar="n")
+        sp.grammar = [tuple("aba")]
+        sp.k = 3
+        sp.extract_alphabet()
+        sp.fsmize()
+
+        self.assertTrue(sp.scan("aaaa"))
+
+        self.assertFalse(sp.scan("aaaabaabbbba"))
+        
+
         
 
 if __name__ == '__main__':
