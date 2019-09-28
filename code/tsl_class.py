@@ -11,10 +11,10 @@
 """
 
 import sys, os
-sys.path.insert(0, os.path.abspath('..'))
+#sys.path.insert(0, os.path.abspath('..'))
 
 from random import choice, randint
-from PyKleene.sl_class import *
+from sl_class import *
 
 
 class TSL(SL):

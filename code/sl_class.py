@@ -11,12 +11,12 @@
 """
 
 import sys, os
-sys.path.insert(0, os.path.abspath('..'))
+#sys.path.insert(0, os.path.abspath('..'))
 
 from random import choice
-from PyKleene.helper import *
-from PyKleene.fsm import *
-from PyKleene.grammar import *
+from helper import *
+from fsm import *
+from grammar import *
 
 class SL(L):
     """

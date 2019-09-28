@@ -11,10 +11,10 @@
 """
 
 import sys, os
-sys.path.insert(0, os.path.abspath('..'))
+#sys.path.insert(0, os.path.abspath('..'))
 
 from itertools import product
-from PyKleene.helper import *
+from helper import *
 
 class L(object):
     """

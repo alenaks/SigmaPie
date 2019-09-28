@@ -2,7 +2,7 @@
 
 """
    A module with the unittests for the SL module.
-   Copyright (C) 2018  Alena Aksenova
+   Copyright (C) 2019  Alena Aksenova
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -11,10 +11,10 @@
 """
 
 import sys, os
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.join(os.path.abspath('..'), 'code'))
 
 import unittest
-from PyKleene.sl_class import *
+from sl_class import *
 
 
 class TestSLLanguages(unittest.TestCase):

@@ -11,14 +11,14 @@
 """
 
 import sys, os
-sys.path.insert(0, os.path.abspath('..'))
+#sys.path.insert(0, os.path.abspath('..'))
 
 from random import choice
 from itertools import product
-from PyKleene.grammar import *
-from PyKleene.fsm import *
-from PyKleene.fsm_family import *
-from PyKleene.helper import *
+from grammar import *
+from fsm import *
+from fsm_family import *
+from helper import *
 
 class SP(L):
     """
