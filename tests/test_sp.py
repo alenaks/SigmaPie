@@ -154,7 +154,7 @@ class TestSPLanguages(unittest.TestCase):
         sp.extract_alphabet()
         sp.fsmize()
 
-        a = sp.generate_sample(n=15, rep=False)
+        a = sp.generate_sample(n=15, repeat=False)
         self.assertTrue(len(set(a)) == 15)
 
 

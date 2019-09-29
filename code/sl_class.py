@@ -59,10 +59,9 @@ class SL(L):
 
     def learn(self):
         """ Extracts SL grammar from the given data. """
-        if self.data:
-            self.grammar = self.ngramize_data()
-            if self.check_polarity() == "n":
-                self.grammar = self.opposite_polarity(self.alphabet)
+        self.grammar = self.ngramize_data()
+        if self.check_polarity() == "n":
+            self.grammar = self.opposite_polarity(self.alphabet)
 
                 
     def annotate_string(self, string):
@@ -146,14 +145,14 @@ class SL(L):
         return self.fsm.scan_sl(string)
 
 
-    def generate_sample(self, n=10, rep=True, safe=True):
+    def generate_sample(self, n=10, repeat=True, safe=True):
         """
         Generates a data sample of the required size, with or without
         repetitions.
 
         Arguments:
             n (int): the number of examples to be generated;
-            rep (bool): allow (rep=True) or prohibit (rep=False)
+            repeat (bool): allow (rep=True) or prohibit (rep=False)
                repetitions of the same data items;
             safe (bool): automatically break out of infinite looops,
                 for example, when the grammar cannot generate the
@@ -171,7 +170,7 @@ class SL(L):
         statemap = self.state_map()
         data = [self.generate_item(statemap) for i in range(n)]
 
-        if rep == False:
+        if repeat == False:
             data = set(data)
             useless_loops = 0
             prev_len = len(data)

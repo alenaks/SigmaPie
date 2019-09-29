@@ -191,13 +191,13 @@ class SP(L):
             else: string += add
 
 
-    def generate_sample(self, n=10, rep=False, safe=True):
+    def generate_sample(self, n=10, repeat=False, safe=True):
         """ Generates data sample of desired length.
 
         Arguments:
             n (int): the number of examples to be generated,
                 the default value is 10;
-            rep (bool): allow (rep=True) or prohibit (rep=False)
+            repeat (bool): allow (rep=True) or prohibit (rep=False)
                repetitions, the default value is False;
             safe (bool): automatically break out of infinite loops,
                 for example, when the grammar cannot generate the
@@ -209,7 +209,7 @@ class SP(L):
         """
         
         sample = [self.generate_item() for i in range(n)]
-        if rep == False:
+        if repeat == False:
             useless_loops = 0
             sample = set(sample)
             prev_len = len(sample)

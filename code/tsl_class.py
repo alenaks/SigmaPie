@@ -27,8 +27,8 @@ class TSL(SL):
         polar ("p" or "n"): polarity of the grammar;
         fsm (FSM): finite state machine that corresponds to the grammar;
         tier (list): list of tier symbols.
-
-    Methods:
+ 
+i   Methods:
         learn: extracts tier and tier-based strictly local grammar;
         learn_tier: extracts the list of tier symbols;
         tier_image: returns tier image of the given string;
