@@ -44,7 +44,7 @@ class SP(L):
         generate_all_ngrams(): generates all possible well-formed ngrams
             based on the given alphabet;
         check_polarity(): returns the polarity of the grammar;
-        change_polarity(): changes the polarity of the grammar to the one
+        switch_polarity(): changes the polarity of the grammar to the one
             that is provided by the user.
     """
 
@@ -224,3 +224,19 @@ class SP(L):
                     break
 
         return list(sample)
+
+
+    def switch_polarity(self, new_polarity=None):
+        """
+        Changes the polarity of the grammar.
+
+        Arguments:
+            new_polarity ("p" or "n"): the new value of the polarity.
+        """
+
+        old_value = self.check_polarity()
+        self.change_polarity(new_polarity)
+        new_value = self.check_polarity()
+
+        if old_value != new_value:
+        	self.grammar = self.opposite_polarity()

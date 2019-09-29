@@ -2,16 +2,13 @@
 
 """
    A class of Tier-based Strictly Local Grammars.
-   Copyright (C) 2018  Alena Aksenova
+   Copyright (C) 2019  Alena Aksenova
    
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 3 of the License, or
    (at your option) any later version.
 """
-
-import sys, os
-#sys.path.insert(0, os.path.abspath('..'))
 
 from random import choice, randint
 from sl_class import *
@@ -48,9 +45,7 @@ class TSL(SL):
         generate_all_ngrams: generates all possible well-formed ngrams
             based on the given alphabet;
         opposite_polarity: returns the opposite grammar;
-        check_polarity: returns the polarity of the grammar;
-        change_polarity: changes the polarity of the grammar to the one
-            that is provided by the user.
+        check_polarity: returns the polarity of the grammar.
     """
     
     def __init__(self, alphabet=None, grammar=None, k=2, data=None,
