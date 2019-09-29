@@ -2,15 +2,13 @@
 
 """
    A class of Families of Finite State Machines.
-   Copyright (C) 2018  Alena Aksenova
+   Copyright (C) 2019  Alena Aksenova
    
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 3 of the License, or
    (at your option) any later version.
 """
-import sys, os
-#sys.path.insert(0, os.path.abspath('..'))
 
 from fsm import *
 

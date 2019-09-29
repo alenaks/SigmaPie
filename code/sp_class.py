@@ -2,7 +2,7 @@
 
 """
    A class of Strictly Piecewise Grammars.
-   Copyright (C) 2018  Alena Aksenova
+   Copyright (C) 2019  Alena Aksenova
    
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -10,11 +10,9 @@
    (at your option) any later version.
 """
 
-import sys, os
-#sys.path.insert(0, os.path.abspath('..'))
-
 from random import choice
 from itertools import product
+
 from grammar import *
 from fsm import *
 from fsm_family import *
@@ -34,22 +32,19 @@ class SP(L):
         fsm (FSM): finite state machine that corresponds to the grammar.
 
     Methods:
-        scan: tells whether a given string is well-formed;
-        learn: extracts allowed or prohibited subsequences from
+        scan(string): tells whether a given string is well-formed;
+        learn(): extracts allowed or prohibited subsequences from
             the input data;
-        subsequences: extracts subsequences of the length k from
+        subsequences(string): extracts subsequences of the length k from
             the input string;
-        fsmize: creates a corresponding FSM based on the
+        fsmize(): creates a corresponding FSM based on the
             training sample;
-        generate_item: generates a well-formed string;
-        generate_sample: generates a sample of a given size;
-        extract_alphabet: extracts alphabet from data/grammar;
-        well_formed_ngram: checks if ngram is well-formed;
-        generate_all_ngrams: generates all possible well-formed ngrams
+        generate_sample(n, repeat, safe): generates a sample of a given size;
+        extract_alphabet(): extracts alphabet from data/grammar;
+        generate_all_ngrams(): generates all possible well-formed ngrams
             based on the given alphabet;
-        opposite_polarity: returns the opposite grammar;
-        check_polarity: returns the polarity of the grammar;
-        change_polarity: changes the polarity of the grammar to the one
+        check_polarity(): returns the polarity of the grammar;
+        change_polarity(): changes the polarity of the grammar to the one
             that is provided by the user.
     """
 
@@ -160,10 +155,19 @@ class SP(L):
         Returns:
             bool: True is well-formed, otherwise False.
         """
-        if self.fsm == None:
-            self.fsmize()
 
-        return self.fsm.run_all_fsm(string)
+        subseq = self.subsequences(string)
+        found_in_G = [(s in self.grammar) for s in subseq]
+        
+        if self.check_polarity == "p":
+        	return all(found_in_G)
+        else:
+        	return not any(found_in_G)
+
+        #if self.fsm == None:
+        #    self.fsmize()
+
+        #return self.fsm.run_all_fsm(string)
 
 
     def generate_item(self):
@@ -195,7 +199,7 @@ class SP(L):
                 the default value is 10;
             rep (bool): allow (rep=True) or prohibit (rep=False)
                repetitions, the default value is False;
-            safe (bool): automatically break out of infinite looops,
+            safe (bool): automatically break out of infinite loops,
                 for example, when the grammar cannot generate the
                 required number of data items, and the repetitions
                 are set to False.
