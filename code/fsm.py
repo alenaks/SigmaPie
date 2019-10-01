@@ -31,9 +31,10 @@ class FSM(object):
     """
 
     def __init__(self, initial, final, transitions=None):
-        
-        if transitions == None: self.transitions = []
-        else: self.transitions = transitions
+        if transitions == None:
+            self.transitions = []
+        else:
+            self.transitions = transitions
 
         self.initial = initial
         self.final = final
@@ -46,7 +47,6 @@ class FSM(object):
         Arguments:
             grammar (list): SL ngrams.
         """
-
         if not grammar:
             raise ValueError("The grammar must not be empty.")
         self.transitions = [(i[:-1], i[-1], i[1:]) for i in grammar]
@@ -54,31 +54,31 @@ class FSM(object):
 
     def scan_sl(self, string):
         """
-        Scans the given string with SL dependencies.
+        Scans a given string using the learned SL grammar.
 
         Arguments:
             string (str): a string that needs to be scanned.
 
         Returns:
-            bool: tells whether the string is well-formed.
+            bool: well-formedness value of the string.
         """
-        if len(string) < 2:
-            raise ValueError("The string is too short.")
         if string[0] != self.initial or string[-1] != self.final:
-            raise ValueError("The string is not annotated with the delimeters.")
+            raise ValueError("The string is not annotated with "
+                             "the delimeters.")
         if not self.transitions:
-            raise ValueError("The transitions are empty.")
+            raise ValueError("The transitions are empty. Extract the"
+                             " transitions using grammar.fsmize().")
 
-        k = len(self.transitions[0][0])+1
-        for i in range(k-1, len(string)):
+        k = len(self.transitions[0][0]) + 1
+        for i in range(k - 1, len(string)):
             move_to_next = []
             for j in self.transitions:
-                if string[i-k+1:i+1] == "".join(j[0])+j[1]:
-                    move_to_next.append(True)
-                else:
-                    move_to_next.append(False)
+                can_read = string[(i - k + 1):(i + 1)] == "".join(j[0]) + j[1]
+                move_to_next.append(can_read)
+
             if not any(move_to_next):
                 return False
+                
         return True
 
 

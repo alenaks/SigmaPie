@@ -28,38 +28,47 @@ class TSL(SL):
         fsm (FSM): finite state machine that corresponds to the grammar;
         tier (list): list of tier symbols.
  
-i   Methods:
-        learn: extracts tier and tier-based strictly local grammar;
+    Methods:
+        learn: extracts tier-based strictly local grammar;
         learn_tier: extracts the list of tier symbols;
-        tier_image: returns tier image of the given string;
-        annotate_string: appends to the string required number of
-            start and end symbols;
-        ngramize_data: returns a list of ngrams based on the given data;
+        tier_image(string): returns tier image of the given string;
+        annotate_string(string): adds start and end symbols to the 
+            given string;
+        ngramize_data: returns a list of ngrams used in the given data;
         fsmize: create a FSM that corresponds to the given grammar;
-        scan: scan the string and tell whether it's well-formed;
-        generate_sample: generate data sample for the given SL grammar;
+        scan(string): scan the string and tell whether it's well-formed;
+        generate_sample(n, repeat, safe): generates `n` strings for 
+            the given SL grammar, contains no duplicats if `repeat` is
+            set to False, detects if the grammar cannot generate the
+            desired number of strings if `safe` is set to True;
+        clean_grammar: removes useless ngrams from the grammar, i.e.
+            the ones that cannot be used in any string of the language;
+        extract_alphabet: extracts alphabet from data/grammar;
+        generate_all_ngrams(alphabet, k): generates all `k`-long ngrams
+            based on the given `alphabet`;
+        opposite_polarity(alphabet): returns the opposite grammar for 
+            the given `alphabet` and the locality of the grammar;
+        check_polarity: returns the polarity of the grammar;
         switch_polarity: rewrites grammar to the opposite, and changes
             the polarity of the grammar;
-        extract_alphabet: extracts alphabet from data/grammar;
-        well_formed_ngram: checks if ngram is well-formed;
-        generate_all_ngrams: generates all possible well-formed ngrams
-            based on the given alphabet;
-        opposite_polarity: returns the opposite grammar;
-        check_polarity: returns the polarity of the grammar.
+        change_polarity(new_polarity): changes the polarity of the 
+            grammar either to `new_polarity` if one is given, or to
+            the opposite than before (does not change the grammar).
     """
     
     def __init__(self, alphabet=None, grammar=None, k=2, data=None,
                  edges=[">", "<"], polar="p", tier=None):
         """ Initializes the TSL object. """
-        
         super().__init__(alphabet, grammar, k, data, edges, polar)
         self.tier = tier
         self.fsm = FSM(initial=self.edges[0], final=self.edges[1])
 
 
     def learn(self):
-        """ Updates grammar attribute based on the given data. """
-
+        """ 
+        Learns tier and finds attested (if positive) or unattested
+        (if negative) ngrams of the tier images of the data. 
+        """
         if not self.alphabet:
             raise ValueError("Alphabet cannot be empty.")
         if not self.data:
@@ -73,17 +82,17 @@ i   Methods:
             self.grammar = self.opposite_polarity(self.tier)
             
 
-    def learn_tier(self) -> None:
+    def learn_tier(self):
         """
         This function determines which of the symbols used in
         the language are tier symbols, algorithm by Jardine &
         McMullin (2017). Updates tier attribute.
         """
         self.tier = self.alphabet[:]
-
         ngrams = self.ngramize_data()
-        ngrams_less = TSL(data=self.data, k=self.k-1).ngramize_data()
-        ngrams_more = TSL(data=self.data, k=self.k+1).ngramize_data()
+
+        ngrams_less = TSL(data=self.data, k=(self.k - 1)).ngramize_data()
+        ngrams_more = TSL(data=self.data, k=(self.k + 1)).ngramize_data()
 
         for symbol in self.tier:
             if self.test_insert(symbol, ngrams, ngrams_less) and \
@@ -111,15 +120,14 @@ i   Methods:
                 new = small[:i] + (symbol,) + small[i:]
                 if self.well_formed_ngram(new):
                     extension.append(new)
-                    
-        if set(extension).issubset(set(ngrams)): return True
-        else: return False
+
+        return set(extension).issubset(set(ngrams))
 
 
     def test_remove(self, symbol, ngrams, ngrams_more):
         """
-        Tier presense test #2. For every (n+1)-gram of the type ('x','S','y'),
-        there must be an n-gram of the type ('x', 'y').
+        Tier presense test #2. For every (n+1)-gram of the type 
+        ('x','S','y'), there must be an n-gram of the type ('x', 'y').
 
         Arguments:
             symbol (str): the symbol that is currently being tested;
@@ -138,8 +146,7 @@ i   Methods:
                         if self.well_formed_ngram(new):
                             extension.append(new)
 
-        if set(extension).issubset(set(ngrams)): return True
-        else: return False
+        return set(extension).issubset(set(ngrams))
 
 
     def tier_image(self, string):
@@ -147,35 +154,29 @@ i   Methods:
         Function that returns a tier image of the input string.
 
         Arguments:
-            string (str): string tier image of which needs to
-                be obtained.
+            string (str): string that needs to be processed.
         
         Returns:
             str: tier image of the input string.
         """
-        new = ""
-        for i in string:
-            if i in self.tier:
-                new += i
-        return new
+        return "".join(i for i in string if i in self.tier)
 
 
     def fsmize(self):
         """ Builds FSM corresponding to the given grammar and saves in
             it the fsm attribute.
         """
-        if self.grammar:
-            if self.check_polarity() == "p":
-                self.fsm.sl_to_fsm(self.grammar)
-            else:
-                if self.tier:
-                    opposite = self.opposite_polarity(self.tier)
-                    self.fsm.sl_to_fsm(opposite)
-                else:
-                    raise ValueError("The tier is not learned yet,"
-                                     " or the tier is empty.")
+        if not self.grammar:
+            raise(IndexError("The grammar must not be empty."))
+        if not self.tier:
+            raise ValueError("The tier is not extracted or empty. "
+                             "Switch to SL or use `grammar.learn()`.")
+
+        if self.check_polarity() == "p":
+            self.fsm.sl_to_fsm(self.grammar)
         else:
-            raise(IndexError("The grammar is not provided."))
+            opposite = self.opposite_polarity(self.tier)
+            self.fsm.sl_to_fsm(opposite)
 
 
     def switch_polarity(self):
@@ -183,16 +184,16 @@ i   Methods:
             grammar to the opposite one.
         """
         if not self.tier:
-            raise ValueError("Either the language is SL, or"
-                             " tier is not extracted yet.")
+            raise ValueError("Either the language is SL, or the tier "
+                             "is not extracted, use `grammar.learn()`.")
+
         self.grammar = self.opposite_polarity(self.tier)
         self.change_polarity()
         
 
     def generate_sample(self, n=10, repeat=True, safe=True):
         """
-        Generates a data sample of the required size, with or without
-        repetitions.
+        Generates n well-formed strings, with or without repetitions.
 
         Arguments:
             n (int): the number of examples to be generated;
@@ -208,13 +209,16 @@ i   Methods:
         """
         if not self.alphabet:
             raise ValueError("Alphabet cannot be empty.")
+        if not self.tier:
+            raise ValueError("Either the language is SL, or the tier "
+                             "is not extracted, use `grammar.learn()`.")        
         if not self.fsm.transitions:
             self.fsmize()
 
         statemap = self.state_map()
         data = [self.generate_item() for i in range(n)]
 
-        if repeat == False:
+        if not repeat:
             data = set(data)
             useless_loops = 0
             prev_len = len(data)
@@ -241,46 +245,54 @@ i   Methods:
         if not self.fsm.transitions:
             self.fsmize()
 
-        tier_seq = self.annotate_string(super().generate_item(self.state_map()))
+        statemap = self.state_map()
+        if any([len(statemap[x]) for x in statemap]) == 0:
+            raise(ValueError("There are ngrams in the grammar that are"
+                            " not leading anywhere. Clean the grammar "
+                            " or run `grammar.clean_grammar()`."))
+
+        tier_seq = self.annotate_string(super().generate_item(statemap))
         ind = [x for x in range(len(tier_seq)) if tier_seq[x] not in self.edges]
         if not ind:
             tier_items = []
         else:
-            tier_items = list(tier_seq[ind[0]:(ind[-1]+1)])
+            tier_items = list(tier_seq[ind[0]:(ind[-1] + 1)])
+
         free_symb = list(set(self.alphabet).difference(set(self.tier)))
         
-        new_string = self.edges[0]*(self.k-1)
-        for i in range(self.k+1):
-            if randint(0,1) == 1:
+        new_string = self.edges[0] * (self.k - 1)
+        for i in range(self.k + 1):
+            if randint(0, 1):
                 new_string += choice(free_symb)
 
-        if tier_items:
-            for item in tier_items:
-                new_string += item
-                for i in range(self.k+1):
-                    if randint(0,1) == 1:
-                        new_string += choice(free_symb)
+        if not tier_items:
+            return "".join([i for i in new_string if i not in self.edges])
 
-        new_string = "".join([i for i in new_string if i not in self.edges])
-       
-        return new_string
+        for item in tier_items:
+            new_string += item
+            for i in range(self.k + 1):
+                if randint(0, 1):
+                    new_string += choice(free_symb)
+
+        return "".join([i for i in new_string if i not in self.edges])
 
 
     def state_map(self):
         """
-        Generates a dictionary of possible transitions in the given FSM.
- 
-        Returns:
-            dict: dictionary of the form
-                {"previous_symbols":[list of possible next symbols]}.
-        """
+        Generates a dictionary of possible transitions in the FSM.
 
+        Returns:
+            dict: the dictionary of the form
+                {"keys":[list of possible next symbols]}, where 
+                keys are (k-1)-long strings.
+        """
         if self.fsm is None:
             self.fsmize()
-            
-        smap = {}
+
         local_alphabet = self.tier[:] + self.edges[:]
-        poss = product(local_alphabet, repeat=self.k-1)
+        poss = product(local_alphabet, repeat=(self.k - 1))
+
+        smap = {}
         for i in poss:
             for j in self.fsm.transitions:
                 if j[0] == i:
@@ -292,19 +304,20 @@ i   Methods:
         return smap
 
 
-
     def scan(self, string):
         """
-        Function that checks if the given string can be generated by the grammar.
+        Checks if the given string is well-formed with respect
+        to the given grammar.
 
         Arguments:
             string (str): the string that needs to be evaluated.
 
         Returns:
-	        bool: True if the string is well-formed, otherwise False.
+            bool: well-formedness value of a string.
         """
         tier_img = self.annotate_string(self.tier_image(string))
         matches = [(n in self.grammar) for n in self.ngramize_item(tier_img)]
+        
         if self.check_polarity() == "p":
         	return all(matches)
         else:

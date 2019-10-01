@@ -21,38 +21,42 @@ class SL(L):
 
     Attributes:
         alphabet (list): alphabet used in the language;
-        grammar (list): the list of substructures;
+        grammar (list): collection of ngrams;
         k (int): locality window;
         data (list): input data;
         edges (list): start- and end-symbols for the grammar;
         polar ("p" or "n"): polarity of the grammar;
-        fsm (FSM): finite state machine that corresponds to the grammar.
+        fsm (FSM): corresponding finite state machine.
 
     Methods:
         learn: extracts strictly local grammar;
-        annotate_string: appends to the string required number of
-            start and end symbols;
-        ngramize_data: returns a list of ngrams based on the given data;
+        annotate_string(string): adds start and end symbols to the 
+            given string;
+        ngramize_data: returns a list of ngrams used in the given data;
         fsmize: create a FSM that corresponds to the given grammar;
-        scan: scan the string and tell whether it's well-formed;
-        generate_sample: generate data sample for the given SL grammar;
-        switch_polarity: rewrites grammar to the opposite, and changes
-            the polarity of the grammar;
+        scan(string): scan the string and tell whether it's well-formed;
+        generate_sample(n, repeat, safe): generates `n` strings for 
+            the given SL grammar, contains no duplicats if `repeat` is
+            set to False, detects if the grammar cannot generate the
+            desired number of strings if `safe` is set to True;
         clean_grammar: removes useless ngrams from the grammar, i.e.
             the ones that cannot be used in any string of the language;
         extract_alphabet: extracts alphabet from data/grammar;
-        well_formed_ngram: checks if ngram is well-formed;
-        generate_all_ngrams: generates all possible well-formed ngrams
-            based on the given alphabet;
-        opposite_polarity: returns the opposite grammar;
+        generate_all_ngrams(alphabet, k): generates all `k`-long ngrams
+            based on the given `alphabet`;
+        opposite_polarity(alphabet): returns the opposite grammar for 
+            the given `alphabet` and the locality of the grammar;
         check_polarity: returns the polarity of the grammar;
-        change_polarity: changes the polarity of the grammar to the one
-            that is provided by the user.
+        switch_polarity: rewrites grammar to the opposite, and changes
+            the polarity of the grammar;
+        change_polarity(new_polarity): changes the polarity of the 
+            grammar either to `new_polarity` if one is given, or to
+            the opposite than before (does not change the grammar).
     """
 
     def __init__(self, alphabet=None, grammar=None, k=2, data=None,
                  edges=[">", "<"], polar="p"):
-        """ Initializes the PosSL object. """
+        """ Initializes the SL object. """
         super().__init__(alphabet, grammar, k, data, edges, polar)
         self.fsm = FSM(initial=self.edges[0], final=self.edges[1])
 
@@ -73,17 +77,17 @@ class SL(L):
         Returns:
             str: annotated version of the string.
         """
-        return ">"*(self.k-1) + string.strip() + "<"*(self.k-1)
+        return ">" * (self.k - 1) + string.strip() + "<" * (self.k - 1)
         
 
     def ngramize_data(self):
         """
-        Creates set of k-grams based on the given data.
+        Creates set of n-grams based on the given data.
 
         Returns:
-            list: list of ngrams from the data.
+            list: collection of ngrams in the data.
         """
-        if self.data == []:
+        if not self.data:
             raise ValueError("The data is not provided.")
 
         ngrams = []
@@ -104,39 +108,39 @@ class SL(L):
                 list: list of ngrams from the item.
         """
         ng = []
-        for i in range(len(item)-(self.k-1)):
-            ng.append(tuple(item[i:i+self.k]))
+        for i in range(len(item) - (self.k - 1)):
+            ng.append(tuple(item[i:(i + self.k)]))
 
         return list(set(ng))
 
 
     def fsmize(self):
-        """ Builds FSM corresponding to the given grammar and saves in
-            it the fsm attribute.
+        """ Builds FSM corresponding to the given grammar and saves it
+            in the fsm attribute.
         """
-        if self.grammar:
-            if self.check_polarity() == "p":
-                self.fsm.sl_to_fsm(self.grammar)
-            else:
-                if self.alphabet:
-                    opposite = self.opposite_polarity(self.alphabet)
-                    self.fsm.sl_to_fsm(opposite)
-                else:
-                    raise ValueError("The alphabet is not provided.")
+        if not self.grammar:
+            raise(IndexError("The grammar must not be empty."))
+        if not self.alphabet:
+            raise ValueError("The alphabet is not provided. "
+                             "Use `grammar.extract_alphabet()`.")
+
+        if self.check_polarity() == "p":
+            self.fsm.sl_to_fsm(self.grammar)
         else:
-            raise(IndexError("The grammar is not provided."))
+            opposite = self.opposite_polarity(self.alphabet)
+            self.fsm.sl_to_fsm(opposite)
 
 
     def scan(self, string):
         """
-        Checks whether the given string is well-formed with respect
+        Checks if the given string is well-formed with respect
         to the given grammar.
 
         Arguments:
             string (str): the string that needs to be evaluated.
 
         Returns:
-            bool: tells whether the string is well-formed.
+            bool: well-formedness value of a string.
         """
         if not self.fsm.transitions:
             self.fsmize()
@@ -148,13 +152,13 @@ class SL(L):
     def generate_sample(self, n=10, repeat=True, safe=True):
         """
         Generates a data sample of the required size, with or without
-        repetitions.
+        repetitions depending on `repeat` value.
 
         Arguments:
             n (int): the number of examples to be generated;
-            repeat (bool): allow (rep=True) or prohibit (rep=False)
-               repetitions of the same data items;
-            safe (bool): automatically break out of infinite looops,
+            repeat (bool): allows (rep=True) or prohibits (rep=False)
+               repetitions within the list of generated items;
+            safe (bool): automatically breaks out of infinite looops,
                 for example, when the grammar cannot generate the
                 required number of data items, and the repetitions
                 are set to False.
@@ -168,20 +172,30 @@ class SL(L):
             self.fsmize()
 
         statemap = self.state_map()
+        if any([len(statemap[x]) for x in statemap]) == 0:
+            raise(ValueError("There are ngrams in the grammar that are"
+                            " not leading anywhere. Clean the grammar "
+                            " or run `grammar.clean_grammar()`."))
+
         data = [self.generate_item(statemap) for i in range(n)]
 
-        if repeat == False:
+        if not repeat:
             data = set(data)
             useless_loops = 0
             prev_len = len(data)
+
             while len(data) < n:
                 data.add(self.generate_item(statemap))
-                if prev_len == len(data): useless_loops += 1
-                else: useless_loops = 0
+
+                if prev_len == len(data):
+                    useless_loops += 1
+                else:
+                    useless_loops = 0
                 
-                if safe == True and useless_loops > 100:
-                    print("The grammar cannot produce the requested number"
-                          " of strings.")
+                if safe == True and useless_loops > 500:
+                    print("The grammar cannot produce the requested "
+                          "number of strings. Check the grammar, "
+                          "reduce the number, or allow repetitions.")
                     break
 
         return list(data)
@@ -192,66 +206,67 @@ class SL(L):
         Generates a well-formed string with respect to the given grammar.
 
         Arguments:
-            statemap (dict): a dictionary of possible transitions
-                in the corresponding fsm; constructed inside
-                generate_sample.
+            statemap (dict): a dictionary of possible transitions in the 
+                corresponding fsm; constructed inside generate_sample.
 
         Returns:
             str: a well-formed string.
         """
-        if any([len(statemap[x]) for x in statemap]) == 0:
-            raise(ValueError("The grammar is not provided properly."))
-
-        word = self.edges[0]*(self.k-1)
+        word = self.edges[0] * (self.k - 1)
         while word[-1] != self.edges[1]:
-            word += choice(statemap[word[-(self.k-1):]])
-        return word[self.k-1:-1]
+            word += choice(statemap[word[-(self.k - 1):]])
+        return word[(self.k - 1):-1]
 
 
     def state_map(self):
-        """ Generates a dictionary of possible transitions in
-            the fsm corresponding to the grammar.
+        """
+        Generates a dictionary of possible transitions in the FSM.
 
         Returns:
-            the dictionary of the form
-                {"previous_symbols":[list of possible next symbols]}.
+            dict: the dictionary of the form
+                {"keys":[list of possible next symbols]}, where 
+                keys are (k-1)-long strings.
         """
         local_alphabet = self.alphabet[:] + self.edges[:]
-        poss = product(local_alphabet, repeat=self.k-1)
+        poss = product(local_alphabet, repeat=(self.k - 1))
         
         smap = {}
         for i in poss:
             for j in self.fsm.transitions:
                 if j[0] == i:
                     before = "".join(i)
-                    if before in smap: smap[before] += j[1]
-                    else: smap[before] = [j[1]]
+                    if before in smap:
+                        smap[before] += j[1]
+                    else:
+                        smap[before] = [j[1]]
         return smap
 
 
     def switch_polarity(self):
-        """ Changes polarity of the grammar, and rewrites
-            grammar to the opposite one.
+        """ Changes polarity of the grammar, and changes the grammar
+            to the opposite one.
         """
         if not self.alphabet:
             raise ValueError("Alphabet cannot be empty.")
+
         self.grammar = self.opposite_polarity(self.alphabet)
         self.change_polarity()
 
 
     def clean_grammar(self):
-        """ Removes useless ngrams from the grammar.
-            If negative, it just removes duplicates.
-            If positive, it detects bigrams to which one cannot get
-                from the initial symbol and from which one cannot get
-                to the final symbol, and removes them.
+        """
+        Removes useless ngrams from the grammar.
+        If negative, it just removes duplicates.
+        If positive, it detects bigrams to which one cannot get
+            from the initial symbol and from which one cannot get
+            to the final symbol, and removes them.
         """
         if not self.fsm.transitions:
             self.fsmize()
             
         if self.check_polarity() == "n":
             self.grammar = list(set(self.grammar))
-        elif self.check_polarity() == "p":
+        else:
             self.fsm.trim_fsm()
-            self.grammar = [j[0]+(j[1],) for j in self.fsm.transitions]
+            self.grammar = [j[0] + (j[1],) for j in self.fsm.transitions]
             

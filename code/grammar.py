@@ -39,6 +39,7 @@ class L(object):
 
     def __init__(self, alphabet=None, grammar=None, k=2, data=None,
                  edges=[">", "<"], polar="p"):
+        """ Initializes the L object. """
         if polar not in ["p", "n"]:
             raise ValueError("The value of polarity should be either "
                              "positive ('p') or negative ('n').")

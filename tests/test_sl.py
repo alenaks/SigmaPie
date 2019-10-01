@@ -150,11 +150,11 @@ class TestSLLanguages(unittest.TestCase):
         sl.grammar = list(gneg)
         
         sl.switch_polarity()
-        self.assertTrue(set(sl.grammar)==gpos)
+        self.assertTrue(set(sl.grammar) == gpos)
         self.assertTrue(sl.check_polarity() == "p")
 
         sl.switch_polarity()
-        self.assertTrue(set(sl.grammar)==gneg)
+        self.assertTrue(set(sl.grammar) == gneg)
         self.assertTrue(sl.check_polarity() == "n")
 
 
@@ -166,6 +166,7 @@ class TestSLLanguages(unittest.TestCase):
         s = SL()
         s.grammar = [(">", "a"), ("b", "a"), ("a", "b"), ("b", "<"),
                      (">", "g"), ("f", "<"), ("t", "t")]
+        s.extract_alphabet()
         s.clean_grammar()
         self.assertTrue(set(s.grammar) == goal)
 
@@ -196,6 +197,7 @@ class TestSLLanguages(unittest.TestCase):
                      ('b', '<', '<'), ('a', '<', '<'), ('>', '>', 'a'),
                      ('a', 'a', 'a'), ('a', 'a', '<'), ('>', '>', 'b'),
                      ('b', 'b', 'b'), ('>', '>', 'f'), ('b', 'd', 'c')]
+        s.extract_alphabet()
         s.clean_grammar()
         self.assertTrue(set(s.grammar) == goal)
 
