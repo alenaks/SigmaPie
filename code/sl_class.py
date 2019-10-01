@@ -172,7 +172,7 @@ class SL(L):
             self.fsmize()
 
         statemap = self.state_map()
-        if any([len(statemap[x]) for x in statemap]) == 0:
+        if not any([len(statemap[x]) for x in statemap]):
             raise(ValueError("There are ngrams in the grammar that are"
                             " not leading anywhere. Clean the grammar "
                             " or run `grammar.clean_grammar()`."))

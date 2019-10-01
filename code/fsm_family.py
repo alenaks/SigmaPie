@@ -15,22 +15,26 @@ from fsm import *
 
 class FSMFamily(object):
     """
-    This class encodes Family of Finite State Machines.
-    Used for scanning and/or generating data.
+    This class encodes Family of Finite State Machines. Used for 
+    a simple encoding of FSMs corresponding to SP languages.
 
     Attributes:
-    -- transitions: triples of the worm [prev_state, transition, next_state].
+      transitions(list): triples of the form 
+        [prev_state, transition, next_state].
     """
 
     def __init__(self, family=None):
         """ Initializes the FSMFamily object. """
-        if family == None: self.family = []
-        else: self.family = family
+        if family is None:
+          self.family = []
+        else:
+          self.family = family
 
 
     def run_all_fsm(self, string):
-        """ Tells whether the given string is accepted by all
-        the automata within the family.
+        """
+        Tells whether the given string is accepted by all
+        the automata of the family.
 
         Arguments:
             string (str): the input string.
