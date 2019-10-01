@@ -110,7 +110,7 @@ class SL(L):
         return list(set(ng))
 
 
-    def fsmize(self) -> None:
+    def fsmize(self):
         """ Builds FSM corresponding to the given grammar and saves in
             it the fsm attribute.
         """
@@ -165,7 +165,7 @@ class SL(L):
         if not self.alphabet:
             raise ValueError("Alphabet cannot be empty.")
         if not self.fsm.transitions:
-            raise ValueError("Corresponding fsm needs to be constructed.")
+            self.fsmize()
 
         statemap = self.state_map()
         data = [self.generate_item(statemap) for i in range(n)]
