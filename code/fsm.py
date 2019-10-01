@@ -2,7 +2,7 @@
 
 """
    A class of Finite State Machines.
-   Copyright (C) 2018  Alena Aksenova
+   Copyright (C) 2019  Alena Aksenova
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,9 +31,10 @@ class FSM(object):
     """
 
     def __init__(self, initial, final, transitions=None):
-        
-        if transitions == None: self.transitions = []
-        else: self.transitions = transitions
+        if transitions == None:
+            self.transitions = []
+        else:
+            self.transitions = transitions
 
         self.initial = initial
         self.final = final
@@ -46,7 +47,6 @@ class FSM(object):
         Arguments:
             grammar (list): SL ngrams.
         """
-
         if not grammar:
             raise ValueError("The grammar must not be empty.")
         self.transitions = [(i[:-1], i[-1], i[1:]) for i in grammar]
@@ -54,31 +54,31 @@ class FSM(object):
 
     def scan_sl(self, string):
         """
-        Scans the given string with SL dependencies.
+        Scans a given string using the learned SL grammar.
 
         Arguments:
             string (str): a string that needs to be scanned.
 
         Returns:
-            bool: tells whether the string is well-formed.
+            bool: well-formedness value of the string.
         """
-        if len(string) < 2:
-            raise ValueError("The string is too short.")
         if string[0] != self.initial or string[-1] != self.final:
-            raise ValueError("The string is not annotated with the delimeters.")
+            raise ValueError("The string is not annotated with "
+                             "the delimeters.")
         if not self.transitions:
-            raise ValueError("The transitions are empty.")
+            raise ValueError("The transitions are empty. Extract the"
+                             " transitions using grammar.fsmize().")
 
-        k = len(self.transitions[0][0])+1
-        for i in range(k-1, len(string)):
+        k = len(self.transitions[0][0]) + 1
+        for i in range(k - 1, len(string)):
             move_to_next = []
             for j in self.transitions:
-                if string[i-k+1:i+1] == "".join(j[0])+j[1]:
-                    move_to_next.append(True)
-                else:
-                    move_to_next.append(False)
+                can_read = string[(i - k + 1):(i + 1)] == "".join(j[0]) + j[1]
+                move_to_next.append(can_read)
+
             if not any(move_to_next):
                 return False
+
         return True
 
 
@@ -98,31 +98,6 @@ class FSM(object):
         self.transitions = [(i[2], i[1], i[0]) for i in can_start]
         mirrored = self.accessible_states(self.final)
         self.transitions = [(i[2], i[1], i[0]) for i in mirrored]
-
-
-    def scan_sp(self, string):
-        """ Runs the given sequence through the automaton.
-
-        Arguments:
-            string (str): string to run through the automaton.
-
-        Returns:
-            bool: True if input can be accepted by the automaton,
-                otherwise False.
-        """
-        state = 0
-        for s in string:
-            change = False
-            for t in self.transitions:
-                if (t[0] == state) and (t[1] == s):
-                    state = t[2]
-                    change = True
-                    break
-
-            if change == False:
-                return False
-
-        return True
         
 
     def accessible_states(self, marker):
@@ -151,7 +126,7 @@ class FSM(object):
         first_time = True
 
         # find transitions that can be reached
-        while mod_reachable != [] or first_time == True:
+        while mod_reachable != [] or first_time:
             mod_reachable = []
             first_time = False
             for p in updated:
@@ -178,7 +153,7 @@ class FSM(object):
         # creating the "sceleton" of the FSM
         for i in range(k-1):
             # boolean shows whether the transition was accessed
-            self.transitions.append([i, path[i], i+1, False])
+            self.transitions.append([i, path[i], i + 1, False])
 
         # adding non-final loops
         newtrans = []
@@ -217,3 +192,27 @@ class FSM(object):
         """ Removes transitions that were not accessed. """
         self.transitions = [i[:3] for i in self.transitions if i[3] == True]
 
+
+    def scan_sp(self, string):
+        """ Runs the given sequence through the automaton.
+
+        Arguments:
+            string (str): string to run through the automaton.
+
+        Returns:
+            bool: True if input can be accepted by the automaton,
+                otherwise False.
+        """
+        state = 0
+        for s in string:
+            change = False
+            for t in self.transitions:
+                if (t[0] == state) and (t[1] == s):
+                    state = t[2]
+                    change = True
+                    break
+
+            if not change:
+                return False
+
+        return True

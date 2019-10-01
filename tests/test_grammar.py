@@ -2,7 +2,7 @@
 
 """
    A module with the unittests for the grammar module.
-   Copyright (C) 2018  Alena Aksenova
+   Copyright (C) 2019  Alena Aksenova
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -11,10 +11,10 @@
 """
 
 import sys, os
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.join(os.path.abspath('..'), 'code'))
 
 import unittest
-from PyKleene.grammar import L
+from grammar import L
 
 
 class TestGeneralLanguages(unittest.TestCase):
@@ -122,4 +122,3 @@ class TestGeneralLanguages(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    
