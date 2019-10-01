@@ -227,7 +227,7 @@ class TSL(SL):
                 if prev_len == len(data): useless_loops += 1
                 else: useless_loops = 0
                 
-                if safe == True and useless_loops > 100:
+                if safe and useless_loops > 100:
                     print("The grammar cannot produce the requested number"
                           " of strings.")
                     break
@@ -317,7 +317,7 @@ class TSL(SL):
         """
         tier_img = self.annotate_string(self.tier_image(string))
         matches = [(n in self.grammar) for n in self.ngramize_item(tier_img)]
-        
+
         if self.check_polarity() == "p":
         	return all(matches)
         else:

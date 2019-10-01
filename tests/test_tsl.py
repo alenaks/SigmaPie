@@ -182,7 +182,7 @@ class TestTSLLanguages(unittest.TestCase):
         a.tier = ["a", "b"]
         a.alphabet = ["a", "b", "c"]
 
-        sample = a.generate_sample(n = 10, repeat = False)
+        sample = a.generate_sample(n=10, repeat=False)
         for i in sample:
             self.assertTrue(a.scan(i))
 

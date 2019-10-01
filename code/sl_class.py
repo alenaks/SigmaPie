@@ -192,7 +192,7 @@ class SL(L):
                 else:
                     useless_loops = 0
                 
-                if safe == True and useless_loops > 500:
+                if safe and useless_loops > 500:
                     print("The grammar cannot produce the requested "
                           "number of strings. Check the grammar, "
                           "reduce the number, or allow repetitions.")
