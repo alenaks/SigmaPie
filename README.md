@@ -712,4 +712,4 @@ Therefore the next steps of the development of _SigmaPie_ inclide the implementa
 
 **Acknowledgements** 
 
-I am very grateful to _Thomas Graf_, _Jeffrey Heinz_ and _Aniello De Santo_ whose input on different parts of this project was extremely helpful.
+I am very grateful to [_Thomas Graf_](https://thomasgraf.net/), [_Jeffrey Heinz_](http://jeffreyheinz.net/) and [_Aniello De Santo_](https://aniellodesanto.github.io/about/) whose input on different parts of this project was extremely helpful.
