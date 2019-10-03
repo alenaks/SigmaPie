@@ -75,6 +75,20 @@ class TestMTSLLanguages(unittest.TestCase):
         self.assertTrue(correct)
 
 
+    def test_convert_pos_to_neg(self):
+        """ Tests conversion of a positive grammar to a negative one. """
+        z = MTSL(polar = "p")
+        z.grammar = {('a', 'o'): [('>', 'a'), ('a', '<'), ('a', 'a'), 
+                    ('>', 'o'), ('o', 'o'), ('o', '<'), ('>', '<')], 
+                    ('b', 'p'): [('>', 'b'), ('b', 'b'), ('b', '<'), 
+                    ('>', 'p'), ('p', 'p'), ('p', '<'), ('>', '<')]}
+        z.switch_polarity()
+        expected = {('a', 'o'): [('a', 'o'), ('o', 'a')], 
+                    ('b', 'p'): [('b', 'p'), ('p', 'b')]}
+        self.assertTrue(z.grammar == expected)
+
+
+
     def test_scan_pos(self):
         """ Tests scanning using a positive grammar. """
         c = MTSL(polar = "p")

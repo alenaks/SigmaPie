@@ -26,9 +26,7 @@ class MTSL(TSL):
         k (int): locality window;
         data (list): input data;
         edges (list): start- and end-symbols for the grammar;
-        polar ("p" or "n"): polarity of the grammar;
-        fsm (FSM): finite state machine that corresponds to the grammar;
-        tier (list): list of tier symbols.
+        polar ("p" or "n"): polarity of the grammar.
  
     Methods:
         learn: extracts tier-based strictly local grammar;
@@ -237,13 +235,20 @@ class MTSL(TSL):
         if not self.grammar:
             raise ValueError("Grammar needs to be provided. It can also "
                              "be learned using `grammar.learn()`.")
-
         opposite = {}
         for i in self.grammar:
             possib = self.generate_all_ngrams(list(i), self.k)
             opposite[i] = [j for j in possib if j not in self.grammar[i]]
 
         return opposite
+
+
+    def switch_polarity(self):
+        """ Changes polarity of the grammar, and rewrites
+            grammar to the opposite one.
+        """
+        self.grammar = self.opposite_polarity()
+        self.change_polarity()
 
 
     def clean_grammar(self, **kwargs):
