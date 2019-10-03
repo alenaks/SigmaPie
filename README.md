@@ -1,6 +1,7 @@
 Author: **Alëna Aksënova** ([mailto](mailto:alena.aksenova@stonybrook.edu) <br>
 Readme last updated: October 3, 2019
 
+
 # [_SigmaPie_](https://github.com/alenaks/SigmaPie) for subregular grammar induction
 
 ## Subregular languages in phonology
@@ -8,17 +9,17 @@ Readme last updated: October 3, 2019
 This toolkit is relevant for anyone who is working or going to work with subregualar grammars both from the perspectives of theoretical linguistics and formal language theory.
 
 **Why theoretical linguists might be interested in formal language theory?** <br>
-_Formal language theory_ explains how potentially infinite stringsets, or _formal languages_,
+_Formal language theory_ explains how potentially infinite string sets, or _formal languages_,
 can be generalized to grammars encoding the desired patterns and what properties those
-grammars have. It also allows one to compare different grammars with respect to parameters such as expressivity.
+grammars have. It also allows one to compare different grammars regarding parameters such as expressivity.
 
-**Chomsky hierarchy** aligns main classes of formal languages with respect to their expressive power [(Chomsky 1959)](http://www.cs.utexas.edu/~cannata/pl/Class%20Notes/Chomsky_1959%20On%20Certain%20Formal%20Properties%20of%20Grammars.pdf).
+**Chomsky hierarchy** aligns the main classes of formal languages with respect to their expressive power [(Chomsky 1959)](http://www.cs.utexas.edu/~cannata/pl/Class%20Notes/Chomsky_1959%20On%20Certain%20Formal%20Properties%20of%20Grammars.pdf).
 
-  * **Regular** grammars are as powerful as finite state devices or regular expressions: they can "count" only until certain threshold (no $a^{n}b^{n}$ patterns);
+  * **Regular** grammars are as powerful as finite-state devices or regular expressions: they can "count" only until a certain threshold (no $a^{n}b^{n}$ patterns);
   * **Context-free** grammars have access to potentially infinite _stack_ that allows them to reproduce patterns that involve center embedding;
   * **Mildly context-sensitive** grammars are powerful enough to handle cross-serial dependencies such as some types of copying;
-  * **Context sensitive** grammars can handle non-linear patterns such as $a^{2^{n}}$ for $n > 0$;
-  * **Recursively enumerable** grammars are as powerful as any theoretically possible computer, and generate languages such as $a^n$, where $n \in \textrm{primes}$.
+  * **Context-sensitive** grammars can handle non-linear patterns such as $a^{2^{n}}$ for $n > 0$;
+  * **Recursively enumerable** grammars are as powerful as any theoretically possible computer and generate languages such as $a^n$, where $n \in \textrm{primes}$.
 
 
 
@@ -27,13 +28,13 @@ grammars have. It also allows one to compare different grammars with respect to 
 
 Both phonology and morphology frequently display properties of regular languages.
 
-**Phonology** does not require the power of center-embedding, that is a property of context-free languages. For example, consider a harmony where the first vowel agrees with the last vowel, second vowel agrees with the pre-last one, etc.
+**Phonology** does not require the power of center-embedding, which is a property of context-free languages. For example, consider a harmony where the first vowel agrees with the last vowel, the second vowel agrees with the pre-last one, etc.
     
     GOOD: "arugula", "tropicalization", "electrotelethermometer", etc.
     BAD:  any other word violating the rule.
 
 
-While it is a theoretically possible pattern, harmonies of that types are unattested in natural languages.
+While it is a theoretically possible pattern, harmonies of that type are unattested in natural languages.
 
 **Morphology** avoids center-embedding as well. In [Aksënova et al. (2016)](https://www.aclweb.org/anthology/W16-2019) we show that it is possible to iterate prefixes with the meaning "after" in Russian. In Ilocano, where the same semantics is expressed via a circumfix, its iteration is prohibited.
     
@@ -59,9 +60,9 @@ The _SigmaPie_ toolkit currently contains functionality for the following subreg
   * tier-based strictly local (TSL);
   * multiple tier-based strictly local (MTSL).
 
-## Functionality of the toolkit
+## The functionality of the toolkit
 
-  * **Learners** extract grammars from stringsets.
+  * **Learners** extract grammars from string sets.
   * **Scanners** evaluate strings with respect to a given grammar.
   * **Sample generators** generate stringsets for a given grammar.
   * **FSM constructors** translate subregular grammars to finite state machines.
@@ -77,7 +78,7 @@ The _SigmaPie_ toolkit currently contains functionality for the following subreg
  
   <img src="tutorial/images/terminal.png" width="650">
   
-### Way 2: running from the Jupyter notbooks
+### Way 2: running from the Jupyter notebooks
   1. Download the code from the [SigmaPie GitHub folder](https://github.com/alenaks/SigmaPie).
   2. Modify the second line in the cell below so that it contains the correct path to `SigmaPie/code/`.
   3. Run that cell.
@@ -92,7 +93,7 @@ from main import *
 
 ## Strictly piecewise languages
 
-**Negative strictly piecewise (SP)** grammars prohibit occurrence of sequences of symbols at an arbitrary distance from each other. Every SP grammar is associated with the value of $k$ that defines the size of the longest sequence that this grammar can prohibit. Alternatively, if the grammar is positive, it lists all subsequences that are allowed in well-formed words of the language.
+**Negative strictly piecewise (SP)** grammars prohibit the occurrence of sequences of symbols at an arbitrary distance from each other. Every SP grammar is associated with the value of $k$ that defines the size of the longest sequence that this grammar can prohibit. Alternatively, if the grammar is positive, it lists all subsequences that are allowed in well-formed words of the language.
 
     k = 2
     POLARITY: negative
@@ -101,7 +102,7 @@ from main import *
               <*>accacba, <*>bcccacbb, <*>bccccccca, ...
               
               
-In phonology, an example of an SP pattren is _tone plateauing_ discussed in [Jardine (2015,](https://adamjardine.net/files/jardinecomptone-short.pdf) [2016)](https://adamjardine.net/files/jardine2016dissertation.pdf).
+In phonology, an example of an SP pattern is _tone plateauing_ discussed in [Jardine (2015,](https://adamjardine.net/files/jardinecomptone-short.pdf) [2016)](https://adamjardine.net/files/jardine2016dissertation.pdf).
 For example, in Luganda (Bantu) a low tone (L) cannot intervene in-between two high tones (H): L is changed to H in such configurations.
 The prosodic domain cannot have more than one stretch of H tones.
 
@@ -123,7 +124,7 @@ This pattern can be described using SP grammar $G_{SP_{neg}} = \{HLH\}$.
 
 ### Learning tone plateauing pattern
 
-Let us say that `luganda` represents a "toy" example of tonal plateauing (TP) pattern.
+Let us say that `luganda` represents a "toy" example of tone plateauing (TP) pattern.
 
 
 ```python
@@ -143,7 +144,7 @@ tp_pattern = SP()
   * `polar` ("p" or "n") is the polarity of the grammar, by default, it is "p";
   * `alphabet` (list) is the set of symbols that the grammar uses;
   * `grammar` (list of tuples) is the list of allowed or prohibited substructures of the language;
-  * `k` (int) is the size of the locality window of the grammar, by default it is $2$;
+  * `k` (int) is the size of the locality window of the grammar, by default, it is $2$;
   * `data` (list of string) is the learning sample;
   * `fsm` (FSM object) is the finite state device that corresponds to the grammar.
   
@@ -175,13 +176,13 @@ print("Locality of the SP grammar:", tp_pattern.k)
   * `check_polarity()` and `switch_polarity()` display and change the polarity of the grammar;
   * `learn()` extracts prohibited or allowed subsequences from the training sample;
   * `scan(string)` tells if a given string is well-formed with respect to the learned grammar;
-  * `extract_alphabet()` collects alphabet based on the data or grammar attribues;
+  * `extract_alphabet()` collects alphabet based on the data or grammar attributes;
   * `generate_sample(n, repeat)` generates $n$ strings based on the given grammar; by default, `repeat` is set to False, and repetitions of the generated strings are not allowed, but this parameter can be set to True;
   * `fsmize()` creates the corresponding FSM family by following the steps outlined in [Heinz and Rogers (2013)](https://www.aclweb.org/anthology/W13-3007);
   * `subsequences(string)` returns all $k$-piecewise subsequences of the given string;
   * `generate_all_ngrams()` generates all possible strings of the length $k$ based on the provided alphabet.
 
-**Checking and changing polarity of the grammar**
+**Checking and changing the polarity of the grammar**
 
 By default, the grammars are positive. The polarity can be checked by running the `check_polarity` method:
 
@@ -256,9 +257,9 @@ While SP languages capture multiple long-distance processes such as tone plateau
 
 ## Strictly local languages
 
-**Negative strictly $k$-local (SL)** grammars prohibit occurrence of consecutive substrings consisting of up to $k$ symbols. The value of $k$ defines the longest substring that cannot be present in a well-formed string of a language. Positive SL grammars defines substrings that can be present in the language.
+**Negative strictly $k$-local (SL)** grammars prohibit the occurrence of consecutive substrings consisting of up to $k$ symbols. The value of $k$ defines the longest substring that cannot be present in a well-formed string of a language. Positive SL grammars define substrings that can be present in the language.
 
-Importantly, in order to define _first_ and _last_ elements, SL languages use delimiters (">" and "<") that indicate the beginning and the end of the string.
+Importantly, to define _first_ and _last_ elements, SL languages use delimiters (">" and "<") that indicate the beginning and the end of the string.
 
     k = 2
     POLARITY: positive
@@ -293,7 +294,7 @@ In this term, the Russian word-final devoicing generalization would be _"do not 
 
 This pattern can then be described using SL grammar $G_{SL_{neg}} = \{b<\}$.
 
-Let us initialize a SL object.
+Let us initialize an SL object.
 
 
 ```python
@@ -305,7 +306,7 @@ wf_devoicing.data = russian
   * `polar` ("p" or "n") is the polarity of the grammar, by default, it is "p";
   * `alphabet` (list) is the set of symbols that the grammar uses;
   * `grammar` (list of tuples) is the list of allowed or prohibited substructures of the language;
-  * `k` (int) is the size of the locality window of the grammar, by default it is $2$;
+  * `k` (int) is the size of the locality window of the grammar, by default, it is $2$;
   * `data` (list of string) is the learning sample;
   * `edges` (list of two characters) are the delimiters used by the grammar, the default value is ">" and "<";
   * `fsm` (FSM object) is the finite state device that corresponds to the grammar.
@@ -368,7 +369,7 @@ for string in no_wfd:
 
 **Generating data samples**
 
-If the grammar is non-empty, the data sample can be generated in the same way as before: `generate_sample(n, repeat)`, where `n` is the number of examples that need to be generated, and `repeat` is a flag allowing or prohibiting repetitings of the same strings in the generated data.
+If the grammar is non-empty, the data sample can be generated in the same way as before: `generate_sample(n, repeat)`, where `n` is the number of examples that need to be generated, and `repeat` is a flag allowing or prohibiting repetitions of the same strings in the generated data.
 
 
 ```python
@@ -407,7 +408,7 @@ Even though SP and SL languages can capture a large portion of phonological well
 
 ## Tier-based strictly local languages
 
-**Tier-based strictly local (TSL)** grammars operate just like the strictly local ones, but they have power to _ignore_ a certain set of symbols completely. The set of symbols that is not ignored are called **tier** symbols, and the one that do not matter for the well-formedness of strings are the **non-tier** ones [(Heinz et al. 2011)](https://pdfs.semanticscholar.org/b934/bfcc962f65e19ae139426668e8f8054e5616.pdf).
+**Tier-based strictly local (TSL)** grammars operate just like the strictly local ones, but they have the power to _ignore_ a certain set of symbols completely. The set of symbols that are not ignored are called **tier** symbols, and the ones that do not matter for the well-formedness of strings are the **non-tier** ones [(Heinz et al. 2011)](https://pdfs.semanticscholar.org/b934/bfcc962f65e19ae139426668e8f8054e5616.pdf).
 
 Assume that we have the following sets of tier and non-tier symbols.
 
@@ -420,7 +421,7 @@ Non-tiers symbols are ignored when the strings are being evaluated by TSL gramma
   * <b>rl</b>dcd<b>r</b>cc<b>l</b>dcd<b>r</b>d<b>l</b> $\Rightarrow$ <b>rlrlrl</b>
   * cdcddcdcdcdc $\Rightarrow \epsilon$
 
-The strings on the right-hand side are called _tier images_ of the original strings, because they exclude all non-tier symbols. Then the TSL grammars can be defined as _SL grammars that operate on a tier._
+The strings on the right-hand side are called _tier images_ of the original strings because they exclude all non-tier symbols. Then the TSL grammars can be defined as _SL grammars that operate on a tier._
 
 Continuing the example above, let's prohibit "l" following "l" unless "r" intervenes, and also ban "r" following "r" unless "l" intervenes (it yields a toy Latin dissimilation pattern). Over the `tier`, $G_{TSL_{neg}} = \{ll, rr\}$ expresses this rule.
 
@@ -434,7 +435,7 @@ In Latin, liquids tend to alternate: if the final liquid of the stem is "l", the
   * f<b>l</b>o<b>r</b>a<b>l</b>is \~ <*>f<b>l</b>o<b>r</b>a<b>r</b>is _"floral"_
   * p<b>l</b>u<b>r</b>a<b>l</b>is \~ <*>p<b>l</b>u<b>r</b>a<b>r</b>is _"plural"_
   
-This pattern is _not SP_ because SP grammars cannot exhibit blocking effect, and it is _not SL_ either due to its long-distance nature.
+This pattern is _not SP_ because SP grammars cannot exhibit the blocking effect, and it is _not SL_ either due to its long-distance nature.
 
 
 ```python
@@ -445,7 +446,7 @@ lat_dissim = TSL()
   * `polar` ("p" or "n") is the polarity of the grammar, the default value is "p";
   * `alphabet` (list) is the set of symbols that the grammar uses;
   * `grammar` (list of tuples) is the list of allowed or prohibited substrings of the language;
-  * `k` (int) is the size of the locality window of the grammar, by default it is $2$;
+  * `k` (int) is the size of the locality window of the grammar, by default, it is $2$;
   * `data` (list of string) is the learning sample;
   * `edges` (list of two characters) are the delimiters used by the grammar, the default value is ">" and "<";
   * `fsm` (FSM object) is the finite state device that corresponds to the grammar;
@@ -510,7 +511,7 @@ We can learn a negative grammar directly as well. For example, let us learn a pa
     aaabaaaa, baaaa, aaaaaba, aaaaaab, ...
     <*>aababaaa, <*>baaaababb, <*>aaaa, ...
     
-In simple words, the desired pattern is _a single "b" must be present in a string_. Translating it to a pattern relevant for linguistics would give us _stress culminativity_.
+In simple words, the desired pattern is _a single "b" must be present in a string_. Translating it to a pattern relevant to linguistics would give us _stress culminativity_.
 
 
 ```python
@@ -523,7 +524,7 @@ print("Tier:    ", stress.tier)
 print("Grammar: ", stress.grammar)
 ```
 
-The learned negative TSL grammar prohibits an empty tier (stress must be present in a word), and prohibits a tier where there is more than a single stress.
+The learned negative TSL grammar prohibits an empty tier (stress must be present in a word) and prohibits a tier where there is more than a single stress.
 
 **Generating sample**
 
@@ -543,7 +544,7 @@ The implemented learning algorithm for $k$-TSL languages is designed by [McMulli
 
 <font color='red'>**PLACEHOLDER: SEE IF THERE IS ENOUGH TIME TO INSERT A BRIEF INTUITION BEHIND THE ALGORITHM.**</font>
 
-However, there are some phonological processes that require more power than TSL. Some languages have more than just a single long-distance assimilation: for example, separate vowel and consonantal harmonies. In this case, one tier is not enough: putting both vowels and consonants on a single tier will not create the desired locality neither among vowels, nor among consonants. For cases like this, a subregular class of _multiple tier-based strictly local languages_ is especially useful.
+However, there are some phonological processes that require more power than TSL. Some languages have more than just a single long-distance assimilation: for example, separate vowel and consonantal harmonies. In this case, one tier is not enough: putting both vowels and consonants on a single tier will create the desired locality neither among vowels nor among consonants. For cases like this, a subregular class of _multiple tier-based strictly local languages_ is especially useful.
 
 ## Multiple tier-based strictly local languages
 
@@ -578,7 +579,7 @@ In Bukusu, vowels agree in height, and a liquid "l" assimilates to "r" if follow
 The tier containing both vowels and liquids would not capture this picture. Intervening vowels would make the liquid spreading non-local over the tier, and intervening liquids would cause vowels to be potentially far away from each other over the tier.
 
 
-**Multiple tier-based strictly local** grammars are a conjunction of multiple TSL grammars: they consist of several tiers, and restrictions defined for every one of those tiers. For example, consider the following toy example.
+**Multiple tier-based strictly local** grammars are conjunction of multiple TSL grammars: they consist of several tiers, and restrictions defined for every one of those tiers. For example, consider the following toy example.
 
 
     Good strings: aaabbabba, oppopooo, aapapapp, obooboboboobbb, ...
@@ -618,7 +619,7 @@ harmony = MTSL()
   * `polar` ("p" or "n") is the polarity of the grammar, where "p" is the default value;
   * `alphabet` (list) is the set of symbols that the grammar uses;
   * `grammar` (dictionary) is a dictionary, where the keys (tuple) are the tier alphabet, and the values (lists) are the restrictions imposed on those tiers;
-  * `k` (int) is the size of the locality window of the grammar, by default it is $2$;
+  * `k` (int) is the size of the locality window of the grammar, by default, it is $2$;
   * `data` (list of string) is the learning sample;
   * `edges` (list of two characters) are the delimiters used by the grammar, the default value is ">" and "<".
   
@@ -626,7 +627,7 @@ harmony = MTSL()
   * `check_polarity()` and `switch_polarity()` display and change the polarity of the grammar;
   * `learn()` detects the tier symbols and learns the tier grammar;
   * `scan(string)` tells if a given string is well-formed with respect to a learned grammar;
-  * `extract_alphabet()` collects alphabet based on the data and grammar.
+  * `extract_alphabet()` collects the alphabet based on the data and grammar.
 
 **Extracting alphabet and learning the grammar**
 
@@ -690,26 +691,26 @@ for s in bad:
     print("String", s, "is in L(G):", harmony.scan(s))
 ```
 
-**Current state of the MTSL-related research**
+**The current state of the MTSL-related research**
 
 We are currently doing the theoretical work of extending the learning algorithm for MTSL languages from capturing $2$-local dependencies to $n$. Therefore this module of the toolkit will be updated as the theoretical work on this language class progresses.
 
 ## Future work
 
-Formal languages and corresponding FSMs map strings to truth values. They answer the question **"Is this string well-formed with respect to the given grammar?"** This question helps to define the well-formedness conditions for _phonotactics_.
+Formal languages and corresponding FSMs map strings to truth values. They answer the question **"Is this string well-formed according to the given grammar?"** This question helps to define the well-formedness conditions for _phonotactics_.
 
-However, in order to capture _phonological processes_, we need to also ask
-the question **"What string will be the output if we process the input string with respect to the given mapping?"** And indeed, subregular mappings and finite state transductions map strings to strings.
+However, to capture _phonological processes_, we need to also ask
+the question **"What string will be the output if we process the input string according to the given mapping?"** And indeed, subregular mappings and finite-state transductions map strings to strings.
 
 <img src="tutorial/images/scheme.png" width="400">
 
-Therefore the next steps of the development of _SigmaPie_ inclide the implementation of transducers and different transdiction learning algorithms, such as:
+Therefore the next steps of the development of _SigmaPie_ include the implementation of transducers and different transduction learning algorithms, such as:
   * Onward Subsequential Transducer Inference Algorithm (_OSTIA_) by [Oncina, Garcia and Vidal (1993)](https://pdfs.semanticscholar.org/9058/01c8e75daacb27d70ccc3c0b587411b6d213.pdf) and [de la Higuera (2014)](https://www.cambridge.org/core/books/grammatical-inference/CEEB229AC5A80DFC6436D860AC79434F);
   * Input Strictly Local Function Learning Algorithm (_ISLFLA_) by [Chandlee, Eyraud and Heinz (2014)](https://hal.archives-ouvertes.fr/hal-01193047/document);
   * Output Strictly Local Function Inference Algorithm (_OSLFIA_)by [Chandlee, Eyraud and Heinz (2015)](https://www.aclweb.org/anthology/W15-2310.pdf)
   
 ... and others.
 
-**Acknowledgements** 
+**Acknowledgments** 
 
 I am very grateful to [_Thomas Graf_](https://thomasgraf.net/), [_Jeffrey Heinz_](http://jeffreyheinz.net/) and [_Aniello De Santo_](https://aniellodesanto.github.io/about/) whose input on different parts of this project was extremely helpful.
