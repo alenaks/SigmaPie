@@ -13,7 +13,7 @@ _Formal language theory_ explains how potentially infinite string sets, or _form
 can be generalized to grammars encoding the desired patterns and what properties those
 grammars have. It also allows one to compare different grammars regarding parameters such as expressivity.
 
-**Chomsky hierarchy** aligns the main classes of formal languages with respect to their expressive power [(Chomsky 1959)](http://www.cs.utexas.edu/~cannata/pl/Class%20Notes/Chomsky_1959%20On%20Certain%20Formal%20Properties%20of%20Grammars.pdf).
+**The Chomsky hierarchy** aligns the main classes of formal languages with respect to their expressive power [(Chomsky 1959)](http://www.cs.utexas.edu/~cannata/pl/Class%20Notes/Chomsky_1959%20On%20Certain%20Formal%20Properties%20of%20Grammars.pdf).
 
   * **Regular** grammars are as powerful as finite-state devices or regular expressions: they can "count" only until a certain threshold (no $a^{n}b^{n}$ patterns);
   * **Context-free** grammars have access to potentially infinite _stack_ that allows them to reproduce patterns that involve center embedding;
