@@ -1,4 +1,4 @@
-Author: **Alëna Aksënova** ([mailto](mailto:alena.aksenova@stonybrook.edu) <br>
+Author: **Alëna Aksënova** <alena.aksenova@stonybrook.edu> <br>
 Readme last updated: October 3, 2019
 
 
