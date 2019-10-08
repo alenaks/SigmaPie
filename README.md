@@ -541,8 +541,6 @@ print(stress.generate_sample(n=10, repeat=False))
 
 The implemented learning algorithm for $k$-TSL languages is designed by [McMullin and Jardine (2017)](https://adamjardine.net/files/jardinemcmullin2016tslk.pdf), which is based on [Jardine and Heinz (2016)](http://jeffreyheinz.net/papers/Jardine-Heinz-2016-LTSLL.pdf).
 
-<font color='red'>**PLACEHOLDER: SEE IF THERE IS ENOUGH TIME TO INSERT A BRIEF INTUITION BEHIND THE ALGORITHM.**</font>
-
 However, there are some phonological processes that require more power than TSL. Some languages have more than just a single long-distance assimilation: for example, separate vowel and consonantal harmonies. In this case, one tier is not enough: putting both vowels and consonants on a single tier will create the desired locality neither among vowels nor among consonants. For cases like this, a subregular class of _multiple tier-based strictly local languages_ is especially useful.
 
 ## Multiple tier-based strictly local languages
@@ -672,7 +670,6 @@ for i in harmony.grammar:
 
 The learning algorithm for $2$-MTSL languages is designed by [McMullin et al. (2019)](https://scholarworks.umass.edu/cgi/viewcontent.cgi?article=1079&context=scil).
 
-<font color='red'>**PLACEHOLDER: SEE IF THERE IS ENOUGH TIME TO INSERT A BRIEF INTUITION BEHIND THE ALGORITHM.**</font>
 
 **Scanning strings**
 
