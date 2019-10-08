@@ -156,12 +156,11 @@ tp_pattern.data = luganda
 tp_pattern.alphabet = ["H", "L"]
 ```
 
-By default, the locality window of the grammar is $2$ and the delimiters are ">" and "<".
+By default, the locality window of the grammar is $2$.
 
 
 ```python
 print("Locality of the SP grammar:", tp_pattern.k)
-print("Delimiters:", tp_pattern.edges)
 ```
 
 SP attributes can be directly accessed. For example, let us change the locality of the window from $2$ to $3$:

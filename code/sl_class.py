@@ -36,7 +36,7 @@ class SL(L):
         fsmize: create a FSM that corresponds to the given grammar;
         scan(string): scan the string and tell whether it's well-formed;
         generate_sample(n, repeat, safe): generates `n` strings for 
-            the given SL grammar, contains no duplicats if `repeat` is
+            the given SL grammar, contains no duplicates if `repeat` is
             set to False, detects if the grammar cannot generate the
             desired number of strings if `safe` is set to True;
         clean_grammar: removes useless ngrams from the grammar, i.e.
@@ -158,7 +158,7 @@ class SL(L):
             n (int): the number of examples to be generated;
             repeat (bool): allows (rep=True) or prohibits (rep=False)
                repetitions within the list of generated items;
-            safe (bool): automatically breaks out of infinite looops,
+            safe (bool): automatically breaks out of infinite loops,
                 for example, when the grammar cannot generate the
                 required number of data items, and the repetitions
                 are set to False.

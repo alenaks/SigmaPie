@@ -37,7 +37,7 @@ class SP(L):
             the input string;
         fsmize: create a FSM family that corresponds to the given grammar;
         generate_sample(n, repeat, safe): generates `n` strings for 
-            the given SL grammar, contains no duplicats if `repeat` is
+            the given SL grammar, contains no duplicates if `repeat` is
             set to False, detects if the grammar cannot generate the
             desired number of strings if `safe` is set to True;
         extract_alphabet(): extracts alphabet from data/grammar;
