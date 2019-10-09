@@ -27,7 +27,11 @@ class MTSL(TSL):
         k (int): locality window;
         data (list): input data;
         edges (list): start- and end-symbols for the grammar;
-        polar ("p" or "n"): polarity of the grammar.
+        polar ("p" or "n"): polarity of the grammar;
+        fsm (FSMFamily): a list of finite state machines that 
+            corresponds to the grammar;
+        tiers (list): list of tuples, where every tuple lists elements
+            of some tier.
  
     Methods:
         learn: extracts tier-based strictly local grammar;
@@ -65,6 +69,7 @@ class MTSL(TSL):
         if self.k != 2:
         	raise NotImplementedError("The learner for k-MTSL languages is "
         							  "still being designed.")
+        self.tiers = None
 
 
     def learn(self):
@@ -126,6 +131,8 @@ class MTSL(TSL):
         gathered = self.gather_grammars(grammar)
 
         self.grammar = gathered
+        self.tiers = [i for i in self.grammar]
+
         if self.check_polarity() == "p":
             self.grammar = self.opposite_polarity()
 
