@@ -14,6 +14,7 @@ from copy import deepcopy
 from random import choice, randint
 from itertools import product
 from tsl_class import *
+from fsm_family import *
 
 
 class MTSL(TSL):
@@ -57,6 +58,7 @@ class MTSL(TSL):
                  edges=[">", "<"], polar="p"):
         """ Initializes the TSL object. """
         super().__init__(alphabet, grammar, k, data, edges, polar)
+        self.fsm = FSMFamily()
         if self.k != 2:
         	raise NotImplementedError("The learner for k-MTSL languages is "
         							  "still being designed.")
@@ -251,11 +253,214 @@ class MTSL(TSL):
         self.change_polarity()
 
 
+    def map_restrictions_to_fsms(self):
+        """
+        Maps restrictions to FSMs: based on the grammar, it creates
+        a list of lists, where every sub-list has the following shape:
+        [tier_n, restrictions_n, fsm_n]. Such sub-list is constructed
+        for every single tier of the current MTSL grammar.
+
+        """
+
+        if not self.grammar:
+            raise(IndexError("The grammar must not be empty."))
+
+        restr_to_fsm = []
+
+        for alpha, ngrams in self.grammar.items():
+            polarity = self.check_polarity()
+            tsl = TSL(self.alphabet, self.grammar, self.k, self.data,
+                self.edges, polar=polarity)
+            if not tsl.alphabet:
+                tsl.extract_alphabet()
+            tsl.tier = list(alpha)
+            tsl.grammar = list(ngrams)
+            tsl.fsmize()
+            restr_to_fsm.append([tsl.tier[:], tsl.grammar[:], tsl.fsm])
+
+        return restr_to_fsm
+
+
+    def fsmize(self):
+        """
+        Builds FSM family corresponding to the given grammar and 
+        saves in it the fsm attribute.
+        """
+
+        restr_to_fsm = self.map_restrictions_to_fsms()
+        self.fsm.family = [i[2] for i in restr_to_fsm]
+
+
     def clean_grammar(self, **kwargs):
         raise NotImplementedError("Requires theoretical work.")
 
-    def fsmize(self, **kwargs):
-        raise NotImplementedError("Requires theoretical work.")
+    def generate_sample(self, n=10, repeat=True, safe=True):
+        """
+        Generates a data sample of the required size, with or without
+        repetitions depending on `repeat` value.
 
-    def generate_sample(self, **kwargs):
-        raise NotImplementedError("Requires theoretical work.")
+        Arguments:
+            n (int): the number of examples to be generated;
+            repeat (bool): allows (rep=True) or prohibits (rep=False)
+               repetitions within the list of generated items;
+            safe (bool): automatically breaks out of infinite loops,
+                for example, when the grammar cannot generate the
+                required number of data items, and the repetitions
+                are set to False.
+
+        Returns:
+            list: generated data sample.
+        """
+        if not self.alphabet:
+            raise ValueError("Alphabet cannot be empty.")
+        if not self.fsm.family:
+            self.fsmize()
+
+        tier_smap = self.tier_state_maps()
+        if not any([len(tier_smap[x]) for x in tier_smap]):
+            raise(ValueError("There are ngrams in the grammar that are"
+                            " not leading anywhere. Clean the grammar "
+                            " or run `grammar.clean_grammar()`."))
+
+        data = [self.generate_item(tier_smap) for i in range(n)]
+
+        if not repeat:
+            data = set(data)
+            useless_loops = 0
+            prev_len = len(data)
+
+            while len(data) < n:
+                data.add(self.generate_item(tier_smap))
+
+                if prev_len == len(data):
+                    useless_loops += 1
+                else:
+                    useless_loops = 0
+                
+                if safe and useless_loops > 500:
+                    print("The grammar cannot produce the requested "
+                          "number of strings. Check the grammar, "
+                          "reduce the number, or allow repetitions.")
+                    break
+
+        return list(data)
+
+
+    def tier_image(self, string):
+        """
+        Creates tier images of a string with respect to the different
+        tiers listed in the grammar.
+
+        Returns:
+            dict: a dictionary of the following shape:
+                { (tier_1):"string_image_given_tier_1",
+                    ...,
+                  (tier_n):"string_image_given_tier_n"
+                }
+        """
+        tiers = {}
+        for i in self.grammar:
+            curr_tier = ""
+            for s in string:
+                if s in self.edges or s in i:
+                    curr_tier += s
+            tiers[i] = curr_tier
+        return tiers
+
+
+    def generate_item(self, tier_smap):
+        """
+        Generates a well-formed string with respect to the given grammar.
+
+        Returns:
+            str: a well-formed string.
+        """
+        word = self.edges[0] * (self.k - 1)
+        main_smap = self.general_state_map(tier_smap)
+        tier_images = self.tier_image(word)
+
+        while word[-1] != self.edges[1]:
+            maybe = choice(main_smap[word[-(self.k - 1):]])
+            good = True
+            for tier in tier_smap:
+                if maybe in tier:
+                    old_image = tier_images[tier]
+                    if maybe not in tier_smap[tier][old_image[-(self.k - 1):]]:
+                        good = False
+            if good:
+                word += maybe
+                tier_images = self.tier_image(word)
+
+        
+        return word[(self.k - 1):-1]
+
+
+    def tier_state_maps(self):
+        """
+        Generates a dictionary of transitions within the FSMs
+        that correspond to the tier grammars.
+
+        Returns:
+            dict: the dictionary of the form
+                {
+                 (tier_1):{"keys":[list of next symbols]},
+                 (tier_2):{"keys":[list of next symbols]},
+                   ...
+                 (tier_n):{"keys":[list of next symbols]},
+                }, where keys are (k-1)-long tier representations.
+
+        Warning: the list of next symbols is tier-specific,
+            so this estimates the rough options: refer to
+            generate_item for the filtering of wrongly
+            generated items.
+        """
+        restr_to_fsm = self.map_restrictions_to_fsms()
+        tier_smaps = {}
+        
+        for curr_tier in restr_to_fsm:
+            sl = SL()
+            sl.edges = self.edges
+            sl.k = self.k
+            sl.alphabet = curr_tier[0]
+            sl.grammar = curr_tier[1]
+            sl.fsm = curr_tier[2]
+            tier_smaps[tuple(sl.alphabet)] = sl.state_map()
+
+        return tier_smaps
+
+
+    def general_state_map(self, smaps):
+        """
+        Generates a dictionary of transitions within all
+        FSMs of the FSM family.
+
+        Returns:
+            dict: the dictionary of the form
+                {"keys":[list of next symbols]}, where 
+                keys are (k-1)-long strings.
+
+        Warning: the list of next symbols is tier-specific,
+            so this estimates the rough options: refer to
+            generate_item for the filtering of wrongly
+            generated items.
+        """
+        local_smaps = deepcopy(smaps)
+
+        for tier in local_smaps:
+            non_tier = [i for i in self.alphabet if i not in tier]
+            for entry in local_smaps[tier]:
+                local_smaps[tier][entry].extend(non_tier)
+
+        local_smaps = list(local_smaps.values())
+        main_smap = deepcopy(local_smaps[0])
+
+        for other in local_smaps[1:]:
+            for entry in other:
+
+                if entry not in main_smap:
+                    main_smap[entry] = other[entry]
+                else:
+                    inter = [i for i in main_smap[entry] if i in other[entry]]
+                    main_smap[entry] = inter
+
+        return main_smap
