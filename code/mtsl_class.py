@@ -291,9 +291,6 @@ class MTSL(TSL):
         self.fsm.family = [i[2] for i in restr_to_fsm]
 
 
-    def clean_grammar(self, **kwargs):
-        raise NotImplementedError("Requires theoretical work.")
-
     def generate_sample(self, n=10, repeat=True, safe=True):
         """
         Generates a data sample of the required size, with or without
@@ -416,7 +413,7 @@ class MTSL(TSL):
         """
         restr_to_fsm = self.map_restrictions_to_fsms()
         tier_smaps = {}
-        
+
         for curr_tier in restr_to_fsm:
             sl = SL()
             sl.edges = self.edges
@@ -464,3 +461,7 @@ class MTSL(TSL):
                     main_smap[entry] = inter
 
         return main_smap
+
+
+    def clean_grammar(self, **kwargs):
+        raise NotImplementedError("Requires theoretical work.")

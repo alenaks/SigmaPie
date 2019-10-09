@@ -248,3 +248,15 @@ class SP(L):
 
         if old_value != new_value:
         	self.grammar = self.opposite_polarity()
+
+
+
+    def clean_grammar(self):
+        """
+        Removes useless ngrams from the grammar.
+        If negative, it just removes duplicates.
+        If positive, it detects bigrams to which one cannot get
+            from the initial symbol and from which one cannot get
+            to the final symbol, and removes them.
+        """
+        self.grammar = list(set(self.grammar))
