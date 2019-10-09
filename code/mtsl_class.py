@@ -34,7 +34,14 @@ class MTSL(TSL):
         annotate_string(string): adds start and end symbols to the 
             given string;
         ngramize_data: returns a list of ngrams used in the given data;
+        fsmize: create a FSM that corresponds to the given grammar;
         scan(string): scan the string and tell whether it's well-formed;
+        generate_sample(n, repeat, safe): generates `n` strings for 
+            the given SL grammar, contains no duplicates if `repeat` is
+            set to False, detects if the grammar cannot generate the
+            desired number of strings if `safe` is set to True;
+        clean_grammar: removes useless ngrams from the grammar, i.e.
+            the ones that cannot be used in any string of the language;
         extract_alphabet: extracts alphabet from data/grammar;
         generate_all_ngrams(alphabet, k): generates all `k`-long ngrams
             based on the given `alphabet`;
@@ -47,11 +54,7 @@ class MTSL(TSL):
             grammar either to `new_polarity` if one is given, or to
             the opposite than before (does not change the grammar).
 
-    NOT IMPLEMENTED (requires more theoretical work):
-        learn for k > 2;
-        fsmize;
-        generate_sample;
-        clean_grammar.
+    Learning for k > 2 is not implemented: requires more theoretical work.
     """
     
     def __init__(self, alphabet=None, grammar=None, k=2, data=None,
@@ -416,6 +419,7 @@ class MTSL(TSL):
 
         for curr_tier in restr_to_fsm:
             sl = SL()
+            sl.change_polarity(self.check_polarity())
             sl.edges = self.edges
             sl.k = self.k
             sl.alphabet = curr_tier[0]
@@ -463,5 +467,21 @@ class MTSL(TSL):
         return main_smap
 
 
-    def clean_grammar(self, **kwargs):
-        raise NotImplementedError("Requires theoretical work.")
+    def clean_grammar(self):
+        """
+        Removes useless ngrams from the grammar.
+        If negative, it just removes duplicates.
+        If positive, it detects ngrams to which one cannot get
+            from the initial symbol and from which one cannot get
+            to the final symbol, and removes them.
+        """
+        for tier in self.grammar:
+            sl = SL()
+            sl.change_polarity(self.check_polarity())
+            sl.edges = self.edges
+            sl.alphabet = list(tier)
+            sl.k = self.k
+            sl.grammar = self.grammar[tier]
+            sl.fsmize()
+            sl.clean_grammar()
+            self.grammar[tier] = deepcopy(sl.grammar)

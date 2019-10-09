@@ -163,8 +163,9 @@ class TSL(SL):
 
 
     def fsmize(self):
-        """ Builds FSM corresponding to the given grammar and saves in
-            it the fsm attribute.
+        """
+        Builds FSM corresponding to the given grammar and saves in
+        it the fsm attribute.
         """
         if not self.grammar:
             raise(IndexError("The grammar must not be empty."))
@@ -180,8 +181,9 @@ class TSL(SL):
 
 
     def switch_polarity(self):
-        """ Changes polarity of the grammar, and rewrites
-            grammar to the opposite one.
+        """
+        Changes polarity of the grammar, and rewrites
+        grammar to the opposite one.
         """
         if not self.tier:
             raise ValueError("Either the language is SL, or the tier "

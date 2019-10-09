@@ -112,32 +112,5 @@ class TestMTSLLanguages(unittest.TestCase):
         for s in ["aoap", "popa", "pbapop", "pabp", "popoa"]:
             self.assertFalse(d.scan(s))
 
-
-    def test_not_implem(self):
-        """ Tests that some functions are not available. """
-        caught = 0
-        e = MTSL()
-
-        try:
-            e.clean_grammar()
-        except:
-            caught += 1
-
-        try:
-            e.fsmize()
-        except:
-            caught += 1
-
-        try:
-            e.generate_sample(10, False)
-        except:
-            caught += 1
-
-        self.assertTrue(caught == 3)
-
-
-
-
-
 if __name__ == '__main__':
     unittest.main()
