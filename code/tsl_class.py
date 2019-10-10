@@ -213,7 +213,17 @@ class TSL(SL):
             raise ValueError("Alphabet cannot be empty.")
         if not self.tier:
             raise ValueError("Either the language is SL, or the tier "
-                             "is not extracted, use `grammar.learn()`.")        
+                             "is not extracted, use `grammar.learn()`.")
+
+        if len(self.alphabet) == len(self.tier):
+            sl = SL(polar = self.check_polarity())
+            sl.alphabet = self.alphabet
+            sl.grammar = self.grammar
+            sl.k = self.k
+            sl.edges = self.edges
+            sl.fsmize()
+            return sl.generate_sample(n, repeat, safe)
+
         if not self.fsm.transitions:
             self.fsmize()
 
