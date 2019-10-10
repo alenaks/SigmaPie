@@ -6,7 +6,7 @@ Readme last updated: October 3, 2019
 
 ## Subregular languages in phonology
 
-This toolkit is relevant for anyone who is working or going to work with subregualar grammars both from the perspectives of theoretical linguistics and formal language theory.
+This toolkit is relevant for anyone who is working or going to work with subregular grammars both from the perspectives of theoretical linguistics and formal language theory.
 
 **Why theoretical linguists might be interested in formal language theory?** <br>
 _Formal language theory_ explains how potentially infinite string sets, or _formal languages_,
