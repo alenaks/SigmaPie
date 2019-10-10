@@ -120,6 +120,8 @@ class MTSL(TSL):
                 for rp in relevant_paths:
                     new = [rp[0], [i for i in rp[1] if i != s], rp[2]]
                     if new not in paths:
+                        if s == "c":
+                            print(new)
                         rmv = False
                         break
 
