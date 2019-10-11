@@ -274,7 +274,7 @@ class TSL(SL):
         
         new_string = self.edges[0] * (self.k - 1)
         for i in range(self.k + 1):
-            if randint(0, 1):
+            if randint(0, 1) and free_symb:
                 new_string += choice(free_symb)
 
         if not tier_items:
@@ -283,7 +283,7 @@ class TSL(SL):
         for item in tier_items:
             new_string += item
             for i in range(self.k + 1):
-                if randint(0, 1):
+                if randint(0, 1) and free_symb:
                     new_string += choice(free_symb)
 
         return "".join([i for i in new_string if i not in self.edges])
