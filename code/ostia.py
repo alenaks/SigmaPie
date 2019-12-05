@@ -110,10 +110,20 @@ def build_ptt(S, Sigma, Gamma):
     return T
 
 
-
-
 def onward_ptt(T, q, u):
-    """ Makes the PTT onward. """
+    """
+    Function recursively pushing the common parts
+    of strings towards the initial state therefore
+    making the machine onward.
+
+    Arguments:
+        T (FST): a transducer that is being modified;
+        q (str): a state that is being processes;
+        u (str): a current part of the string to be moved.
+
+    Outputs:
+        (FST, str, str): updated values of the input.
+    """
     
     # proceed as deep as possible
     for tr in T.E:
@@ -136,25 +146,47 @@ def onward_ptt(T, q, u):
     return T, q, f
 
 
-
-
 def ostia_outputs(w1,w2):
-    ''' Compares two strings allowing for unknown. '''
+    """
+    Function implementing a special comparison operation:
+    it returns a string if two strings are the same and if
+    another string is unknown, and False otherwise.
+
+    Arguments:
+        w1 (str): the first string;
+        w2 (str): the second string.
+
+    Returns:
+        bool | if strings are not the same;
+        str | otherwise.
+    """
     
-    if w1 == "*": return w2
-    elif w2 == "*": return w1
-    elif w1 == w2: return w2
-    else: return False
-
-
-
+    if w1 == "*":
+        return w2
+    elif w2 == "*":
+        return w1
+    elif w1 == w2:
+        return w2
+    else:
+        return False
 
 
 def ostia_pushback(T_orig, q1, q2, a):
-    ''' Moves further the part after lcp of two states. '''
+    """
+    Re-distributes lcp of two states further in the FST.
+
+    Arguments:
+        T_orig (FST): a transducer;
+        q1 (str): the first state;
+        q2 (str): the second state;
+        a (str): the lcp of q1 and q2.
+
+    Returns:
+        FST: an updated transducer.
+    """
     
     # to avoid rewriting the original transducer
-    T = copy_fst(T_orig)
+    T = T_orig.copy_fst()
     
     # states where you get if follow a
     q1_goes_to = None
@@ -202,10 +234,20 @@ def ostia_pushback(T_orig, q1, q2, a):
 
 
 def ostia_merge(T_orig, q1, q2):
-    ''' Redirects all branches to q2 into q1. '''
+    """
+    Re-directs all branches of q2 into q1.
+
+    Arguments:
+        T_orig (FST): a transducer;
+        q1 (str): the first state;
+        q2 (str): the second state.
+
+    Returns:
+        FST: an updated transducer.
+    """
     
     # to avoid rewriting the original transducer
-    T = copy_fst(T_orig)
+    T = T_orig.copy_fst()
     
     # save which transition was changed to revert in case cannot merge the states
     changed = None
@@ -229,20 +271,32 @@ def ostia_merge(T_orig, q1, q2):
         return False
     
     # if can, do it
-    else: return can_do
+    else:
+        return can_do
 
 
 
 
 def ostia_fold(T_orig, q1, q2):
-    ''' Folds recursively subtrees of Q2 into Q1. '''
+    """
+    Recursively folds subtrees of q2 into q1.
+
+    Arguments:
+        T_orig (FST): a transducer;
+        q1 (str): the first state;
+        q2 (str): the second state.
+
+    Returns:
+        FST: an updated transducer.
+    """
     
     # to avoid rewriting the original transducer
-    T = copy_fst(T_orig)
+    T = T_orig.copy_fst()
     
     # compare the state outputs
     w = ostia_outputs(T.stout[q1], T.stout[q2])
-    if w == False: return False
+    if w == False:
+        return False
     
     # rewrite * in case it's the output of q1
     T.stout[q1] = w
@@ -283,12 +337,19 @@ def ostia_fold(T_orig, q1, q2):
 
 
 def ostia_clean(T_orig):
-    ''' Cleans the resulting transducers by getting rid of the states that were never processed
-        (i.e. never colored red or blue) -- those states are not reachable from the initial state.
-    '''
+    """
+    Removes the disconnected branches from the transducer
+    that appear due to the step folding the sub-trees.
+
+    Arguments:
+        T_orig (FST): a transducer.
+
+    Returns:
+        FST: an updated transducer.
+    """
     
     # to avoid rewriting the original transducer
-    T = copy_fst(T_orig)
+    T = T_orig.copy_fst()
     
     # determine which states are reachable, i.e. accessible from the initial state
     reachable_states = [""]
@@ -328,8 +389,3 @@ def ostia_clean(T_orig):
     T.Q = new_Q
     
     return T
-
-
-
-
-

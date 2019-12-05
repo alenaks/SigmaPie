@@ -17,12 +17,16 @@ from sp_class import *
 from ostia import *
 
 
-print("\nYou successfully loaded SigmaPie. "
-      "Now you can initialize one of the following classes:\n"
+print("\nYou successfully loaded SigmaPie. \n\n"
+      "Formal language classes and grammars available:\n"
       "\t* strictly piecewise: SP(alphabet, grammar, k, data, polar);\n"
       "\t* strictly local: SL(alphabet, grammar, k, data, edges, polar);\n"
       "\t* tier-based strictly local: TSL(alphabet, grammar, k, data, edges,"
             " polar, tier);\n"
       "\t* multiple tier-based strictly local: MTSL(alphabet, grammar, k, "
-            "data, edges, polar).\n"
+            "data, edges, polar).\n\n"
+      "Alternatively, you can initialize a transducer: "
+      "FST(states, sigma, gamma, initial, transitions, stout).\n"
+      "Learning algorithm:\n"
+      "\tOSTIA: ostia(sample, sigma, gamma)."
     )
