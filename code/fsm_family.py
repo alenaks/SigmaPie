@@ -17,7 +17,6 @@ class FSMFamily(object):
     """
     This class encodes Family of Finite State Machines. Used for 
     a simple encoding of FSMs corresponding to SP languages.
-
     Attributes:
       transitions(list): triples of the form 
         [prev_state, transition, next_state].
@@ -35,10 +34,8 @@ class FSMFamily(object):
         """
         Tells whether the given string is accepted by all
         the automata of the family.
-
         Arguments:
             string (str): the input string.
-
         Returns:
             bool: True if the string is accepted by all the
                 fsms, otherwise False.

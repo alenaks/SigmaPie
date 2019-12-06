@@ -27,35 +27,7 @@ class TSL(SL):
         polar ("p" or "n"): polarity of the grammar;
         fsm (FSM): finite state machine that corresponds to the grammar;
         tier (list): list of tier symbols.
- 
-    Methods:
-        learn: extracts tier-based strictly local grammar;
-        learn_tier: extracts the list of tier symbols;
-        tier_image(string): returns tier image of the given string;
-        annotate_string(string): adds start and end symbols to the 
-            given string;
-        ngramize_data: returns a list of ngrams used in the given data;
-        fsmize: create a FSM that corresponds to the given grammar;
-        scan(string): scan the string and tell whether it's well-formed;
-        generate_sample(n, repeat, safe): generates `n` strings for 
-            the given SL grammar, contains no duplicates if `repeat` is
-            set to False, detects if the grammar cannot generate the
-            desired number of strings if `safe` is set to True;
-        clean_grammar: removes useless ngrams from the grammar, i.e.
-            the ones that cannot be used in any string of the language;
-        extract_alphabet: extracts alphabet from data/grammar;
-        generate_all_ngrams(alphabet, k): generates all `k`-long ngrams
-            based on the given `alphabet`;
-        opposite_polarity(alphabet): returns the opposite grammar for 
-            the given `alphabet` and the locality of the grammar;
-        check_polarity: returns the polarity of the grammar;
-        switch_polarity: rewrites grammar to the opposite, and changes
-            the polarity of the grammar;
-        change_polarity(new_polarity): changes the polarity of the 
-            grammar either to `new_polarity` if one is given, or to
-            the opposite than before (does not change the grammar).
     """
-    
     def __init__(self, alphabet=None, grammar=None, k=2, data=None,
                  edges=[">", "<"], polar="p", tier=None):
         """ Initializes the TSL object. """
@@ -105,12 +77,10 @@ class TSL(SL):
         Tier presense test #1. For every (n-1)-gram ('x','y','z'),
         there must be n-grams of the type ('x','S','y','z') and
         ('x','y','S','z').
-
         Arguments:
             symbol (str): the symbol that is currently being tested;
             ngrams (list): the list of n-gramized input;
             ngrams_less (list): the list of (n-1)-gramized input.
-            
         Returns:
             bool: True if a symbol passed the test, otherwise False.
         """
@@ -128,12 +98,10 @@ class TSL(SL):
         """
         Tier presense test #2. For every (n+1)-gram of the type 
         ('x','S','y'), there must be an n-gram of the type ('x', 'y').
-
         Arguments:
             symbol (str): the symbol that is currently being tested;
             ngrams (list): the list of n-gramized input;
             ngrams_more (list): the list of (n+1)-gramized input.
-            
         Returns:
             bool: True if a symbol passed the test, otherwise False.
         """
@@ -152,10 +120,8 @@ class TSL(SL):
     def tier_image(self, string):
         """
         Function that returns a tier image of the input string.
-
         Arguments:
             string (str): string that needs to be processed.
-        
         Returns:
             str: tier image of the input string.
         """
@@ -196,7 +162,6 @@ class TSL(SL):
     def generate_sample(self, n=10, repeat=True, safe=True):
         """
         Generates n well-formed strings, with or without repetitions.
-
         Arguments:
             n (int): the number of examples to be generated;
             repeat (bool): allow (rep=True) or prohibit (rep=False)
@@ -205,7 +170,6 @@ class TSL(SL):
                 for example, when the grammar cannot generate the
                 required number of data items, and the repetitions
                 are set to False.
-
         Returns:
             list: generated data sample.
         """
@@ -250,7 +214,6 @@ class TSL(SL):
     def generate_item(self):
         """
         Generates a well-formed sequence of symbols.
-
         Returns:
             str: a well-formed string.
         """
@@ -292,7 +255,6 @@ class TSL(SL):
     def state_map(self):
         """
         Generates a dictionary of possible transitions in the FSM.
-
         Returns:
             dict: the dictionary of the form
                 {"keys":[list of possible next symbols]}, where 
@@ -320,10 +282,8 @@ class TSL(SL):
         """
         Checks if the given string is well-formed with respect
         to the given grammar.
-
         Arguments:
             string (str): the string that needs to be evaluated.
-
         Returns:
             bool: well-formedness value of a string.
         """

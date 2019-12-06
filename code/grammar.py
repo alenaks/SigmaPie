@@ -17,7 +17,6 @@ class L(object):
     """
     A general class for grammars and languages. Implements methods that
     are applicable to all grammars in this package.
-
     Attributes:
         alphabet (list): alphabet used in the language;
         grammar (list): the list of substructures;
@@ -25,18 +24,7 @@ class L(object):
         data (list): input data;
         edges (list): start- and end-symbols for the grammar;
         polar ("p" or "n"): polarity of the grammar.
-
-    Methods:
-        extract_alphabet: extracts alphabet from data/grammar;
-        well_formed_ngram: checks if ngram is well-formed;
-        generate_all_ngrams: generates all possible well-formed ngrams
-            based on the given alphabet;
-        opposite_polarity: returns the opposite grammar;
-        check_polarity: returns the polarity of the grammar;
-        change_polarity: changes the polarity of the grammar to the one
-            that is provided by the user.
     """
-
     def __init__(self, alphabet=None, grammar=None, k=2, data=None,
                  edges=[">", "<"], polar="p"):
         """ Initializes the L object. """
@@ -55,7 +43,6 @@ class L(object):
         """
         Extracts alphabet from the given data or grammar and saves it
         into the 'alphabet' attribute.
-
         CAUTION: if not all symbols were used in the data or grammar,
                 the result is not correct: update manually.
         """
@@ -82,10 +69,8 @@ class L(object):
           ('a>'), or
         * the ngram consists only of start- or end-symbols.
         Otherwise it is well-formed.
-
         Arguments:
             ngram (str): The ngram that needs to be evaluated.
-
         Returns:
             bool: well-formedness of the ngram.
         """
@@ -123,11 +108,9 @@ class L(object):
         """
         Generates all possible ngrams of the length k based on the
         given alphabet.
-
         Arguments:
             alphabet (list): alphabet;
             k (int): locality window (length of ngram).
-
         Returns:
             list: generated ngrams.
         """
@@ -147,10 +130,8 @@ class L(object):
     def opposite_polarity(self, symbols):
         """
         Returns the grammar opposite to the one given.
-
         Arguments:
             symbols (list): alphabet.
-
         Returns:
             list: ngrams of the opposite polarity.
         """

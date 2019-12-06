@@ -14,22 +14,12 @@
 class FSM(object):
     """
     This class implements Finite State Machine.
-
     Attributes:
         initial (str): initial symbol;
         final (str): final symbol;
         transitions (list): triples of the form [prev_state,
             transition, next_state].
-
-    Methods:
-        sl_to_fsm: converts given SL grammar to FSM transitions;
-        scan_sl: scans a string with SL dependencies and tells
-            whether it is well-formed in the current FSM;
-        trim_fsm: removes useless transitions, i.e. the ones that
-            cannot be accessed from the initial state, and the ones
-            that do not lead to the final state.
     """
-
     def __init__(self, initial, final, transitions=None):
         if transitions == None:
             self.transitions = []
@@ -43,7 +33,6 @@ class FSM(object):
     def sl_to_fsm(self, grammar):
         """
         Creates FSM transitions based on the SL grammar.
-
         Arguments:
             grammar (list): SL ngrams.
         """
@@ -55,10 +44,8 @@ class FSM(object):
     def scan_sl(self, string):
         """
         Scans a given string using the learned SL grammar.
-
         Arguments:
             string (str): a string that needs to be scanned.
-
         Returns:
             bool: well-formedness value of the string.
         """
@@ -103,10 +90,8 @@ class FSM(object):
     def accessible_states(self, marker):
         """
         Finds accessible states.
-
         Arguments:
             marker (str): initial or final state.
-
         Returns:
             list: list of transitions that can be made from
                 the given initial or final state.
@@ -143,7 +128,6 @@ class FSM(object):
     def sp_build_template(self, path, alphabet, k):
         """
         Generates a template for the given k-SP path.
-
         Arguments:
             path (str): the sequence for which the template is generated;
             alphabet (list): list of all symbols of the grammar;
@@ -174,7 +158,6 @@ class FSM(object):
         Runs the imput sequence through the SP automaton
         and marks transitions if they were taken. Cleans
         transitions that were not taken afterwards.
-
         Arguments:
             sequence (str): sequence of symbols that needs to be
                 passed through the automaton.
@@ -195,10 +178,8 @@ class FSM(object):
 
     def scan_sp(self, string):
         """ Runs the given sequence through the automaton.
-
         Arguments:
             string (str): string to run through the automaton.
-
         Returns:
             bool: True if input can be accepted by the automaton,
                 otherwise False.

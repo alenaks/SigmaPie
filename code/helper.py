@@ -14,14 +14,11 @@
 def alphabetize(data):
     """
     Detects symbols used in the input data.
-
     Arguments:
         data (list): Input data.
-
     Returns:
         list:  Symbols used in these examples.
     """
-
     alphabet = set()
     for item in data:
         alphabet.update({i for i in item})
@@ -31,16 +28,13 @@ def alphabetize(data):
 def get_gram_info(ngrams):
     """
     Returns the alphabet and window size of the grammar.
-
     Arguments:
         ngrams (list): list of ngrams.
-
     Returns:
         (list, int)
             list: alphabet;
             int: locality window.
     """
-
     alphabet = list(set([i for i in "".join(ngrams) if i not in [">", "<"]]))
     k = max(len(i) for i in ngrams)
     return alphabet, k
@@ -49,14 +43,11 @@ def get_gram_info(ngrams):
 def prefix(w):
     """
     Returns a list of prefixes of a given string.
-
     Arguments:
         w (str): a string prefixes of which need to be extracted.
-
     Returns:
         list: a list of prefixes of the given string.
     """
-    
     return [w[:i] for i in range(len(w)+1)]
 
 
@@ -64,14 +55,11 @@ def prefix(w):
 def lcp(*string):
     """
     Finds the longest common prefix of an unbounded number of strings.
-
     Arguments:
         *string (str): one or more strings;
-
     Returns:
         str: a longest common prefix of the input strings.
     """
-    
     w = list(set(i for i in string if i != "*"))
     if not w:
         raise IndexError("At least one non-unknown string needs to be provided.")
@@ -91,15 +79,12 @@ def lcp(*string):
 def remove_from_prefix(w, pref):
     """
     Removes a substring from the prefix position of another string.
-
     Arguments:
         w (str): a string that needs to be modified;
         pref (str): a prefix that needs to be removed from the string.
-
     Returns:
         str: the modified string.
     """
-    
     if w.startswith(pref):
         return w[len(pref):]
     elif w == "*":

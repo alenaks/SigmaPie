@@ -20,7 +20,6 @@ from fsm_family import *
 class MTSL(TSL):
     """
     A class for tier-based strictly local grammars and languages.
-
     Attributes:
         alphabet (list): alphabet used in the language;
         grammar (list): the list of substructures;
@@ -32,35 +31,8 @@ class MTSL(TSL):
             corresponds to the grammar;
         tier (list): list of tuples, where every tuple lists elements
             of some tier.
- 
-    Methods:
-        learn: extracts tier-based strictly local grammar;
-        annotate_string(string): adds start and end symbols to the 
-            given string;
-        ngramize_data: returns a list of ngrams used in the given data;
-        fsmize: create a FSM that corresponds to the given grammar;
-        scan(string): scan the string and tell whether it's well-formed;
-        generate_sample(n, repeat, safe): generates `n` strings for 
-            the given SL grammar, contains no duplicates if `repeat` is
-            set to False, detects if the grammar cannot generate the
-            desired number of strings if `safe` is set to True;
-        clean_grammar: removes useless ngrams from the grammar, i.e.
-            the ones that cannot be used in any string of the language;
-        extract_alphabet: extracts alphabet from data/grammar;
-        generate_all_ngrams(alphabet, k): generates all `k`-long ngrams
-            based on the given `alphabet`;
-        opposite_polarity(alphabet): returns the opposite grammar for 
-            the given `alphabet` and the locality of the grammar;
-        check_polarity: returns the polarity of the grammar;
-        switch_polarity: rewrites grammar to the opposite, and changes
-            the polarity of the grammar;
-        change_polarity(new_polarity): changes the polarity of the 
-            grammar either to `new_polarity` if one is given, or to
-            the opposite than before (does not change the grammar).
-
     Learning for k > 2 is not implemented: requires more theoretical work.
     """
-    
     def __init__(self, alphabet=None, grammar=None, k=2, data=None,
                  edges=[">", "<"], polar="p"):
         """ Initializes the TSL object. """
@@ -78,7 +50,6 @@ class MTSL(TSL):
         currently works only for k=2 and is based on MTSL2IA designed 
         by McMullin, Aksenova and De Santo (2019). We are currently
         working on lifting the locality of the grammar to arbitrary k.
-
         Results:
             self.grammar is updated with a grammar of the following shape:
             {(tier_1):[bigrams_for_tier_1],
@@ -140,10 +111,8 @@ class MTSL(TSL):
     def scan(self, string):
         """
         Scan string with respect to a given MTSL grammar.
-
         Arguments:
             string (str): a string that needs to be scanned.
-
         Returns:
             bool: well-formedness of the string.
         """
@@ -170,12 +139,10 @@ class MTSL(TSL):
     def gather_grammars(self, grammar):
         """
         Gathers grammars with the same tier together.
-
         Arguments:
             grammar (list): a representation of the learned grammar
                 where there is a one-to-one mapping between tiers 
                 and bigrams.
-
         Returns:
             dict: a dictionary where keys are tiers and values are
                 the restrictions imposed on those tiers.
@@ -195,10 +162,8 @@ class MTSL(TSL):
         triplet <a, X, b>, where `a` is a symbol, `b` is a symbol
         that follows `a` in `string`, and `X` is a set of symbols 
         in-between `a` and `b`.
-
         Arguments:
             string (str): a string paths of which need to be found.
-
         Returns:
             list: list of paths of `string`.
         """
@@ -220,10 +185,8 @@ class MTSL(TSL):
     def all_paths(self, dataset):
         """
         Finds all paths that are present in a list of strings.
-
         Arguments:
             dataset (list): a list of strings.
-
         Returns:
             list: a list of paths present in `dataset`.
         """
@@ -239,7 +202,6 @@ class MTSL(TSL):
     def opposite_polarity(self):
         """
         Generates a grammar of the opposite polarity.
-
         Returns:
             dict: a dictionary containing the opposite ngram lists
                 for every tier of the grammar.
@@ -269,9 +231,12 @@ class MTSL(TSL):
         a list of lists, where every sub-list has the following shape:
         [tier_n, restrictions_n, fsm_n]. Such sub-list is constructed
         for every single tier of the current MTSL grammar.
-
+        Returns:
+            [list, list, FSM]
+                list: a list of current tier's symbols;
+                list: a list of current tier's restrictions;
+                FSM: a FSM corresponding to the current tier.
         """
-
         if not self.grammar:
             raise(IndexError("The grammar must not be empty."))
 
@@ -296,7 +261,6 @@ class MTSL(TSL):
         Builds FSM family corresponding to the given grammar and 
         saves in it the fsm attribute.
         """
-
         restr_to_fsm = self.map_restrictions_to_fsms()
         self.fsm.family = [i[2] for i in restr_to_fsm]
 
@@ -305,7 +269,6 @@ class MTSL(TSL):
         """
         Generates a data sample of the required size, with or without
         repetitions depending on `repeat` value.
-
         Arguments:
             n (int): the number of examples to be generated;
             repeat (bool): allows (rep=True) or prohibits (rep=False)
@@ -314,7 +277,6 @@ class MTSL(TSL):
                 for example, when the grammar cannot generate the
                 required number of data items, and the repetitions
                 are set to False.
-
         Returns:
             list: generated data sample.
         """
@@ -357,7 +319,6 @@ class MTSL(TSL):
         """
         Creates tier images of a string with respect to the different
         tiers listed in the grammar.
-
         Returns:
             dict: a dictionary of the following shape:
                 { (tier_1):"string_image_given_tier_1",
@@ -378,7 +339,6 @@ class MTSL(TSL):
     def generate_item(self, tier_smap):
         """
         Generates a well-formed string with respect to the given grammar.
-
         Returns:
             str: a well-formed string.
         """
@@ -406,7 +366,6 @@ class MTSL(TSL):
         """
         Generates a dictionary of transitions within the FSMs
         that correspond to the tier grammars.
-
         Returns:
             dict: the dictionary of the form
                 {
@@ -415,7 +374,6 @@ class MTSL(TSL):
                    ...
                  (tier_n):{"keys":[list of next symbols]},
                 }, where keys are (k-1)-long tier representations.
-
         Warning: the list of next symbols is tier-specific,
             so this estimates the rough options: refer to
             generate_item for the filtering of wrongly
@@ -441,12 +399,10 @@ class MTSL(TSL):
         """
         Generates a dictionary of transitions within all
         FSMs of the FSM family.
-
         Returns:
             dict: the dictionary of the form
                 {"keys":[list of next symbols]}, where 
                 keys are (k-1)-long strings.
-
         Warning: the list of next symbols is tier-specific,
             so this estimates the rough options: refer to
             generate_item for the filtering of wrongly

@@ -18,14 +18,14 @@ def ostia(S, Sigma, Gamma):
     """
     This function implements OSTIA (Onward Subsequential Transduction
     Inference Algorithm).
-
-    Input:
+    Arguments:
         S (list): a list of pairs (o, t), where `o` is the original
             string, and `t` is its translation;
         Sigma (list): the input alphabet;
         Gamma (list): the output alphabet.
+    Returns:
+        FST: a transducer defining the mapping.
     """
-
     # create a template of the onward PTT
     T = build_ptt(S, Sigma, Gamma)
     T = onward_ptt(T, "", "")[0]
@@ -75,7 +75,7 @@ def build_ptt(S, Sigma, Gamma):
     """
     Builds a prefix tree transducer based on the data sample.
 
-    Input:
+    Arguments:
         S (list): a list of pairs (o, t), where `o` is the original
             string, and `t` is its translation;
         Sigma (list): the input alphabet;
@@ -115,16 +115,16 @@ def onward_ptt(T, q, u):
     Function recursively pushing the common parts
     of strings towards the initial state therefore
     making the machine onward.
-
     Arguments:
         T (FST): a transducer that is being modified;
         q (str): a state that is being processes;
         u (str): a current part of the string to be moved.
-
-    Outputs:
-        (FST, str, str): updated values of the input.
+    Returns:
+        (FST, str, str)
+            FST: the updated transducer;
+            str: a new state;
+            u: a new string to be moved.
     """
-    
     # proceed as deep as possible
     for tr in T.E:
         if tr[0] == q:
@@ -151,16 +151,13 @@ def ostia_outputs(w1,w2):
     Function implementing a special comparison operation:
     it returns a string if two strings are the same and if
     another string is unknown, and False otherwise.
-
     Arguments:
         w1 (str): the first string;
         w2 (str): the second string.
-
     Returns:
         bool | if strings are not the same;
         str | otherwise.
     """
-    
     if w1 == "*":
         return w2
     elif w2 == "*":
@@ -174,17 +171,14 @@ def ostia_outputs(w1,w2):
 def ostia_pushback(T_orig, q1, q2, a):
     """
     Re-distributes lcp of two states further in the FST.
-
     Arguments:
         T_orig (FST): a transducer;
         q1 (str): the first state;
         q2 (str): the second state;
         a (str): the lcp of q1 and q2.
-
     Returns:
         FST: an updated transducer.
     """
-    
     # to avoid rewriting the original transducer
     T = T_orig.copy_fst()
     
@@ -236,16 +230,13 @@ def ostia_pushback(T_orig, q1, q2, a):
 def ostia_merge(T_orig, q1, q2):
     """
     Re-directs all branches of q2 into q1.
-
     Arguments:
         T_orig (FST): a transducer;
         q1 (str): the first state;
         q2 (str): the second state.
-
     Returns:
         FST: an updated transducer.
     """
-    
     # to avoid rewriting the original transducer
     T = T_orig.copy_fst()
     
@@ -280,16 +271,13 @@ def ostia_merge(T_orig, q1, q2):
 def ostia_fold(T_orig, q1, q2):
     """
     Recursively folds subtrees of q2 into q1.
-
     Arguments:
         T_orig (FST): a transducer;
         q1 (str): the first state;
         q2 (str): the second state.
-
     Returns:
         FST: an updated transducer.
     """
-    
     # to avoid rewriting the original transducer
     T = T_orig.copy_fst()
     
@@ -340,14 +328,11 @@ def ostia_clean(T_orig):
     """
     Removes the disconnected branches from the transducer
     that appear due to the step folding the sub-trees.
-
     Arguments:
         T_orig (FST): a transducer.
-
     Returns:
         FST: an updated transducer.
     """
-    
     # to avoid rewriting the original transducer
     T = T_orig.copy_fst()
     

@@ -16,7 +16,6 @@ from copy import deepcopy
 class FST():
     """
     A class representing finite state transducers.
-
     Attributes:
         Q (list): a list of states;
         Sigma (list): a list of symbols of the input alphabet;
@@ -24,13 +23,7 @@ class FST():
         qe (str): name of the unique initial state;
         E (list): a list of transitions;
         stout (dict): a collection of state outputs.
-
-    Methods:
-        rewrite: takes a string as input, and returns its image
-            under the rewriting rules of this transducers;
-        copy_fst: returns a copy of the given fst.
     """
-
     def __init__(self, Sigma=None, Gamma=None):
         """ Initializes the FST object. """
         self.Q = None
@@ -45,14 +38,11 @@ class FST():
         """
         Rewrites the given string with respect to the rules represented
         in the current FST.
-
         Arguments:
             w (str): a string that needs to be rewritten.
-
         Outputs:
             str: the translation of the input string.
         """
-        
         if self.Q == None:
             raise ValueError("The transducer needs to be constructed.")
         
@@ -80,11 +70,9 @@ class FST():
     def copy_fst(self):
         """
         Produces a deep copy of the current FST.
-
         Returns:
             T (FST): a copy of the current FST.
         """
-
         T = FST()
         T.Q = deepcopy(self.Q)
         T.Sigma = deepcopy(self.Sigma)

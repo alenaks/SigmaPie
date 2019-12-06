@@ -27,33 +27,7 @@ class SL(L):
         edges (list): start- and end-symbols for the grammar;
         polar ("p" or "n"): polarity of the grammar;
         fsm (FSM): corresponding finite state machine.
-
-    Methods:
-        learn: extracts strictly local grammar;
-        annotate_string(string): adds start and end symbols to the 
-            given string;
-        ngramize_data: returns a list of ngrams used in the given data;
-        fsmize: create a FSM that corresponds to the given grammar;
-        scan(string): scan the string and tell whether it's well-formed;
-        generate_sample(n, repeat, safe): generates `n` strings for 
-            the given SL grammar, contains no duplicates if `repeat` is
-            set to False, detects if the grammar cannot generate the
-            desired number of strings if `safe` is set to True;
-        clean_grammar: removes useless ngrams from the grammar, i.e.
-            the ones that cannot be used in any string of the language;
-        extract_alphabet: extracts alphabet from data/grammar;
-        generate_all_ngrams(alphabet, k): generates all `k`-long ngrams
-            based on the given `alphabet`;
-        opposite_polarity(alphabet): returns the opposite grammar for 
-            the given `alphabet` and the locality of the grammar;
-        check_polarity: returns the polarity of the grammar;
-        switch_polarity: rewrites grammar to the opposite, and changes
-            the polarity of the grammar;
-        change_polarity(new_polarity): changes the polarity of the 
-            grammar either to `new_polarity` if one is given, or to
-            the opposite than before (does not change the grammar).
     """
-
     def __init__(self, alphabet=None, grammar=None, k=2, data=None,
                  edges=[">", "<"], polar="p"):
         """ Initializes the SL object. """
@@ -70,10 +44,8 @@ class SL(L):
                 
     def annotate_string(self, string):
         """ Annotates the string with the start and end symbols.
-
         Arguments:
             string (str): a string that needs to be annotated.
-
         Returns:
             str: annotated version of the string.
         """
@@ -83,7 +55,6 @@ class SL(L):
     def ngramize_data(self):
         """
         Creates set of n-grams based on the given data.
-
         Returns:
             list: collection of ngrams in the data.
         """
@@ -99,13 +70,12 @@ class SL(L):
 
 
     def ngramize_item(self, item):
-        """ This function n-gramizes a given string.
-
-            Arguments:
-                item (str): a string that needs to be ngramized.
-
-            Returns:
-                list: list of ngrams from the item.
+        """
+        This function n-gramizes a given string.
+        Arguments:
+            item (str): a string that needs to be ngramized.
+        Returns:
+            list: list of ngrams from the item.
         """
         ng = []
         for i in range(len(item) - (self.k - 1)):
@@ -115,8 +85,9 @@ class SL(L):
 
 
     def fsmize(self):
-        """ Builds FSM corresponding to the given grammar and saves it
-            in the fsm attribute.
+        """
+        Builds FSM corresponding to the given grammar and saves it
+        in the fsm attribute.
         """
         if not self.grammar:
             raise(IndexError("The grammar must not be empty."))
@@ -135,10 +106,8 @@ class SL(L):
         """
         Checks if the given string is well-formed with respect
         to the given grammar.
-
         Arguments:
             string (str): the string that needs to be evaluated.
-
         Returns:
             bool: well-formedness value of a string.
         """
@@ -153,7 +122,6 @@ class SL(L):
         """
         Generates a data sample of the required size, with or without
         repetitions depending on `repeat` value.
-
         Arguments:
             n (int): the number of examples to be generated;
             repeat (bool): allows (rep=True) or prohibits (rep=False)
@@ -162,7 +130,6 @@ class SL(L):
                 for example, when the grammar cannot generate the
                 required number of data items, and the repetitions
                 are set to False.
-
         Returns:
             list: generated data sample.
         """
@@ -204,11 +171,9 @@ class SL(L):
     def generate_item(self, statemap):
         """
         Generates a well-formed string with respect to the given grammar.
-
         Arguments:
             statemap (dict): a dictionary of possible transitions in the 
                 corresponding fsm; constructed inside generate_sample.
-
         Returns:
             str: a well-formed string.
         """
@@ -221,7 +186,6 @@ class SL(L):
     def state_map(self):
         """
         Generates a dictionary of possible transitions in the FSM.
-
         Returns:
             dict: the dictionary of the form
                 {"keys":[list of possible next symbols]}, where 
@@ -243,8 +207,9 @@ class SL(L):
 
 
     def switch_polarity(self):
-        """ Changes polarity of the grammar, and changes the grammar
-            to the opposite one.
+        """
+        Changes polarity of the grammar, and changes the grammar
+        to the opposite one.
         """
         if not self.alphabet:
             raise ValueError("Alphabet cannot be empty.")

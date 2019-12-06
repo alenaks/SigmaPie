@@ -29,28 +29,7 @@ class SP(L):
         data (list): input data;
         polar ("p" or "n"): polarity of the grammar;
         fsm (FSM): corresponding finite state machine.
-
-    Methods:
-        learn: extracts strictly piecewise grammar;
-        scan(string): scan the string and tell whether it's well-formed;
-        subsequences(string): extracts subsequences of the length k from
-            the input string;
-        fsmize: create a FSM family that corresponds to the given grammar;
-        generate_sample(n, repeat, safe): generates `n` strings for 
-            the given SL grammar, contains no duplicates if `repeat` is
-            set to False, detects if the grammar cannot generate the
-            desired number of strings if `safe` is set to True;
-        extract_alphabet(): extracts alphabet from data/grammar;
-        generate_all_ngrams(alphabet, k): generates all `k`-long ngrams
-            based on the given `alphabet`;
-        check_polarity: returns the polarity of the grammar;
-        switch_polarity: rewrites grammar to the opposite, and changes
-            the polarity of the grammar;
-        change_polarity(new_polarity): changes the polarity of the 
-            grammar either to `new_polarity` if one is given, or to
-            the opposite than before (does not change the grammar).
     """
-
     def __init__(self, alphabet=None, grammar=None, k=2, data=None,
                  polar="p"):
         """ Initializes the SP object. """
@@ -61,10 +40,8 @@ class SP(L):
     def subsequences(self, string):
         """
         Extracts k-long subsequences out of the given word.
-
         Arguments:
             string (str): a string that needs to be processed.
-
         Returns:
             list: a list of subsequences out of the string.
         """
@@ -93,7 +70,6 @@ class SP(L):
     def learn(self):
         """
         Extracts k-long subsequences from the training data.
-
         Results:
             self.grammar is updated.
         """
@@ -153,14 +129,11 @@ class SP(L):
     def scan(self, string):
         """
         Tells if the input string is well-formed.
-
         Arguments:
             string (str): string to be scanned.
-
         Returns:
             bool: True is well-formed, otherwise False.
         """
-
         subseq = self.subsequences(string)
         found_in_G = [(s in self.grammar) for s in subseq]
         
@@ -173,7 +146,6 @@ class SP(L):
     def generate_item(self):
         """
         Generates a well-formed string.
-
         Returns:
             str: the generated string.
         """
@@ -197,7 +169,6 @@ class SP(L):
     def generate_sample(self, n=10, repeat=False, safe=True):
         """
         Generates data sample of desired length.
-
         Arguments:
             n (int): the number of examples to be generated,
                 the default value is 10;
@@ -207,11 +178,9 @@ class SP(L):
                 for example, when the grammar cannot generate the
                 required number of data items, and the repetitions
                 are set to False.
-
         Returns:
             list: a list of generated examples.
         """
-        
         sample = [self.generate_item() for i in range(n)]
 
         if not repeat:
@@ -237,11 +206,9 @@ class SP(L):
     def switch_polarity(self, new_polarity=None):
         """
         Changes the polarity of the grammar.
-
         Arguments:
             new_polarity ("p" or "n"): the new value of the polarity.
         """
-
         old_value = self.check_polarity()
         self.change_polarity(new_polarity)
         new_value = self.check_polarity()
