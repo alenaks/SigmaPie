@@ -15,6 +15,7 @@ from tsl_class import *
 from mtsl_class import *
 from sp_class import *
 from ostia import *
+from helper import *
 
 
 print("\nYou successfully loaded SigmaPie. \n\n"
