@@ -91,6 +91,11 @@ class TSL(SL):
                 if self.well_formed_ngram(new):
                     extension.append(new)
 
+        # needs to be here: otherwise no local WF/WE processes
+        edgecase1 = tuple(self.edges[0] * (self.k - 1) + symbol)
+        edgecase2 = tuple(symbol + self.edges[1] * (self.k - 1))
+        extension.extend([edgecase1, edgecase2])
+
         return set(extension).issubset(set(ngrams))
 
 

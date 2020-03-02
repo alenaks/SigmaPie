@@ -357,9 +357,12 @@ class MTSL(TSL):
             if good:
                 word += maybe
                 tier_images = self.tier_image(word)
-
         
-        return word[(self.k - 1):-1]
+        newword = word[(self.k - 1):-1] 
+        if self.scan(newword):    
+            return newword
+        else:
+            return self.generate_item(tier_smap)
 
 
     def tier_state_maps(self):
@@ -426,6 +429,17 @@ class MTSL(TSL):
                 else:
                     inter = [i for i in main_smap[entry] if i in other[entry]]
                     main_smap[entry] = inter
+
+        free_ones = []
+        for i in self.alphabet:
+            for j in self.grammar:
+                if i in j:
+                    break
+            free_ones.append(i)
+
+        ext_alphabet = deepcopy(self.alphabet) + [self.edges[1]]
+        for x in free_ones:
+            main_smap[x] = ext_alphabet
 
         return main_smap
 
