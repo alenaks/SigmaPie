@@ -1,19 +1,18 @@
 #!/bin/python3
 
-"""
-   Module with general helper functions for the subregular package.
-   Copyright (C) 2019  Alena Aksenova
+"""Module with general helper functions for the subregular package. Copyright
+(C) 2019  Alena Aksenova.
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3 of the License, or
-   (at your option) any later version.
-
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version.
 """
+
 
 def alphabetize(data):
-    """
-    Detects symbols used in the input data.
+    """Detects symbols used in the input data.
+
     Arguments:
         data (list): Input data.
     Returns:
@@ -26,8 +25,8 @@ def alphabetize(data):
 
 
 def get_gram_info(ngrams):
-    """
-    Returns the alphabet and window size of the grammar.
+    """Returns the alphabet and window size of the grammar.
+
     Arguments:
         ngrams (list): list of ngrams.
     Returns:
@@ -41,15 +40,14 @@ def get_gram_info(ngrams):
 
 
 def prefix(w):
-    """
-    Returns a list of prefixes of a given string.
+    """Returns a list of prefixes of a given string.
+
     Arguments:
         w (str): a string prefixes of which need to be extracted.
     Returns:
         list: a list of prefixes of the given string.
     """
-    return [w[:i] for i in range(len(w)+1)]
-
+    return [w[:i] for i in range(len(w) + 1)]
 
 
 def lcp(*string):
@@ -63,7 +61,7 @@ def lcp(*string):
     w = list(set(i for i in string if i != "*"))
     if not w:
         raise IndexError("At least one non-unknown string needs to be provided.")
-    
+
     result = ""
     n = min([len(x) for x in w])
     for i in range(n):
@@ -71,14 +69,13 @@ def lcp(*string):
             result += w[0][i]
         else:
             break
-    
+
     return result
 
 
-
 def remove_from_prefix(w, pref):
-    """
-    Removes a substring from the prefix position of another string.
+    """Removes a substring from the prefix position of another string.
+
     Arguments:
         w (str): a string that needs to be modified;
         pref (str): a prefix that needs to be removed from the string.
@@ -86,7 +83,7 @@ def remove_from_prefix(w, pref):
         str: the modified string.
     """
     if w.startswith(pref):
-        return w[len(pref):]
+        return w[len(pref) :]
     elif w == "*":
         return w
 

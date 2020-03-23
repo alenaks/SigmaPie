@@ -1,13 +1,11 @@
 #!/bin/python3
 
-"""
-   A class of Strictly Piecewise Grammars.
-   Copyright (C) 2019  Alena Aksenova
-   
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3 of the License, or
-   (at your option) any later version.
+"""A class of Strictly Piecewise Grammars. Copyright (C) 2019  Alena Aksenova.
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version.
 """
 
 from random import choice
@@ -18,9 +16,9 @@ from fsm import *
 from fsm_family import *
 from helper import *
 
+
 class SP(L):
-    """
-    A class for strictly piecewise grammars and languages.
+    """A class for strictly piecewise grammars and languages.
 
     Attributes:
         alphabet (list): alphabet used in the language;
@@ -30,16 +28,15 @@ class SP(L):
         polar ("p" or "n"): polarity of the grammar;
         fsm (FSM): corresponding finite state machine.
     """
-    def __init__(self, alphabet=None, grammar=None, k=2, data=None,
-                 polar="p"):
-        """ Initializes the SP object. """
+
+    def __init__(self, alphabet=None, grammar=None, k=2, data=None, polar="p"):
+        """Initializes the SP object."""
         super().__init__(alphabet, grammar, k, data, polar=polar)
         self.fsm = FSMFamily()
 
-
     def subsequences(self, string):
-        """
-        Extracts k-long subsequences out of the given word.
+        """Extracts k-long subsequences out of the given word.
+
         Arguments:
             string (str): a string that needs to be processed.
         Returns:
@@ -47,38 +44,39 @@ class SP(L):
         """
         if len(string) < self.k:
             return []
-        
-        start = list(string[:self.k])
+
+        start = list(string[: self.k])
         result = [start]
 
         previous_state = [start]
         current_state = []
 
-        for s in string[self.k:]:
+        for s in string[self.k :]:
             for p in previous_state:
                 for i in range(self.k):
-                    new = p[:i] + p[i+1:] + [s]
+                    new = p[:i] + p[i + 1 :] + [s]
                     if new not in current_state:
                         current_state.append(new)
             result.extend(current_state)
             previous_state = current_state[:]
             current_state = []
-            
+
         return list(set([tuple(i) for i in result]))
 
-
     def learn(self):
-        """
-        Extracts k-long subsequences from the training data.
+        """Extracts k-long subsequences from the training data.
+
         Results:
             self.grammar is updated.
         """
         if not self.data:
             raise ValueError("The data must be provided.")
         if not self.alphabet:
-            raise ValueError("The alphabet must be provided. To "
-                             "extract the alphabet automatically, "
-                             "run `grammar.extract_alphabet()`.")
+            raise ValueError(
+                "The alphabet must be provided. To "
+                "extract the alphabet automatically, "
+                "run `grammar.extract_alphabet()`."
+            )
 
         self.grammar = []
         for i in self.data:
@@ -89,18 +87,14 @@ class SP(L):
         if self.check_polarity() == "n":
             self.grammar = self.opposite_polarity()
 
-
     def opposite_polarity(self):
-        """ Returns the grammar opposite to the current one. """
-        all_ngrams = product(self.alphabet, repeat = self.k)
+        """Returns the grammar opposite to the current one."""
+        all_ngrams = product(self.alphabet, repeat=self.k)
         return [i for i in all_ngrams if i not in self.grammar]
 
-
     def fsmize(self):
-        """
-        Creates FSM family for the given SP grammar by passing every
-        encountered subsequence through the corresponding automaton.
-        """
+        """Creates FSM family for the given SP grammar by passing every
+        encountered subsequence through the corresponding automaton."""
         if not self.grammar:
             self.learn()
 
@@ -110,7 +104,7 @@ class SP(L):
             data_subseq = self.opposite_polarity()
 
         # create a family of templates in fsm attribute
-        seq = product(self.alphabet, repeat = self.k-1)
+        seq = product(self.alphabet, repeat=self.k - 1)
         for path in seq:
             f = FSM(initial=None, final=None)
             f.sp_build_template(path, self.alphabet, self.k)
@@ -125,10 +119,9 @@ class SP(L):
         for f in self.fsm.family:
             f.sp_clean_template()
 
-
     def scan(self, string):
-        """
-        Tells if the input string is well-formed.
+        """Tells if the input string is well-formed.
+
         Arguments:
             string (str): string to be scanned.
         Returns:
@@ -136,16 +129,15 @@ class SP(L):
         """
         subseq = self.subsequences(string)
         found_in_G = [(s in self.grammar) for s in subseq]
-        
-        if self.check_polarity == "p":
-        	return all(found_in_G)
-        else:
-        	return not any(found_in_G)
 
+        if self.check_polarity == "p":
+            return all(found_in_G)
+        else:
+            return not any(found_in_G)
 
     def generate_item(self):
-        """
-        Generates a well-formed string.
+        """Generates a well-formed string.
+
         Returns:
             str: the generated string.
         """
@@ -165,10 +157,9 @@ class SP(L):
             else:
                 string += add
 
-
     def generate_sample(self, n=10, repeat=False, safe=True):
-        """
-        Generates data sample of desired length.
+        """Generates data sample of desired length.
+
         Arguments:
             n (int): the number of examples to be generated,
                 the default value is 10;
@@ -196,16 +187,16 @@ class SP(L):
                     useless_loops = 0
 
                 if safe and useless_loops > 100:
-                    print("The grammar cannot produce the requested number"
-                          " of strings.")
+                    print(
+                        "The grammar cannot produce the requested number" " of strings."
+                    )
                     break
 
         return list(sample)
 
-
     def switch_polarity(self, new_polarity=None):
-        """
-        Changes the polarity of the grammar.
+        """Changes the polarity of the grammar.
+
         Arguments:
             new_polarity ("p" or "n"): the new value of the polarity.
         """
@@ -214,16 +205,14 @@ class SP(L):
         new_value = self.check_polarity()
 
         if old_value != new_value:
-        	self.grammar = self.opposite_polarity()
-
-
+            self.grammar = self.opposite_polarity()
 
     def clean_grammar(self):
-        """
-        Removes useless ngrams from the grammar.
-        If negative, it just removes duplicates.
-        If positive, it detects bigrams to which one cannot get
-            from the initial symbol and from which one cannot get
-            to the final symbol, and removes them.
+        """Removes useless ngrams from the grammar.
+
+        If negative, it just removes duplicates. If positive, it detects
+        bigrams to which one cannot get     from the initial symbol and
+        from which one cannot get     to the final symbol, and removes
+        them.
         """
         self.grammar = list(set(self.grammar))

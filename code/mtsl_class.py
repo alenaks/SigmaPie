@@ -1,13 +1,12 @@
 #!/bin/python3
 
-"""
-   A class of Multiple Tier-based Strictly Local Grammars.
-   Copyright (C) 2019  Alena Aksenova
-   
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3 of the License, or
-   (at your option) any later version.
+"""A class of Multiple Tier-based Strictly Local Grammars. Copyright (C) 2019
+Alena Aksenova.
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version.
 """
 
 from copy import deepcopy
@@ -18,8 +17,8 @@ from fsm_family import *
 
 
 class MTSL(TSL):
-    """
-    A class for tier-based strictly local grammars and languages.
+    """A class for tier-based strictly local grammars and languages.
+
     Attributes:
         alphabet (list): alphabet used in the language;
         grammar (list): the list of substructures;
@@ -27,22 +26,24 @@ class MTSL(TSL):
         data (list): input data;
         edges (list): start- and end-symbols for the grammar;
         polar ("p" or "n"): polarity of the grammar;
-        fsm (FSMFamily): a list of finite state machines that 
+        fsm (FSMFamily): a list of finite state machines that
             corresponds to the grammar;
         tier (list): list of tuples, where every tuple lists elements
             of some tier.
     Learning for k > 2 is not implemented: requires more theoretical work.
     """
-    def __init__(self, alphabet=None, grammar=None, k=2, data=None,
-                 edges=[">", "<"], polar="p"):
-        """ Initializes the TSL object. """
+
+    def __init__(
+        self, alphabet=None, grammar=None, k=2, data=None, edges=[">", "<"], polar="p"
+    ):
+        """Initializes the TSL object."""
         super().__init__(alphabet, grammar, k, data, edges, polar)
         self.fsm = FSMFamily()
         if self.k != 2:
-        	raise NotImplementedError("The learner for k-MTSL languages is "
-        							  "still being designed.")
+            raise NotImplementedError(
+                "The learner for k-MTSL languages is " "still being designed."
+            )
         self.tier = None
-
 
     def learn(self):
         """
@@ -57,10 +58,12 @@ class MTSL(TSL):
              (tier_n):[bigrams_for_tier_n]}
         """
         if not self.data:
-    	    raise ValueError("Data needs to be provided.")
+            raise ValueError("Data needs to be provided.")
         if not self.alphabet:
-    	    raise ValueError("The alphabet is empty. Provide data or "
-    	    	"run `grammar.extract_alphabet`.")
+            raise ValueError(
+                "The alphabet is empty. Provide data or "
+                "run `grammar.extract_alphabet`."
+            )
 
         possible = set(self.generate_all_ngrams(self.alphabet, self.k))
         attested = set()
@@ -107,10 +110,9 @@ class MTSL(TSL):
         if self.check_polarity() == "p":
             self.grammar = self.opposite_polarity()
 
-
     def scan(self, string):
-        """
-        Scan string with respect to a given MTSL grammar.
+        """Scan string with respect to a given MTSL grammar.
+
         Arguments:
             string (str): a string that needs to be scanned.
         Returns:
@@ -135,13 +137,12 @@ class MTSL(TSL):
 
         return all(tier_evals)
 
-
     def gather_grammars(self, grammar):
-        """
-        Gathers grammars with the same tier together.
+        """Gathers grammars with the same tier together.
+
         Arguments:
             grammar (list): a representation of the learned grammar
-                where there is a one-to-one mapping between tiers 
+                where there is a one-to-one mapping between tiers
                 and bigrams.
         Returns:
             dict: a dictionary where keys are tiers and values are
@@ -155,12 +156,12 @@ class MTSL(TSL):
                 G[tuple(i[0])] = [i[1]]
         return G
 
-
     def path(self, string):
-        """
-        Collects a list of paths from a string. A path is a 
+        """Collects a list of paths from a string.
+
+        A path is a
         triplet <a, X, b>, where `a` is a symbol, `b` is a symbol
-        that follows `a` in `string`, and `X` is a set of symbols 
+        that follows `a` in `string`, and `X` is a set of symbols
         in-between `a` and `b`.
         Arguments:
             string (str): a string paths of which need to be found.
@@ -173,7 +174,7 @@ class MTSL(TSL):
         for i in range(len(string) - 1):
             for j in range(i + 1, len(string)):
                 path = [string[i]]
-                path.append(list(set([k for k in string[(i + 1):j]])))
+                path.append(list(set([k for k in string[(i + 1) : j]])))
                 path.append(string[j])
 
                 if path not in paths:
@@ -181,10 +182,9 @@ class MTSL(TSL):
 
         return paths
 
-
     def all_paths(self, dataset):
-        """
-        Finds all paths that are present in a list of strings.
+        """Finds all paths that are present in a list of strings.
+
         Arguments:
             dataset (list): a list of strings.
         Returns:
@@ -198,17 +198,18 @@ class MTSL(TSL):
 
         return paths
 
-
     def opposite_polarity(self):
-        """
-        Generates a grammar of the opposite polarity.
+        """Generates a grammar of the opposite polarity.
+
         Returns:
             dict: a dictionary containing the opposite ngram lists
                 for every tier of the grammar.
         """
         if not self.grammar:
-            raise ValueError("Grammar needs to be provided. It can also "
-                             "be learned using `grammar.learn()`.")
+            raise ValueError(
+                "Grammar needs to be provided. It can also "
+                "be learned using `grammar.learn()`."
+            )
         opposite = {}
         for i in self.grammar:
             possib = self.generate_all_ngrams(list(i), self.k)
@@ -216,19 +217,16 @@ class MTSL(TSL):
 
         return opposite
 
-
     def switch_polarity(self):
-        """ Changes polarity of the grammar, and rewrites
-            grammar to the opposite one.
-        """
+        """Changes polarity of the grammar, and rewrites grammar to the
+        opposite one."""
         self.grammar = self.opposite_polarity()
         self.change_polarity()
 
-
     def map_restrictions_to_fsms(self):
-        """
-        Maps restrictions to FSMs: based on the grammar, it creates
-        a list of lists, where every sub-list has the following shape:
+        """Maps restrictions to FSMs: based on the grammar, it creates a list
+        of lists, where every sub-list has the following shape:
+
         [tier_n, restrictions_n, fsm_n]. Such sub-list is constructed
         for every single tier of the current MTSL grammar.
         Returns:
@@ -238,14 +236,20 @@ class MTSL(TSL):
                 FSM: a FSM corresponding to the current tier.
         """
         if not self.grammar:
-            raise(IndexError("The grammar must not be empty."))
+            raise (IndexError("The grammar must not be empty."))
 
         restr_to_fsm = []
 
         for alpha, ngrams in self.grammar.items():
             polarity = self.check_polarity()
-            tsl = TSL(self.alphabet, self.grammar, self.k, self.data,
-                self.edges, polar=polarity)
+            tsl = TSL(
+                self.alphabet,
+                self.grammar,
+                self.k,
+                self.data,
+                self.edges,
+                polar=polarity,
+            )
             if not tsl.alphabet:
                 tsl.extract_alphabet()
             tsl.tier = list(alpha)
@@ -255,20 +259,16 @@ class MTSL(TSL):
 
         return restr_to_fsm
 
-
     def fsmize(self):
-        """
-        Builds FSM family corresponding to the given grammar and 
-        saves in it the fsm attribute.
-        """
+        """Builds FSM family corresponding to the given grammar and saves in it
+        the fsm attribute."""
         restr_to_fsm = self.map_restrictions_to_fsms()
         self.fsm.family = [i[2] for i in restr_to_fsm]
 
-
     def generate_sample(self, n=10, repeat=True, safe=True):
-        """
-        Generates a data sample of the required size, with or without
+        """Generates a data sample of the required size, with or without
         repetitions depending on `repeat` value.
+
         Arguments:
             n (int): the number of examples to be generated;
             repeat (bool): allows (rep=True) or prohibits (rep=False)
@@ -287,9 +287,13 @@ class MTSL(TSL):
 
         tier_smap = self.tier_state_maps()
         if not any([len(tier_smap[x]) for x in tier_smap]):
-            raise(ValueError("There are ngrams in the grammar that are"
-                            " not leading anywhere. Clean the grammar "
-                            " or run `grammar.clean_grammar()`."))
+            raise (
+                ValueError(
+                    "There are ngrams in the grammar that are"
+                    " not leading anywhere. Clean the grammar "
+                    " or run `grammar.clean_grammar()`."
+                )
+            )
 
         data = [self.generate_item(tier_smap) for i in range(n)]
 
@@ -305,15 +309,16 @@ class MTSL(TSL):
                     useless_loops += 1
                 else:
                     useless_loops = 0
-                
+
                 if safe and useless_loops > 500:
-                    print("The grammar cannot produce the requested "
-                          "number of strings. Check the grammar, "
-                          "reduce the number, or allow repetitions.")
+                    print(
+                        "The grammar cannot produce the requested "
+                        "number of strings. Check the grammar, "
+                        "reduce the number, or allow repetitions."
+                    )
                     break
 
         return list(data)
-
 
     def tier_image(self, string):
         """
@@ -335,10 +340,9 @@ class MTSL(TSL):
             tiers[i] = curr_tier
         return tiers
 
-
     def generate_item(self, tier_smap):
-        """
-        Generates a well-formed string with respect to the given grammar.
+        """Generates a well-formed string with respect to the given grammar.
+
         Returns:
             str: a well-formed string.
         """
@@ -347,23 +351,22 @@ class MTSL(TSL):
         tier_images = self.tier_image(word)
 
         while word[-1] != self.edges[1]:
-            maybe = choice(main_smap[word[-(self.k - 1):]])
+            maybe = choice(main_smap[word[-(self.k - 1) :]])
             good = True
             for tier in tier_smap:
                 if maybe in tier:
                     old_image = tier_images[tier]
-                    if maybe not in tier_smap[tier][old_image[-(self.k - 1):]]:
+                    if maybe not in tier_smap[tier][old_image[-(self.k - 1) :]]:
                         good = False
             if good:
                 word += maybe
                 tier_images = self.tier_image(word)
-        
-        newword = word[(self.k - 1):-1] 
-        if self.scan(newword):    
+
+        newword = word[(self.k - 1) : -1]
+        if self.scan(newword):
             return newword
         else:
             return self.generate_item(tier_smap)
-
 
     def tier_state_maps(self):
         """
@@ -396,7 +399,6 @@ class MTSL(TSL):
             tier_smaps[tuple(sl.alphabet)] = sl.state_map()
 
         return tier_smaps
-
 
     def general_state_map(self, smaps):
         """
@@ -443,14 +445,13 @@ class MTSL(TSL):
 
         return main_smap
 
-
     def clean_grammar(self):
-        """
-        Removes useless ngrams from the grammar.
-        If negative, it just removes duplicates.
-        If positive, it detects ngrams to which one cannot get
-            from the initial symbol and from which one cannot get
-            to the final symbol, and removes them.
+        """Removes useless ngrams from the grammar.
+
+        If negative, it just removes duplicates. If positive, it detects
+        ngrams to which one cannot get     from the initial symbol and
+        from which one cannot get     to the final symbol, and removes
+        them.
         """
         for tier in self.grammar:
             sl = SL()

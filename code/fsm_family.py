@@ -1,13 +1,12 @@
 #!/bin/python3
 
-"""
-   A class of Families of Finite State Machines.
-   Copyright (C) 2019  Alena Aksenova
-   
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3 of the License, or
-   (at your option) any later version.
+"""A class of Families of Finite State Machines. Copyright (C) 2019  Alena
+Aksenova.
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version.
 """
 
 from fsm import *
@@ -23,17 +22,16 @@ class FSMFamily(object):
     """
 
     def __init__(self, family=None):
-        """ Initializes the FSMFamily object. """
+        """Initializes the FSMFamily object."""
         if family is None:
-          self.family = []
+            self.family = []
         else:
-          self.family = family
-
+            self.family = family
 
     def run_all_fsm(self, string):
-        """
-        Tells whether the given string is accepted by all
-        the automata of the family.
+        """Tells whether the given string is accepted by all the automata of
+        the family.
+
         Arguments:
             string (str): the input string.
         Returns:
