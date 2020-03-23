@@ -1,5 +1,3 @@
-#!/bin/python3
-
 """A module with the definition of the grammar class. Copyright (C) 2019  Alena
 Aksenova.
 
@@ -10,7 +8,7 @@ option) any later version.
 """
 
 from itertools import product
-from helper import *
+from sigmapie.helper import *
 
 
 class L(object):

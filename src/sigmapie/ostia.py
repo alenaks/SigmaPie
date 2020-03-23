@@ -1,5 +1,3 @@
-#!/bin/python3
-
 """An implementation of the learning algorithm OSTIA. Copyright (C) 2019  Alena
 Aksenova.
 
@@ -9,8 +7,8 @@ Free Software Foundation; either version 3 of the License, or (at your
 option) any later version.
 """
 
-from fst_object import *
-from helper import *
+from sigmapie.fst_object import *
+from sigmapie.helper import *
 
 
 def ostia(S, Sigma, Gamma):

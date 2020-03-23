@@ -9,10 +9,6 @@ Free Software Foundation; either version 3 of the License, or (at your
 option) any later version.
 """
 
-import sys, os
-
-sys.path.insert(0, os.path.join(os.path.abspath(".."), "code"))
-
 import unittest
 from fsm import FSM
 

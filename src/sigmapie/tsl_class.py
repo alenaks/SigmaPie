@@ -1,5 +1,3 @@
-#!/bin/python3
-
 """A class of Tier-based Strictly Local Grammars. Copyright (C) 2019  Alena
 Aksenova.
 
@@ -10,7 +8,7 @@ option) any later version.
 """
 
 from random import choice, randint
-from sl_class import *
+from sigmapie.sl_class import *
 
 
 class TSL(SL):

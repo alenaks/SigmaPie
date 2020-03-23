@@ -1,5 +1,3 @@
-#!/bin/python3
-
 """A class of Multiple Tier-based Strictly Local Grammars. Copyright (C) 2019
 Alena Aksenova.
 
@@ -12,8 +10,8 @@ option) any later version.
 from copy import deepcopy
 from random import choice, randint
 from itertools import product
-from tsl_class import *
-from fsm_family import *
+from sigmapie.tsl_class import *
+from sigmapie.fsm_family import *
 
 
 class MTSL(TSL):

@@ -1,5 +1,3 @@
-#!/bin/python3
-
 """A class defining the Finite State Transducer. Copyright (C) 2019  Alena
 Aksenova.
 

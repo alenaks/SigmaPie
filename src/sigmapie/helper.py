@@ -1,5 +1,3 @@
-#!/bin/python3
-
 """Module with general helper functions for the subregular package. Copyright
 (C) 2019  Alena Aksenova.
 

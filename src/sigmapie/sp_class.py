@@ -1,5 +1,3 @@
-#!/bin/python3
-
 """A class of Strictly Piecewise Grammars. Copyright (C) 2019  Alena Aksenova.
 
 This program is free software; you can redistribute it and/or modify it
@@ -11,10 +9,10 @@ option) any later version.
 from random import choice
 from itertools import product
 
-from grammar import *
-from fsm import *
-from fsm_family import *
-from helper import *
+from sigmapie.grammar import *
+from sigmapie.fsm import *
+from sigmapie.fsm_family import *
+from sigmapie.helper import *
 
 
 class SP(L):

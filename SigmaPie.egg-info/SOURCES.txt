@@ -1,0 +1,7 @@
+README.md
+setup.cfg
+setup.py
+SigmaPie.egg-info/PKG-INFO
+SigmaPie.egg-info/SOURCES.txt
+SigmaPie.egg-info/dependency_links.txt
+SigmaPie.egg-info/top_level.txt

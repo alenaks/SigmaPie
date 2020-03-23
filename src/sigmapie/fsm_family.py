@@ -1,5 +1,3 @@
-#!/bin/python3
-
 """A class of Families of Finite State Machines. Copyright (C) 2019  Alena
 Aksenova.
 
@@ -9,7 +7,7 @@ Free Software Foundation; either version 3 of the License, or (at your
 option) any later version.
 """
 
-from fsm import *
+from sigmapie.fsm import *
 
 
 class FSMFamily(object):
