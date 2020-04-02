@@ -88,7 +88,7 @@ class TSL(SL):
         """
         extension = []
         for small in ngrams_less:
-            for i in range(len(small)):
+            for i in range(len(small) + 1):
                 new = small[:i] + (symbol,) + small[i:]
                 if self.well_formed_ngram(new):
                     extension.append(new)
