@@ -90,7 +90,7 @@ class MTSL(TSL):
                     if (p[0] == bgr[0]) and (p[-1] == bgr[-1]) and (s in p[1]):
                         relevant_paths.append(p)
                 for rp in relevant_paths:
-                    new = [rp[0], [i for i in rp[1] if i != s], rp[2]]
+                    new = [rp[0], set(i for i in rp[1] if i != s), rp[2]]
                     if new not in paths:
                         rmv = False
                         break
@@ -172,7 +172,7 @@ class MTSL(TSL):
         for i in range(len(string) - 1):
             for j in range(i + 1, len(string)):
                 path = [string[i]]
-                path.append(list(set([k for k in string[(i + 1) : j]])))
+                path.append(set(k for k in string[(i + 1) : j]))
                 path.append(string[j])
 
                 if path not in paths:
