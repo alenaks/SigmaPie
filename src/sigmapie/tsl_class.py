@@ -67,7 +67,7 @@ class TSL(SL):
         ngrams_less = TSL(data=self.data, k=(self.k - 1)).ngramize_data()
         ngrams_more = TSL(data=self.data, k=(self.k + 1)).ngramize_data()
 
-        for symbol in self.tier:
+        for symbol in self.alphabet:
             if self.test_insert(symbol, ngrams, ngrams_less) and self.test_remove(
                 symbol, ngrams, ngrams_more
             ):
