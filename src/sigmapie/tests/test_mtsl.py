@@ -1,6 +1,6 @@
 #!/bin/python3
 
-"""A module with the unit tests for the TSL module. Copyright (C) 2019  Alena
+"""A module with the unit tests for the MTSL module. Copyright (C) 2019  Alena
 Aksenova.
 
 This program is free software; you can redistribute it and/or modify it
@@ -10,6 +10,7 @@ option) any later version.
 """
 
 import unittest
+import unittest.mock
 from mtsl_class import *
 
 
@@ -174,6 +175,28 @@ class TestMTSLLanguages(unittest.TestCase):
             correct = False
 
         self.assertTrue(correct)
+
+    @unittest.mock.patch(
+        # Artificially enforce a particular case of list(set())'s naturally-
+        # occurring non-determinism with respect to ordering: 
+        # make it ascending if odd number of elements, descending if even.
+
+        # While impractical, this re-implementation of list(set()) is perfectly
+        # legal. It could be discarded, but that way, the test becomes
+        # non-deterministic and reveals the bug only in some 10% of runs.
+
+        "mtsl_class.list", 
+        new=lambda x: sorted(x, reverse=len(x) % 2 == 0) \
+                      if type(x) == set else list(x)
+    )
+    def test_grammar_learning_raised_issue(self):
+        """Checks a specific case related to GitHub issue #6."""
+        mtsl = MTSL(k=2, polar="n")
+        mtsl.data = ["axb", "ayxb", "azxb", "azxyb"]
+        mtsl.extract_alphabet()
+        mtsl.learn()
+        self.assertTrue(all({*tier} == {"a", "b", "x"} for tier, restrict \
+                            in mtsl.grammar.items() if ("a", "b") in restrict))
 
     def test_convert_pos_to_neg(self):
         """Tests conversion of a positive grammar to a negative one."""
