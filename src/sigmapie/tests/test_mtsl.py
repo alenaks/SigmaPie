@@ -181,7 +181,9 @@ class TestMTSLLanguages(unittest.TestCase):
         # occurring non-determinism with respect to ordering: 
         # make it ascending if odd number of elements, descending if even.
 
-        # Removing this patch makes the test pass or fail at random instead.
+        # While impractical, this re-implementation of list(set()) is perfectly
+        # legal. It could be discarded, but that way, the test becomes
+        # non-deterministic and reveals the bug only in some 10% of runs.
 
         "mtsl_class.list", 
         new=lambda x: sorted(x, reverse=len(x) % 2 == 0) \
