@@ -30,6 +30,19 @@ class TestTSLLanguages(unittest.TestCase):
         b.learn_tier()
         self.assertTrue(set(b.tier) == {"a", "b"})
 
+    def test_tier_learning_raised_issue(self):
+        """Checks a specific case related to GitHub issue #6."""
+        tsl = TSL()
+        tsl.data = [
+            "aa", "ab", "ax", "ay", 
+            "ba", "bb", "bx", "by", 
+            "xa", "xb", "xx", 
+            "ya", "yb", "yx", "yy"
+        ]
+        tsl.alphabet = ["a", "b", "x", "y"]
+        tsl.learn_tier()
+        self.assertTrue(set(tsl.tier) == {"x", "y"})
+
     def test_tier_image(self):
         """Tests the erasing function."""
         a = TSL()
