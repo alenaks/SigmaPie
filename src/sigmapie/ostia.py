@@ -296,7 +296,7 @@ def ostia_fold(T_orig, q1, q2):
                         edge_defined = True
 
                         # fail if inconsistent with output of q2
-                        if tr_1[2] not in prefix(tr_2[2]):
+                        if tr_1[2] not in prefix(tr_2[2]) and tr_2[2] not in prefix(tr_1[2]):
                             return False
 
                         # move the mismatched suffix of q1 and q2 further
